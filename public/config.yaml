@@ -1,5 +1,6 @@
 # default config.yaml can be overridden by customConfig.yaml
 defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsMultiEnvExample.yaml
+multi-environment: ["Dev", "QA", "Prod"]
 # multi-environment: ["Dev", "QA", "Prod"]
 # default-environment: "Prod" # By default last environment in the list is selected as the default environment
 
@@ -9,9 +10,9 @@ zoom-to-fit-columns: True # Default is True
 theme: light
 
 # Customise domain names by mapping their names as they appear in the domain filter to a more user-friendly name
-# domainNameCustomisation:
-#   "food_production": "Food Production"
-#   "petstore": "Petstore"
+domainNameCustomisation:
+  "food_production": "Food Production"
+  "petstore": "Petstore"
 
 sampleDataMeshOperationalDataUrls:
   - http://localhost:8000/dmesh/discover
