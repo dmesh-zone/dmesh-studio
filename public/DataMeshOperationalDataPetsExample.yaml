@@ -27,6 +27,20 @@
       value: rdsoracle
   outputPorts: []
 - kind: DataProduct
+  id: a538c642-e1d5-4c07-9e79-e31be0bd295c
+  name: Petstore C
+  domain: petstore
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Operational Oracle database for Petstore C retail operations
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdsoracle
+  outputPorts: []
+- kind: DataProduct
   id: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
   name: Food Production
   domain: food_production
@@ -78,19 +92,19 @@
     - server: "Petstore workspace"
       type: databricks
       environment: dev
-      host: https://github.com/dmesh-zone/dmesh-viewer/blob/main/README.md
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
       schema: retail_data
     - server: "Petstore workspace"
       type: databricks
       environment: qa
-      host: https://github.com/dmesh-zone/dmesh-viewer/blob/main/README.md
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
       schema: retail_data
     - server: "Petstore workspace"
       type: databricks
       environment: prod
-      host: https://github.com/dmesh-zone/dmesh-viewer/blob/main/README.md
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
       schema: retail_data
   roles:
@@ -779,6 +793,35 @@
               value: deltalake
           examples:
             - 2024-06-01T08:00:00Z
+- kind: DataProduct
+  id: 9a82ac51-c30d-45f4-9b5c-83ef5013c46e
+  name: Petstore C
+  domain: petstore
+  status: active
+  apiVersion: v1.0.0
+  description:
+    purpose: Source-aligned data from Petstore C operational database
+  customProperties:
+    - property: dataProductTier
+      value: sourceAligned
+    - property: technology
+      value: databricks
+  outputPorts:
+    - name: customers
+      version: "v1"
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
+    - name: orders
+      version: "v1"
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
+    - name: order_items
+      version: "v1"
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
+    - name: products
+      version: "v1"
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
+    - name: inventory
+      version: "v1"
+      contractId: 688de69e-651c-5bef-a503-bf2b68c7e7c1
 - kind: DataProduct
   id: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
   name: Food Production
@@ -2197,6 +2240,34 @@
     teamId: food-production-team
     outputPortId: "*"
     dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+  consumer:
+    teamId: petstore-analytics-team
+    dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+- dataUsageAgreementSpecification: 0.0.1
+  id: 45c55a30-cf22-491a-be10-098555ac291b
+  info:
+    active: true
+    purpose: Extract operational data from Petstore C database
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: petstore-c-team
+    outputPortId: "*"
+    dataProductId: a538c642-e1d5-4c07-9e79-e31be0bd295c
+  consumer:
+    teamId: petstore-central-team
+    dataProductId: 9a82ac51-c30d-45f4-9b5c-83ef5013c46e
+- dataUsageAgreementSpecification: 0.0.1
+  id: 23c8a920-d3ab-41c4-b892-75d1123490cf
+  info:
+    active: true
+    purpose: Integrate Petstore C data into unified retail view
+    status: approved
+    startDate: 2026-02-10
+  provider:
+    teamId: petstore-central-team
+    outputPortId: "*"
+    dataProductId: 9a82ac51-c30d-45f4-9b5c-83ef5013c46e
   consumer:
     teamId: petstore-analytics-team
     dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6

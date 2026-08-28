@@ -1,19 +1,19 @@
-# Deploying `dmesh-viewer` to Databricks Apps
+# Deploying `dmesh-studio` to Databricks Apps
 
-This guide explains how to deploy the `dmesh-viewer` (a Vite-based React application) as a Databricks App. 
+This guide explains how to deploy the `dmesh-studio` (a Vite-based React application) as a Databricks App. 
 
 We use a hybrid deployment model: the frontend is built locally using Node.js/Vite, and the resulting static files are served by a small Python FastAPI backend running on Databricks Apps.
 
 ## 1. Prerequisites
 
 ### Environment Variables
-You must configure your Databricks workspace details. Create a `.env` file in the root of the `dmesh-viewer` directory containing:
+You must configure your Databricks workspace details. Create a `.env` file in the root of the `dmesh-studio` directory containing:
 
 ```bash
 DATABRICKS_EMAIL="your-databricks-email"
 DB_PROFILE="<your-databricks-profile>"
 DATABRICKS_WORKSPACE_URL="https://<your-databricks-workspace-url>"
-API_APP_URL="https://<your-databricks-workspace-url>/dmesh-viewer"
+API_APP_URL="https://<your-databricks-workspace-url>/dmesh-studio"
 ```
 
 ### Databricks CLI
@@ -38,7 +38,7 @@ To streamline the deployment process, we have provided an automated deployment s
 
 When you execute this script, it will:
 1. Run `npm install` and `npm run build` locally to generate the static `dist/` folder.
-2. Ensure the `dmesh-viewer` Databricks App exists in your workspace.
+2. Ensure the `dmesh-studio` Databricks App exists in your workspace.
 3. Sync the necessary files (`dist/`, `app.yaml`, `app.py`, `requirements.txt`) to your workspace directory.
 4. Trigger the app deployment.
 
@@ -53,5 +53,5 @@ If you are unable to access the app after deployment or if a Service Principal u
 
 ```bash
 # Check permissions
-databricks apps get-permissions dmesh-viewer --profile <your-databricks-profile>
+databricks apps get-permissions dmesh-studio --profile <your-databricks-profile>
 ```

@@ -29,6 +29,7 @@ import { validateRegistry } from './ValidationService';
 import YAML from 'yaml';
 import * as ObsSim from './ObsSimulation';
 
+import { Box, Typography, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import DomainSelector from './DomainSelector';
 import GlobalFilter from './GlobalFilter';
 import DataProductVisual from './DataProductVisual';
@@ -62,7 +63,7 @@ const BASE_URL = import.meta.env.BASE_URL;
 
 const normalizePath = (path) => {
     if (!path) return path;
-    
+
     // If it's the absolute localhost backend, normalize it to the proxy path
     // ONLY in development mode where the Vite proxy is active.
     if (import.meta.env.DEV && path.startsWith('http://localhost:8000/dmesh')) {
@@ -71,7 +72,7 @@ const normalizePath = (path) => {
     }
 
     if (path.startsWith('http')) return path;
-    
+
     // If it already starts with BASE_URL, don't normalize again
     if (path.startsWith(BASE_URL)) return path;
 
@@ -84,7 +85,7 @@ const normalizePath = (path) => {
 
 export default Flow;
 
-function Flow() {
+function Flow({ isExpanded = false }) {
     // Theme Context
     const { mode, setThemeFromConfig } = useThemeContext();
 
@@ -98,6 +99,21 @@ function Flow() {
     const [config, setConfig] = React.useState({ iconMap: {}, tiers: {}, domainPalette: [], defaultDataMeshOperationalDataUrl: '', registries: [], 'single-domain-default-filter': false, 'zoom-to-fit-columns': true }); // Config state
     const [configError, setConfigError] = React.useState(null); // Track config loading errors
     const [showRegistryModal, setShowRegistryModal] = React.useState(false);
+
+    const [allEnvsData, setAllEnvsData] = React.useState([]);
+    const [selectedEnv, setSelectedEnv] = React.useState('');
+
+    React.useEffect(() => {
+        if (config?.['multi-environment'] && Array.isArray(config['multi-environment']) && allEnvsData.length > 0) {
+            const defaultEnv = config['default-environment'] || config['multi-environment'][config['multi-environment'].length - 1];
+            const currentEnv = selectedEnv || defaultEnv;
+            if (!selectedEnv) {
+                setSelectedEnv(currentEnv);
+            }
+            const envObj = allEnvsData.find(e => String(e.env).toLowerCase() === String(currentEnv).toLowerCase());
+            setDataMeshOperationalData(envObj ? (envObj.data || []) : []);
+        }
+    }, [selectedEnv, allEnvsData, config]);
 
     // Load Config
     React.useEffect(() => {
@@ -172,7 +188,7 @@ function Flow() {
                 if (loadedConfig.theme) {
                     setThemeFromConfig(loadedConfig.theme);
                 }
-                
+
                 // Keep the initial config.theme name so the useEffect can use it
                 // We don't append to DOM here.
 
@@ -188,10 +204,10 @@ function Flow() {
     // Effect to handle CSS theme file injection based on mode
     React.useEffect(() => {
         if (!config) return;
-        
+
         let activeThemeName = 'light';
         const configThemeName = typeof config.theme === 'string' ? config.theme : 'light';
-        
+
         if (configThemeName === 'light' || configThemeName === 'dark') {
             activeThemeName = mode; // Obey user toggle
         } else {
@@ -208,7 +224,7 @@ function Flow() {
         }
         // Always append it to the end of the head so it takes precedence over Vite's injected <style> tags
         document.head.appendChild(themeLink);
-        
+
         const baseUrl = import.meta.env.BASE_URL || '/';
         const themeUrl = `${baseUrl}/themes/${activeThemeName}-theme.css`.replace('//', '/');
         themeLink.href = import.meta.env.DEV ? `${themeUrl}?t=${Date.now()}` : themeUrl;
@@ -268,7 +284,7 @@ function Flow() {
     React.useEffect(() => {
         localStorage.setItem('showDescriptionsExpanded', showDescriptionsExpanded);
     }, [showDescriptionsExpanded]);
-    
+
     const [showGlobalConfig, setShowGlobalConfig] = React.useState(false);
     const globalConfigMenuRef = React.useRef(null);
     React.useEffect(() => {
@@ -389,10 +405,14 @@ function Flow() {
         if (!parsed) {
             console.warn("Parsed registry is empty");
             setDataMeshOperationalData([]);
+            setAllEnvsData([]);
         } else {
             const items = Array.isArray(parsed) ? parsed : [parsed];
-            setDataMeshOperationalData(items);
-            // Observability Metrics extracted in a separate useEffect
+            if (config?.['multi-environment'] && Array.isArray(config['multi-environment'])) {
+                setAllEnvsData(items);
+            } else {
+                setDataMeshOperationalData(items);
+            }
         }
     };
 
@@ -463,6 +483,7 @@ function Flow() {
             console.error("Error loading registry from text:", err);
             setError(err.message);
             setDataMeshOperationalData([]);
+            setAllEnvsData([]);
         } finally {
             setIsLoading(false);
         }
@@ -491,6 +512,7 @@ function Flow() {
                 console.error("Error loading registry:", err);
                 setError(err.message);
                 setDataMeshOperationalData([]);
+                setAllEnvsData([]);
             } finally {
                 setIsLoading(false);
             }
@@ -706,7 +728,7 @@ function Flow() {
             });
 
         const activeNodeIds = new Set(initialNodes.map(n => n.id));
-        
+
         // Find full upstream and downstream chains for hover highlighting
         const connectedEdgeIds = new Set();
         if (hoveredNodeId) {
@@ -720,24 +742,24 @@ function Flow() {
                 if (!adjUp[c]) adjUp[c] = [];
                 adjUp[c].push({ eId: e.id, t: p });
             });
-            
+
             const visitedUp = new Set();
             let queue = [hoveredNodeId];
             visitedUp.add(hoveredNodeId);
-            while(queue.length) {
+            while (queue.length) {
                 const curr = queue.shift();
-                (adjUp[curr] || []).forEach(({eId, t}) => {
+                (adjUp[curr] || []).forEach(({ eId, t }) => {
                     connectedEdgeIds.add(eId);
                     if (!visitedUp.has(t)) { visitedUp.add(t); queue.push(t); }
                 });
             }
-            
+
             const visitedDown = new Set();
             queue = [hoveredNodeId];
             visitedDown.add(hoveredNodeId);
-            while(queue.length) {
+            while (queue.length) {
                 const curr = queue.shift();
-                (adjDown[curr] || []).forEach(({eId, t}) => {
+                (adjDown[curr] || []).forEach(({ eId, t }) => {
                     connectedEdgeIds.add(eId);
                     if (!visitedDown.has(t)) { visitedDown.add(t); queue.push(t); }
                 });
@@ -764,7 +786,7 @@ function Flow() {
 
                 let strokeColor;
                 let markerEndProps;
-                
+
                 if (isEdgeInChain) {
                     strokeColor = 'var(--connector-hovered-node, #22c55e)';
                     markerEndProps = 'custom-arrow-hovered-node';
@@ -815,7 +837,7 @@ function Flow() {
             const COLUMN_SPACING = 450;
             activeTiers.forEach((tierId, colNum) => {
                 const x = (colNum - 1) * COLUMN_SPACING;
-                
+
                 // Human readable: e.g. consumerAligned -> Consumer Aligned
                 const formattedTier = tierId
                     .replace(/([A-Z])/g, ' $1')
@@ -860,24 +882,24 @@ function Flow() {
                     if (!adjUp[c]) adjUp[c] = [];
                     adjUp[c].push({ eId: e.id, t: p });
                 });
-                
+
                 const visitedUp = new Set();
                 let queue = [hoveredNodeId];
                 visitedUp.add(hoveredNodeId);
-                while(queue.length) {
+                while (queue.length) {
                     const curr = queue.shift();
-                    (adjUp[curr] || []).forEach(({eId, t}) => {
+                    (adjUp[curr] || []).forEach(({ eId, t }) => {
                         connectedEdgeIds.add(eId);
                         if (!visitedUp.has(t)) { visitedUp.add(t); queue.push(t); }
                     });
                 }
-                
+
                 const visitedDown = new Set();
                 queue = [hoveredNodeId];
                 visitedDown.add(hoveredNodeId);
-                while(queue.length) {
+                while (queue.length) {
                     const curr = queue.shift();
-                    (adjDown[curr] || []).forEach(({eId, t}) => {
+                    (adjDown[curr] || []).forEach(({ eId, t }) => {
                         connectedEdgeIds.add(eId);
                         if (!visitedDown.has(t)) { visitedDown.add(t); queue.push(t); }
                     });
@@ -900,31 +922,31 @@ function Flow() {
                 const isEdgeInChain = hoveredNodeId ? connectedEdgeIds.has(edge.id) : false;
                 const isFaint = hoveredNodeId && !isEdgeInChain;
 
-            let strokeColor;
-            let markerEndProps;
-            
-            if (isEdgeInChain) {
-                strokeColor = 'var(--connector-hovered-node, #22c55e)';
-                markerEndProps = 'custom-arrow-hovered-node';
-            } else if (hoveredEdgeId === edge.id) {
-                strokeColor = observeMode ? edgeColor : 'var(--connector-hovered-edge, #2563eb)';
-                markerEndProps = observeMode ? { type: 'arrowclosed', color: edgeColor } : 'custom-arrow-hovered-edge';
-            } else if (isFaint) {
-                strokeColor = 'var(--connector-faint, #ffffff)';
-                markerEndProps = 'custom-arrow-faint';
-            } else {
-                strokeColor = edgeColor;
-                markerEndProps = { type: 'arrowclosed', color: edgeColor };
-            }
+                let strokeColor;
+                let markerEndProps;
 
-            return {
-                ...edge,
-                style: { ...edge.style, stroke: strokeColor, strokeWidth: isEdgeInChain ? 2 : 1 },
-                markerEnd: markerEndProps
-            };
+                if (isEdgeInChain) {
+                    strokeColor = 'var(--connector-hovered-node, #22c55e)';
+                    markerEndProps = 'custom-arrow-hovered-node';
+                } else if (hoveredEdgeId === edge.id) {
+                    strokeColor = observeMode ? edgeColor : 'var(--connector-hovered-edge, #2563eb)';
+                    markerEndProps = observeMode ? { type: 'arrowclosed', color: edgeColor } : 'custom-arrow-hovered-edge';
+                } else if (isFaint) {
+                    strokeColor = 'var(--connector-faint, #ffffff)';
+                    markerEndProps = 'custom-arrow-faint';
+                } else {
+                    strokeColor = edgeColor;
+                    markerEndProps = { type: 'arrowclosed', color: edgeColor };
+                }
+
+                return {
+                    ...edge,
+                    style: { ...edge.style, stroke: strokeColor, strokeWidth: isEdgeInChain ? 2 : 1 },
+                    markerEnd: markerEndProps
+                };
+            });
         });
-    });
-}, [hoveredNodeId, hoveredEdgeId, observeMode, activeDimension, setEdges, setNodes, deriveStatus]);
+    }, [hoveredNodeId, hoveredEdgeId, observeMode, activeDimension, setEdges, setNodes, deriveStatus]);
 
 
     // Validation Logic
@@ -1321,14 +1343,14 @@ function Flow() {
             if (!matchesSearch) {
                 const searchText = globalFilterText.toLowerCase();
                 const matchesLabel = node.data.label.toLowerCase().includes(searchText) || String(node.id).toLowerCase().includes(searchText);
-                
+
                 let matchesCustomProps = false;
                 const customProps = node.data?.originalData?.customProperties || [];
                 matchesCustomProps = customProps.some(prop => String(prop.value).toLowerCase().includes(searchText));
-                
+
                 let matchesContractProps = false;
                 const outputPorts = node.data?.originalData?.outputPorts || [];
-                
+
                 let matchesRoles = false;
                 const nodeRoles = node.data?.originalData?.roles || [];
                 matchesRoles = nodeRoles.some(r => String(r.role).toLowerCase().includes(searchText) || String(r.access).toLowerCase().includes(searchText));
@@ -1348,7 +1370,7 @@ function Flow() {
                         }
                     }
                 }
-                
+
                 matchesSearch = matchesLabel || matchesCustomProps || matchesRoles || matchesContractProps;
             }
 
@@ -1456,7 +1478,7 @@ function Flow() {
 
 
     const visibleNodes = contractViewNodes || lineageViewNodes || meshFilterNodes || nodes;
-    
+
     // Side Panel Resizing
     const startResizing = React.useCallback((mouseDownEvent) => {
         mouseDownEvent.preventDefault();
@@ -1549,7 +1571,7 @@ function Flow() {
                             if (n.position.y < minY) minY = n.position.y;
                         }
                     });
-                    
+
                     if (minX === Infinity) {
                         rfInstance.fitView({ duration: 800, padding: 0.2 });
                         return;
@@ -1557,22 +1579,25 @@ function Flow() {
 
                     const nodeWidth = 350; // Approximate width of a node
                     const graphWidth = (maxX - minX) + nodeWidth;
-                    
-                    // We want the graph width to take up 90% of the screen width
-                    const screenWidth = window.innerWidth;
-                    let targetZoom = (screenWidth * 0.90) / graphWidth;
-                    
+
+                    // Calculate available canvas width by subtracting the navigation drawer/rail width
+                    const drawerWidth = isExpanded ? 240 : 72;
+                    const canvasWidth = window.innerWidth - drawerWidth;
+
+                    // We want the graph width to take up 90% of the canvas width
+                    let targetZoom = (canvasWidth * 0.90) / graphWidth;
+
                     // Clamp zoom between 0.1 and 1.5
                     if (targetZoom < 0.1) targetZoom = 0.1;
                     if (targetZoom > 1.5) targetZoom = 1.5;
-                    
+
                     // Center the graph horizontally
-                    const xOffset = (screenWidth - (graphWidth * targetZoom)) / 2;
+                    const xOffset = (canvasWidth - (graphWidth * targetZoom)) / 2;
                     const viewX = xOffset - (minX * targetZoom);
-                    
+
                     // Position minY near the top of the canvas, since the canvas top is already offset by the UI height
-                    const viewY = 16 - (minY * targetZoom);
-                    
+                    const viewY = 20 - (minY * targetZoom);
+
                     if (!isNaN(viewX) && !isNaN(viewY) && !isNaN(targetZoom)) {
                         rfInstance.setViewport({ x: viewX, y: viewY, zoom: targetZoom }, { duration: 800 });
                     } else {
@@ -1583,7 +1608,7 @@ function Flow() {
                 }
             });
         }
-    }, [selection.id, rfInstance, isLoading, visibleNodes.length, selectedDomains, globalFilterText, compactMode, config]);
+    }, [selection.id, rfInstance, isLoading, visibleNodes.length, selectedDomains, globalFilterText, compactMode, config, isExpanded]);
 
     const visibleEdges = React.useMemo(() => {
         // If Contract View, show relationship edges
@@ -1782,7 +1807,7 @@ function Flow() {
         let content = '';
         let type = '';
         let extension = '';
-        
+
         if (format === 'yaml') {
             content = YAML.stringify(dataMeshRegistry);
             type = 'text/yaml';
@@ -1792,12 +1817,12 @@ function Flow() {
             type = 'application/json';
             extension = 'json';
         }
-        
+
         const blob = new Blob([content], { type });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        
+
         const now = new Date();
         const yyyy = now.getFullYear();
         const mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -1806,7 +1831,7 @@ function Flow() {
         const min = String(now.getMinutes()).padStart(2, '0');
         const ss = String(now.getSeconds()).padStart(2, '0');
         a.download = `dmesh-operational-data-${yyyy}${mm}${dd}_${hh}${min}${ss}.${extension}`;
-        
+
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1826,9 +1851,9 @@ function Flow() {
     };
 
     return (
-        <div style={{ height: '100%', position: 'relative', overflow: 'hidden', background: 'var(--m3-surface, #ffffff)' }}>
+        <div style={{ height: '100%', position: 'relative', overflow: 'hidden', background: 'var(--m3-surface, #f5f5f5)' }}>
             {/* Secret Test Mode Toggle */}
-            <div 
+            <div
                 onClick={() => {
                     if (!window.location.hash.includes('#test')) {
                         setIsTestMode(prev => !prev);
@@ -1935,19 +1960,90 @@ function Flow() {
             {/* Top Bar for Controls */}
             <div style={{
                 position: 'absolute',
-                top: '20px',
-                left: '20px',
-                right: '20px',
+                top: 0,
+                left: 0,
+                right: 0,
                 zIndex: 10,
                 display: 'flex',
                 gap: '12px',
                 alignItems: 'flex-start',
+                padding: '12px 32px',
+                background: 'var(--m3-surface, #f5f5f5)',
                 pointerEvents: 'none' // Let clicks pass through to canvas where empty
             }}>
 
                 {/* Left Controls Group */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', pointerEvents: 'auto', flexShrink: 0 }}>
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', pointerEvents: 'auto', flexShrink: 0 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+                        Data Mesh
+                    </Typography>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        {/* Environment Selector */}
+                        {config?.['multi-environment'] && Array.isArray(config['multi-environment']) && !selection.id && (
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                bgcolor: mode === 'dark' ? '#1e293b' : '#ffffff',
+                                px: 2,
+                                py: '2px',
+                                borderRadius: '8px',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                                height: '32px'
+                            }}>
+                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold', mr: 0.5 }}>
+                                    Environment:
+                                </Typography>
+                                <RadioGroup
+                                    row
+                                    value={selectedEnv}
+                                    onChange={(e) => setSelectedEnv(e.target.value)}
+                                    sx={{ gap: 0.5, flexWrap: 'nowrap' }}
+                                >
+                                    {config['multi-environment'].map((env) => (
+                                        <FormControlLabel
+                                            key={env}
+                                            value={env}
+                                            control={
+                                                <Radio
+                                                    size="small"
+                                                    icon={
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <circle cx="12" cy="12" r="8" stroke="var(--radio-border, #64748b)" strokeWidth="2" />
+                                                        </svg>
+                                                    }
+                                                    checkedIcon={
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <circle cx="12" cy="12" r="8" stroke="var(--radio-selected-border, #111111)" strokeWidth="2.5" />
+                                                            <circle cx="12" cy="12" r="4" fill="var(--radio-selected-dot, #111111)" />
+                                                        </svg>
+                                                    }
+                                                    sx={{
+                                                        padding: '2px',
+                                                        '&.Mui-focusVisible': {
+                                                            outline: '2px solid #ff5500',
+                                                            outlineOffset: '2px'
+                                                        }
+                                                    }}
+                                                />
+                                            }
+                                            label={env}
+                                            sx={{
+                                                margin: 0,
+                                                '& .MuiFormControlLabel-label': {
+                                                    fontSize: '0.75rem',
+                                                    color: 'text.primary',
+                                                    pr: 0.5
+                                                }
+                                            }}
+                                        />
+                                    ))}
+                                </RadioGroup>
+                            </Box>
+                        )}
+
                         {/* Domain Selector */}
                         {!selection.id && (
                             <DomainSelector
@@ -2040,7 +2136,7 @@ function Flow() {
                 <div style={{ flex: 1 }}></div>
 
                 {/* Right Controls Group - Observability */}
-                <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start', flexShrink: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start', flexShrink: 1, minWidth: 0, marginTop: '48px' }}>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
                         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
@@ -2103,7 +2199,7 @@ function Flow() {
                                         top: '100%',
                                         right: 0,
                                         marginTop: '8px',
-                                        background: 'var(--m3-surface, white)',
+                                        background: 'var(--input-bg, #ffffff)',
                                         borderRadius: '8px',
                                         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
                                         border: '1px solid var(--m3-outline-variant, #e2e8f0)',
@@ -2200,7 +2296,7 @@ function Flow() {
                                             top: '100%',
                                             right: 0,
                                             marginTop: '8px',
-                                            background: 'var(--m3-surface, white)',
+                                            background: 'var(--input-bg, #ffffff)',
                                             borderRadius: '8px',
                                             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
                                             border: '1px solid var(--m3-outline-variant, #e2e8f0)',
@@ -2393,52 +2489,53 @@ function Flow() {
 
             <div style={{
                 position: 'absolute',
-                top: (!isMobile && !selection.id && !hideKpis && kpiStats) ? '170px' : '68px',
+                top: (!isMobile && !selection.id && !hideKpis && kpiStats) ? '230px' : '110px',
                 bottom: 0,
                 left: 0,
-                right: 0
+                right: 0,
+                background: mode === 'dark' ? '#141414' : '#ffffff'
             }}>
                 <ReactFlow
-                colorMode={mode}
-                nodeTypes={nodeTypes}
-                edgeTypes={edgeTypes}
-                nodes={visibleNodes}
-                edges={visibleEdges}
-                onNodesChange={!selection.id ? onNodesChange : undefined}
-                onEdgesChange={onEdgesChange}
-                onNodeClick={onNodeClick}
-                onEdgeClick={onEdgeClick}
-                onEdgeMouseEnter={onEdgeMouseEnter}
-                onEdgeMouseLeave={onEdgeMouseLeave}
-                onNodeMouseEnter={(_, node) => setHoveredNodeId(node.id)}
-                onNodeMouseLeave={() => setHoveredNodeId(null)}
-                onNodeDoubleClick={onNodeDoubleClick}
-                onInit={setRfInstance}
-                minZoom={0.1}
-                nodesDraggable={false}
-                nodesConnectable={false}
-                elementsSelectable={false}
-            >
-                <Background />
-                <Controls position="bottom-right" />
-                {/* <MiniMap position="bottom-right" /> */}
-                <svg style={{ position: 'absolute', top: 0, left: 0 }}>
-                    <defs>
-                        <marker id="custom-arrow-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-default, #9ca3af)" />
-                        </marker>
-                        <marker id="custom-arrow-hovered-node" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-hovered-node, #ff5500)" />
-                        </marker>
-                        <marker id="custom-arrow-hovered-edge" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-hovered-edge, #ff5500)" />
-                        </marker>
-                        <marker id="custom-arrow-faint" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-faint, #ffffff)" />
-                        </marker>
-                    </defs>
-                </svg>
-            </ReactFlow>
+                    colorMode={mode}
+                    nodeTypes={nodeTypes}
+                    edgeTypes={edgeTypes}
+                    nodes={visibleNodes}
+                    edges={visibleEdges}
+                    onNodesChange={!selection.id ? onNodesChange : undefined}
+                    onEdgesChange={onEdgesChange}
+                    onNodeClick={onNodeClick}
+                    onEdgeClick={onEdgeClick}
+                    onEdgeMouseEnter={onEdgeMouseEnter}
+                    onEdgeMouseLeave={onEdgeMouseLeave}
+                    onNodeMouseEnter={(_, node) => setHoveredNodeId(node.id)}
+                    onNodeMouseLeave={() => setHoveredNodeId(null)}
+                    onNodeDoubleClick={onNodeDoubleClick}
+                    onInit={setRfInstance}
+                    minZoom={0.1}
+                    nodesDraggable={false}
+                    nodesConnectable={false}
+                    elementsSelectable={false}
+                >
+                    <Background />
+                    <Controls position="bottom-right" />
+                    {/* <MiniMap position="bottom-right" /> */}
+                    <svg style={{ position: 'absolute', top: 0, left: 0 }}>
+                        <defs>
+                            <marker id="custom-arrow-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-default, #9ca3af)" />
+                            </marker>
+                            <marker id="custom-arrow-hovered-node" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-hovered-node, #ff5500)" />
+                            </marker>
+                            <marker id="custom-arrow-hovered-edge" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-hovered-edge, #ff5500)" />
+                            </marker>
+                            <marker id="custom-arrow-faint" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--connector-faint, #ffffff)" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </ReactFlow>
             </div>
 
             {/* Side Panel */}
@@ -2802,7 +2899,7 @@ function Flow() {
 
             {/* Floating Buttons - Bottom Left */}
             {isTestMode && (
-                <div 
+                <div
                     onMouseEnter={() => setIsHoveredBottomLeft(true)}
                     onMouseLeave={() => setIsHoveredBottomLeft(false)}
                     style={{
@@ -2826,240 +2923,240 @@ function Flow() {
                         transition: 'opacity 0.3s ease, transform 0.3s ease',
                         pointerEvents: isHoveredBottomLeft ? 'auto' : 'none'
                     }}>
-                    {/* Copy YAML */}
-                    <button
-                        onClick={() => copyDataToClipboard('yaml')}
-                        style={{
-                            width: '34px',
-                            height: '34px',
-                            borderRadius: '17px',
-                            background: copiedFormat === 'test-yaml' ? '#10b981' : 'var(--button-secondary-bg, #f3f4f6)',
-                            border: 'none',
-                            cursor: 'pointer',
-                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                            if (copiedFormat !== 'test-yaml') {
-                                e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
-                            }
-                            e.currentTarget.style.transform = 'scale(1.05)';
-                        }}
-                        onMouseLeave={(e) => {
-                            if (copiedFormat !== 'test-yaml') {
-                                e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
-                            }
-                            e.currentTarget.style.transform = 'scale(1)';
-                        }}
-                        title="Copy as YAML"
-                    >
-                        <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                            {copiedFormat === 'test-yaml' ? (
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                            ) : (
-                                <>
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        {/* Copy YAML */}
+                        <button
+                            onClick={() => copyDataToClipboard('yaml')}
+                            style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '17px',
+                                background: copiedFormat === 'test-yaml' ? '#10b981' : 'var(--button-secondary-bg, #f3f4f6)',
+                                border: 'none',
+                                cursor: 'pointer',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                if (copiedFormat !== 'test-yaml') {
+                                    e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                                }
+                                e.currentTarget.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                                if (copiedFormat !== 'test-yaml') {
+                                    e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                                }
+                                e.currentTarget.style.transform = 'scale(1)';
+                            }}
+                            title="Copy as YAML"
+                        >
+                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {copiedFormat === 'test-yaml' ? (
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
-                                    <span style={{
-                                        position: 'absolute',
-                                        top: '-2px',
-                                        right: '-6px',
-                                        fontSize: '10px',
-                                        fontWeight: 'bold',
-                                        color: 'var(--button-secondary-text, white)',
-                                        textShadow: '0 0 2px rgba(0,0,0,0.5)'
-                                    }}>Y</span>
-                                </>
-                            )}
-                        </div>
-                    </button>
+                                ) : (
+                                    <>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                        <span style={{
+                                            position: 'absolute',
+                                            top: '-2px',
+                                            right: '-6px',
+                                            fontSize: '10px',
+                                            fontWeight: 'bold',
+                                            color: 'var(--button-secondary-text, white)',
+                                            textShadow: '0 0 2px rgba(0,0,0,0.5)'
+                                        }}>Y</span>
+                                    </>
+                                )}
+                            </div>
+                        </button>
 
-                    {/* Download YAML */}
-                    <button
-                        onClick={() => downloadData('yaml')}
-                        style={{
-                            width: '34px',
-                            height: '34px',
-                            borderRadius: '17px',
-                            background: 'var(--button-secondary-bg, #f3f4f6)',
-                            border: 'none',
-                            cursor: 'pointer',
-                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
-                            e.currentTarget.style.transform = 'scale(1.05)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
-                            e.currentTarget.style.transform = 'scale(1)';
-                        }}
-                        title="Download as YAML"
-                    >
-                        <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            <span style={{
-                                position: 'absolute',
-                                top: '-2px',
-                                right: '-6px',
-                                fontSize: '10px',
-                                fontWeight: 'bold',
-                                color: 'var(--button-secondary-text, white)',
-                                textShadow: '0 0 2px rgba(0,0,0,0.5)'
-                            }}>Y</span>
-                        </div>
-                    </button>
-                    
-                    {/* Copy JSON */}
-                    <button
-                        onClick={() => copyDataToClipboard('json')}
-                        style={{
-                            width: '34px',
-                            height: '34px',
-                            borderRadius: '17px',
-                            background: copiedFormat === 'test-json' ? '#10b981' : 'var(--button-secondary-bg, #f3f4f6)',
-                            border: 'none',
-                            cursor: 'pointer',
-                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                            if (copiedFormat !== 'test-json') {
+                        {/* Download YAML */}
+                        <button
+                            onClick={() => downloadData('yaml')}
+                            style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '17px',
+                                background: 'var(--button-secondary-bg, #f3f4f6)',
+                                border: 'none',
+                                cursor: 'pointer',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
                                 e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
-                            }
-                            e.currentTarget.style.transform = 'scale(1.05)';
-                        }}
-                        onMouseLeave={(e) => {
-                            if (copiedFormat !== 'test-json') {
+                                e.currentTarget.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
                                 e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
-                            }
-                            e.currentTarget.style.transform = 'scale(1)';
-                        }}
-                        title="Copy as JSON"
-                    >
-                        <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                            {copiedFormat === 'test-json' ? (
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                e.currentTarget.style.transform = 'scale(1)';
+                            }}
+                            title="Download as YAML"
+                        >
+                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
                                 </svg>
-                            ) : (
-                                <>
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                <span style={{
+                                    position: 'absolute',
+                                    top: '-2px',
+                                    right: '-6px',
+                                    fontSize: '10px',
+                                    fontWeight: 'bold',
+                                    color: 'var(--button-secondary-text, white)',
+                                    textShadow: '0 0 2px rgba(0,0,0,0.5)'
+                                }}>Y</span>
+                            </div>
+                        </button>
+
+                        {/* Copy JSON */}
+                        <button
+                            onClick={() => copyDataToClipboard('json')}
+                            style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '17px',
+                                background: copiedFormat === 'test-json' ? '#10b981' : 'var(--button-secondary-bg, #f3f4f6)',
+                                border: 'none',
+                                cursor: 'pointer',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                if (copiedFormat !== 'test-json') {
+                                    e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                                }
+                                e.currentTarget.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                                if (copiedFormat !== 'test-json') {
+                                    e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                                }
+                                e.currentTarget.style.transform = 'scale(1)';
+                            }}
+                            title="Copy as JSON"
+                        >
+                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {copiedFormat === 'test-json' ? (
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
-                                    <span style={{
-                                        position: 'absolute',
-                                        top: '-2px',
-                                        right: '-5px',
-                                        fontSize: '10px',
-                                        fontWeight: 'bold',
-                                        color: 'var(--button-secondary-text, white)',
-                                        textShadow: '0 0 2px rgba(0,0,0,0.5)'
-                                    }}>J</span>
-                                </>
-                            )}
-                        </div>
-                    </button>
+                                ) : (
+                                    <>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                        <span style={{
+                                            position: 'absolute',
+                                            top: '-2px',
+                                            right: '-5px',
+                                            fontSize: '10px',
+                                            fontWeight: 'bold',
+                                            color: 'var(--button-secondary-text, white)',
+                                            textShadow: '0 0 2px rgba(0,0,0,0.5)'
+                                        }}>J</span>
+                                    </>
+                                )}
+                            </div>
+                        </button>
 
-                    {/* Download JSON */}
-                    <button
-                        onClick={() => downloadData('json')}
-                        style={{
-                            width: '34px',
-                            height: '34px',
-                            borderRadius: '17px',
-                            background: 'var(--button-secondary-bg, #f3f4f6)',
-                            border: 'none',
-                            cursor: 'pointer',
-                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
-                            e.currentTarget.style.transform = 'scale(1.05)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
-                            e.currentTarget.style.transform = 'scale(1)';
-                        }}
-                        title="Download as JSON"
-                    >
-                        <div style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                        {/* Download JSON */}
+                        <button
+                            onClick={() => downloadData('json')}
+                            style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '17px',
+                                background: 'var(--button-secondary-bg, #f3f4f6)',
+                                border: 'none',
+                                cursor: 'pointer',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                                e.currentTarget.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                                e.currentTarget.style.transform = 'scale(1)';
+                            }}
+                            title="Download as JSON"
+                        >
+                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span style={{
+                                    position: 'absolute',
+                                    top: '-2px',
+                                    right: '-5px',
+                                    fontSize: '10px',
+                                    fontWeight: 'bold',
+                                    color: 'var(--button-secondary-text, white)',
+                                    textShadow: '0 0 2px rgba(0,0,0,0.5)'
+                                }}>J</span>
+                            </div>
+                        </button>
+
+                        {/* Load Registry */}
+                        <button
+                            onClick={() => setShowRegistryModal(true)}
+                            style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '17px',
+                                background: 'var(--button-secondary-bg, #f3f4f6)',
+                                border: 'none',
+                                cursor: 'pointer',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                                e.currentTarget.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                                e.currentTarget.style.transform = 'scale(1)';
+                            }}
+                            title="Load Registry"
+                        >
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="12" y1="18" x2="12" y2="12"></line>
+                                <line x1="9" y1="15" x2="15" y2="15"></line>
                             </svg>
-                            <span style={{
-                                position: 'absolute',
-                                top: '-2px',
-                                right: '-5px',
-                                fontSize: '10px',
-                                fontWeight: 'bold',
-                                color: 'var(--button-secondary-text, white)',
-                                textShadow: '0 0 2px rgba(0,0,0,0.5)'
-                            }}>J</span>
-                        </div>
-                    </button>
-
-                    {/* Load Registry */}
-                    <button
-                        onClick={() => setShowRegistryModal(true)}
-                        style={{
-                            width: '34px',
-                            height: '34px',
-                            borderRadius: '17px',
-                            background: 'var(--button-secondary-bg, #f3f4f6)',
-                            border: 'none',
-                            cursor: 'pointer',
-                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
-                            e.currentTarget.style.transform = 'scale(1.05)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
-                            e.currentTarget.style.transform = 'scale(1)';
-                        }}
-                        title="Load Registry"
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="12" y1="18" x2="12" y2="12"></line>
-                            <line x1="9" y1="15" x2="15" y2="15"></line>
-                        </svg>
-                    </button>
+                        </button>
+                    </div>
                 </div>
-            </div>
-        )}
+            )}
 
             {/* Registry Modal */}
             <RegistryModal

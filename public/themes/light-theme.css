@@ -2,6 +2,9 @@
   /* Typography */
   --font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 
+  /* React Flow Overrides */
+  --xy-background-color: #ffffff;
+
   /* Domain Palette */
   --domain-palette-01: #FFFFFF;
   --domain-palette-02: #FCF5CA;
@@ -57,6 +60,17 @@
   --checkbox-accent: #2563eb;
   --checkbox-size: 16px;
   --checkbox-radius: 4px;
+
+  /* Controls: Inputs */
+  --input-bg: #ffffff;
+  --input-border-default: #9ca3af;
+  --input-border-hover: #111111;
+  --input-border-focus: #111111;
+
+  /* Table */
+  --table-row-bg: #ffffff;
+  --table-row-hover-bg: #f3f4f6;
+
 
   /* Controls: Buttons Base */
   --button-radius: 6px;
@@ -121,4 +135,9 @@
 
   /* Node Elements */
   --node-icon-filter: none;
+
+  /* Radio Buttons */
+  --radio-border: #64748b;
+  --radio-selected-border: #111111;
+  --radio-selected-dot: #111111;
 }

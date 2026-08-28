@@ -1,11 +1,11 @@
-# dmesh-viewer
+# dmesh-studio
 
-[![CodeQL](https://github.com/dmesh-zone/dmesh-viewer/actions/workflows/codeql.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-viewer/actions/workflows/codeql.yml)
-[![Snyk Security Scan](https://github.com/dmesh-zone/dmesh-viewer/actions/workflows/snyk.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-viewer/actions/workflows/snyk.yml)
+[![CodeQL](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/codeql.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/codeql.yml)
+[![Snyk Security Scan](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/snyk.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/snyk.yml)
 
 A React-based visualization tool for exploring Data Mesh registries, Data Products, Data Contracts, and Data Usage Agreements.
 
-Live demo: https://dmesh-zone.github.io/dmesh-viewer
+Live demo: https://dmesh-zone.github.io/dmesh-studio
 
 ## Features
 

@@ -1,5 +1,7 @@
 # default config.yaml can be overridden by customConfig.yaml
-defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsExample.yaml
+defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsMultiEnvExample.yaml
+# multi-environment: ["Dev", "QA", "Prod"]
+# default-environment: "Prod" # By default last environment in the list is selected as the default environment
 
 single-domain-default-filter: False # Default is False
 zoom-to-fit-columns: True # Default is True

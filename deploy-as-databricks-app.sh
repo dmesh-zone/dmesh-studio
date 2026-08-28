@@ -8,11 +8,11 @@ fi
 
 set -e
 
-# Navigate to the directory of this script (dmesh-viewer)
+# Navigate to the directory of this script (dmesh-studio)
 cd "$(dirname "$0")"
 
 if [ ! -f .env ]; then
-  echo "Error: .env file not found in dmesh-viewer directory!"
+  echo "Error: .env file not found in dmesh-studio directory!"
   exit 1
 fi
 
@@ -48,9 +48,9 @@ echo "=========================================="
 echo " 2. Syncing to Databricks Workspace"
 echo "=========================================="
 # Ensure app exists silently
-if ! databricks apps get dmesh-viewer --profile "$DB_PROFILE" >/dev/null 2>&1; then
-  echo "Creating new Databricks App: dmesh-viewer..."
-  databricks apps create dmesh-viewer --profile "$DB_PROFILE"
+if ! databricks apps get dmesh-studio --profile "$DB_PROFILE" >/dev/null 2>&1; then
+  echo "Creating new Databricks App: dmesh-studio..."
+  databricks apps create dmesh-studio --profile "$DB_PROFILE"
 fi
 
 # Create a clean deployment folder to avoid syncing unnecessary files
@@ -63,14 +63,14 @@ cp app.py "$DEPLOY_DIR/"
 cp requirements.txt "$DEPLOY_DIR/"
 
 echo "Cleaning up remote workspace directory to ensure no unnecessary files remain..."
-databricks workspace delete "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-viewer" --recursive --profile "$DB_PROFILE" 2>/dev/null || true
-databricks workspace mkdirs "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-viewer" --profile "$DB_PROFILE" 2>/dev/null || true
+databricks workspace delete "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-studio" --recursive --profile "$DB_PROFILE" 2>/dev/null || true
+databricks workspace mkdirs "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-studio" --profile "$DB_PROFILE" 2>/dev/null || true
 
-databricks sync "$DEPLOY_DIR" "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-viewer" --profile "$DB_PROFILE"
+databricks sync "$DEPLOY_DIR" "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-studio" --profile "$DB_PROFILE"
 
 echo "=========================================="
 echo " 3. Deploying Databricks App"
 echo "=========================================="
-databricks apps deploy dmesh-viewer --source-code-path "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-viewer" --profile "$DB_PROFILE"
+databricks apps deploy dmesh-studio --source-code-path "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-studio" --profile "$DB_PROFILE"
 
 echo "Deployment complete! You can view the status in the Databricks UI."

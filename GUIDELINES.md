@@ -1,4 +1,4 @@
-# Data Mesh Viewer Development Standards
+# Data Mesh Studio Development Standards
 
 ## 1. Project Overview
 A React-based visualization tool for Data Mesh registries, utilizing React Flow (`@xyflow/react`) for graph rendering, Material UI (MUI) for standardized UI components, and AJV for schema validation against ODCS (Open Data Contract Standard) and ODPS (Open Data Product Specification).

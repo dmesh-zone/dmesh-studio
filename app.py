@@ -17,9 +17,9 @@ def get_ws():
 
 @app.get("/")
 async def root():
-    return RedirectResponse(url="/dmesh-viewer/")
+    return RedirectResponse(url="/dmesh-studio/")
 
-@app.api_route("/dmesh-viewer/api/{path: path}", methods=["GET", "POST"])
+@app.api_route("/dmesh-studio/api/{path: path}", methods=["GET", "POST"])
 async def proxy(path: str, request: Request):
     auth_headers = get_ws().config.authenticate()
     async with httpx.AsyncClient() as client:
@@ -36,4 +36,4 @@ async def proxy(path: str, request: Request):
         media_type=resp.headers.get("content-type"),
     )
 
-app.mount("/dmesh-viewer", StaticFiles(directory="dist", html=True), name="static")
+app.mount("/dmesh-studio", StaticFiles(directory="dist", html=True), name="static")

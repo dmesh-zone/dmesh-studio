@@ -143,4 +143,13 @@
 
   /* Node Elements */
   --node-icon-filter: grayscale(100%) invert(1) contrast(1.5);
+
+  /* Radio Buttons */
+  --radio-border: #94a3b8;
+  --radio-selected-border: #ffffff;
+  --radio-selected-dot: #ffffff;
+
+  /* Table */
+  --table-row-bg: #000000;
+  --table-row-hover-bg: #1a1a1a;
 }

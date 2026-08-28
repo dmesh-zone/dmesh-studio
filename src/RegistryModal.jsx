@@ -164,7 +164,7 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
                                 top: '100%',
                                 left: 0,
                                 right: 0,
-                                background: 'var(--m3-surface, white)',
+                                background: 'var(--input-bg, #ffffff)',
                                 border: '1px solid var(--m3-outline, #d1d5db)',
                                 borderRadius: '6px',
                                 marginTop: '4px',
