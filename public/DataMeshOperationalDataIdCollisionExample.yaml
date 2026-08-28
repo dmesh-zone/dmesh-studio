@@ -1,0 +1,216 @@
+- kind: DataProduct
+  apiVersion: v0.9.0
+  name: Customer Data Product
+  id: "1"
+  domain: seller
+  status: draft
+  tenant: RetailCorp
+  description:
+    purpose: Enterprise view of a customer.
+    limitations: No known limitations.
+    usage: Check the various artefacts for their own description.
+  tags: ['customer']
+  outputPorts:
+  - name: "example"
+    version: v1.0.0
+    contractId: "1"
+
+- kind: DataContract
+  domain: seller # Domain
+  dataProduct: my quantum # Data product name
+  version: 1.1.0 # Version (follows semantic versioning)
+  status: active
+  id: "1"
+  authoritativeDefinitions:
+  - type: canonical
+    url: https://github.com/bitol-io/open-data-contract-standard/blob/main/docs/examples/all/full-example.odcs.yaml
+    description: Canonical URL to the latest version of the contract.
+  # Lots of information
+  description:
+    purpose: Views built on top of the seller tables.
+  apiVersion: v3.1.0 # Standard version (follows semantic versioning)
+  # Dataset, schema, and quality
+  schema:
+    - id: tbl_obj
+      name: tbl
+      physicalName: tbl_1
+      physicalType: table
+      businessName: Core Payment Metrics
+      description: Provides core payment metrics
+      authoritativeDefinitions:
+        - url: https://catalog.data.gov/dataset/air-quality
+          type: businessDefinition
+        - url: https://youtu.be/jbY1BKFj9ec
+          type: videoTutorial
+      tags: [ 'finance', 'payments']
+      dataGranularityDescription: Aggregation on columns txn_ref_dt, pmt_txn_id
+      # Schema-level relationships (for composite keys)
+      relationships:
+        - type: foreignKey
+          from:
+            - tbl.rcvr_id
+            - tbl.rcvr_cntry_code
+          to:
+            - receivers.id
+            - receivers.country_code
+          customProperties:
+            - property: description
+              value: "Composite key linking to receivers table"
+            - property: cardinality
+              value: "many-to-one"
+      properties:
+        - id: txn_ref_dt_prop
+          name: transaction_reference_date
+          physicalName: txn_ref_dt
+          primaryKey: false
+          primaryKeyPosition: -1
+          businessName: transaction reference date
+          logicalType: date
+          physicalType: date
+          required: false
+          description: Reference date for transaction
+          partitioned: true
+          partitionKeyPosition: 1
+          criticalDataElement: false
+          tags: [ ]
+          classification: public
+          transformSourceObjects:
+            - table_name_1
+            - table_name_2
+            - table_name_3
+          transformLogic: sel t1.txn_dt as txn_ref_dt from table_name_1 as t1, table_name_2 as t2, table_name_3 as t3 where t1.txn_dt=date-3
+          transformDescription: defines the logic in business terms; logic for dummies
+          examples:
+            - "2022-10-03"
+            - "2020-01-28"
+          customProperties:
+            - property: anonymizationStrategy
+              value: none
+        - id: rcvr_id_prop
+          name: rcvr_id
+          primaryKey: true
+          primaryKeyPosition: 1
+          businessName: receiver id
+          logicalType: string
+          physicalType: varchar(18)
+          required: false
+          description: A description for column rcvr_id.
+          partitioned: false
+          partitionKeyPosition: -1
+          criticalDataElement: false
+          tags: [ 'uid' ]
+          classification: restricted
+          # Property-level relationship (from is implicit)
+          relationships:
+            - to: receivers.id
+              type: foreignKey
+              customProperties:
+                - property: description
+                  value: "Links to receiver master data"
+        - id: rcvr_cntry_code_prop
+          name: rcvr_cntry_code
+          primaryKey: false
+          primaryKeyPosition: -1
+          businessName: receiver country code
+          logicalType: string
+          physicalType: varchar(2)
+          required: false
+          description: Country code
+          partitioned: false
+          partitionKeyPosition: -1
+          criticalDataElement: false
+          tags: [ ]
+          classification: public
+          authoritativeDefinitions:
+            - url: https://collibra.com/asset/742b358f-71a5-4ab1-bda4-dcdba9418c25
+              type: businessDefinition
+            - url: https://github.com/myorg/myrepo
+              type: transformationImplementation
+            - url: jdbc:postgresql://localhost:5432/adventureworks/tbl_1/rcvr_cntry_code
+              type: implementation
+          encryptedName: rcvr_cntry_code_encrypted
+          quality:
+            - metric: nullValues
+              mustBe: 0
+              description: column should not contain null values
+              dimension: completeness
+              type: library
+              severity: error
+              businessImpact: operational
+              schedule: 0 20 * * *
+              scheduler: cron
+              customProperties:
+                - property: FIELD_NAME
+                  value:
+                - property: COMPARE_TO
+                  value:
+                - property: COMPARISON_TYPE
+                  value: Greater than
+      quality:
+        - metric: rowCount
+          mustBeGreaterThan: 1000000
+          type: library
+          description: Ensure row count is within expected volume range
+          dimension: completeness
+          method: reconciliation
+          severity: error
+          businessImpact: operational
+          schedule: 0 20 * * *
+          scheduler: cron
+      customProperties:
+        - property: business-key
+          value:
+            - txn_ref_dt
+            - rcvr_id
+    # Receivers master table
+    - id: receivers_obj
+      name: receivers
+      physicalName: receivers_master
+      physicalType: table
+      businessName: Receivers Master Data
+      description: Master data for all receivers
+      tags: [ 'master-data', 'receivers' ]
+      properties:
+        - id: receiver_id_prop
+          name: id
+          primaryKey: true
+          primaryKeyPosition: 1
+          businessName: receiver identifier
+          logicalType: string
+          physicalType: varchar(18)
+          required: true
+          description: Unique identifier for receiver
+          unique: true
+          classification: restricted
+        - id: country_code_prop
+          name: country_code
+          primaryKey: true
+          primaryKeyPosition: 2
+          businessName: receiver country
+          logicalType: string
+          physicalType: varchar(2)
+          required: true
+          description: Country code of the receiver
+          classification: public
+        - id: receiver_name_prop
+          name: receiver_name
+          businessName: receiver name
+          logicalType: string
+          physicalType: varchar(255)
+          required: true
+          description: Name of the receiver
+          classification: restricted
+        - id: receiver_type_prop
+          name: receiver_type
+          businessName: receiver type
+          logicalType: string
+          physicalType: varchar(20)
+          required: false
+          description: Type of receiver (individual, business, etc.)
+          classification: public
+          # Example of nested reference
+          relationships:
+            - to: receiver_types.type_code
+              customProperties:
+                - property: description
+                  value: "Links to receiver type definitions"

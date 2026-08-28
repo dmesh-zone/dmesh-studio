@@ -1,0 +1,909 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://github.com/dmesh-zone/dmesh-viewer/blob/main/src/schemas/odps-observability-metrics-json-schema-v1.0.0.json",
+    "title": "DataProductObservabilityMetrics",
+    "description": "Runtime observability metrics for a Bitol ODPS data product, surfaced via the managementPort. SLO fields mirror objectives declared in the linked ODCS output port contracts.",
+    "type": "object",
+    "required": [
+        "schemaVersion",
+        "productId",
+        "asOf",
+        "period",
+        "status"
+    ],
+    "properties": {
+        "schemaVersion": {
+            "type": "string",
+            "description": "Semantic version of this schema. Consumers should use this for compatibility checks.",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "examples": [
+                "0.0.1"
+            ]
+        },
+        "kind": {
+            "type": "string",
+            "default": "DataProductObservabilityMetrics",
+            "description": "The kind of file this is. Valid value is `DataProductObservabilityMetrics`.",
+            "enum": [
+                "DataProductObservabilityMetrics"
+            ]
+        },
+        "productId": {
+            "type": "string",
+            "description": "UUID of the data product as declared in the ODPS",
+            "examples": [
+                "fbe8d147-28db-4f1d-bedf-a3fe9f458427"
+            ]
+        },
+        "asOf": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 UTC timestamp at which these metrics were collected."
+        },
+        "period": {
+            "type": "string",
+            "description": "ISO 8601 duration representing the observation window for rate-based metrics (e.g. query volume, pipeline runs).",
+            "pattern": "^P(?:\\d+Y)?(?:\\d+M)?(?:\\d+W)?(?:\\d+D)?(?:T(?:\\d+H)?(?:\\d+M)?(?:\\d+S)?)?$",
+            "examples": [
+                "PT1H",
+                "PT24H",
+                "P7D"
+            ]
+        },
+        "status": {
+            "type": "string",
+            "description": "Composite any-case health status derived across all dimensions and output ports. Maps directly to the node shading colour in the mesh visualisation.",
+            "enum": [
+                "healthy",
+                "degraded",
+                "critical",
+                "unknown"
+            ],
+            "$comment": "healthy = all SLOs met, no failures. degraded = at least one warning-level breach. critical = at least one hard failure (pipeline down, SLO breached, critical quality rule failing). unknown = insufficient data to evaluate."
+        },
+        "physical": {
+            "type": "object",
+            "description": "Physical-space metrics (Petrella ch.3): compute, pipeline runtime, and storage — the infrastructure layer beneath the data.",
+            "properties": {
+                "pipeline": {
+                    "type": "object",
+                    "description": "Most recent pipeline execution for this data product.",
+                    "required": [
+                        "status"
+                    ],
+                    "properties": {
+                        "lastRunAt": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time",
+                            "description": "UTC timestamp when the last pipeline run started."
+                        },
+                        "durationSeconds": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Wall-clock duration of the last run in seconds. Null if the run failed before completion."
+                        },
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "success",
+                                "failed",
+                                "running",
+                                "skipped",
+                                "unknown"
+                            ],
+                            "description": "Terminal or current status of the last pipeline execution."
+                        },
+                        "failureReason": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Human-readable error message if status=failed.",
+                            "maxLength": 1024
+                        },
+                        "recordsProcessed": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Number of records processed end-to-end by the pipeline in the last run — i.e. records that completed the full source-to-output transformation. Distinct from dynamic.volume.rowCount, which reflects the resulting stored state of the output port. Null if the run failed before completion or if the pipeline does not emit this metric. Aligns with Petrella's physical-space instrumentation of pipeline throughput."
+                        },
+                        "computeCreditsUsed": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Platform-specific compute units consumed (e.g. Databricks DBUs). Null if not applicable or unavailable."
+                        },
+                        "meanTimeBetweenFailuresDays": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "MTBF is the average time between repairable failures of a pipeline. Computed from physical.pipeline events: time between status=failed and next status=success."
+                        },
+                        "meanTimeToRecoveryMinutes": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "MTTR Mean time to recovery is the average time it takes to recover from an incident. Computed from physical.pipeline events: time between status=failed and next status=success."
+                        }
+                    }
+                },
+                "storage": {
+                    "type": "object",
+                    "description": "Physical storage footprint of the data product's output ports.",
+                    "properties": {
+                        "sizeBytes": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Total uncompressed bytes across all output port tables/files."
+                        },
+                        "partitionCount": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Number of physical partitions. Relevant for partitioned tables (e.g. Delta Lake)."
+                        }
+                    }
+                }
+            }
+        },
+        "static": {
+            "type": "object",
+            "description": "Static-space metrics (Petrella ch.4): schema structure and contract conformance — what the data looks like, not what the values are.",
+            "properties": {
+                "schema": {
+                    "type": "object",
+                    "description": "Schema health relative to the declared ODCS output port contract.",
+                    "properties": {
+                        "version": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Semantic version of the schema currently in production.",
+                            "examples": [
+                                "2.3.0"
+                            ]
+                        },
+                        "lastValidatedAt": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time",
+                            "description": "UTC timestamp of the last schema validation run against the linked ODCS contract."
+                        },
+                        "driftDetected": {
+                            "type": "boolean",
+                            "description": "True if the current schema deviates from the version declared in the ODCS contract."
+                        },
+                        "breakingChangeSinceVersion": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "If a breaking schema change has been detected, the last known-good schema version. Null otherwise.",
+                            "examples": [
+                                "2.2.0",
+                                null
+                            ]
+                        },
+                        "columnCount": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Total number of columns/fields in the primary output port schema."
+                        }
+                    }
+                }
+            }
+        },
+        "dynamic": {
+            "type": "object",
+            "description": "Dynamic-space metrics (Petrella ch.5): data values, volume, freshness, and quality rules — the runtime fitness of the data itself.",
+            "properties": {
+                "responseTime": {
+                    "type": "object",
+                    "description": "Query/access latency SLO. Applicable to output ports served via APIs or interactive query engines.",
+                    "properties": {
+                        "objectiveMs": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Declared maximum p95 response time in milliseconds."
+                        },
+                        "actualP95Ms": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Measured p95 response time in milliseconds over the observation period."
+                        },
+                        "met": {
+                            "type": [
+                                "boolean",
+                                "null"
+                            ],
+                            "description": "True if actualP95Ms <= objectiveMs."
+                        }
+                    }
+                },
+                "volume": {
+                    "type": "object",
+                    "description": "Row/record count health. Unexpected volume changes are a leading indicator of upstream issues.",
+                    "properties": {
+                        "rowCount": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Current total row count of the primary output port."
+                        },
+                        "rowCountDelta": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "description": "Change in row count over the observation period. Negative values indicate deletion or compaction."
+                        },
+                        "expectedRangeMin": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Lower bound of the expected row count range for the given period. Derived from historical baselines or ODCS quality rules."
+                        },
+                        "expectedRangeMax": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Upper bound of the expected row count range."
+                        },
+                        "withinExpectation": {
+                            "type": [
+                                "boolean",
+                                "null"
+                            ],
+                            "description": "True if rowCount falls within [expectedRangeMin, expectedRangeMax]. Null if no expectation is defined."
+                        }
+                    }
+                },
+                "freshness": {
+                    "type": "object",
+                    "description": "Data freshness relative to the update frequency SLO declared in the ODCS contract.",
+                    "required": [
+                        "withinExpectation"
+                    ],
+                    "properties": {
+                        "lastUpdatedAt": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time",
+                            "description": "UTC timestamp of the most recent data write to the primary output port."
+                        },
+                        "lagMinutes": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Current lag in minutes: difference between asOf and lastUpdatedAt."
+                        },
+                        "maxAllowedLagMinutes": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "description": "Maximum lag permitted under the ODCS contract SLO. Source of truth for the withinExpectation evaluation."
+                        },
+                        "withinExpectation": {
+                            "type": [
+                                "boolean",
+                                "null"
+                            ],
+                            "description": "True if lagMinutes <= maxAllowedLagMinutes. Null if no freshness SLO is declared."
+                        }
+                    }
+                },
+                "quality": {
+                    "type": "object",
+                    "description": "Data quality rule evaluation results. Rules are defined in the linked ODCS contract and evaluated per-run.",
+                    "required": [
+                        "rulesTotal",
+                        "rulesPassed",
+                        "rulesFailed"
+                    ],
+                    "properties": {
+                        "rulesTotal": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Total number of quality rules evaluated in this run."
+                        },
+                        "rulesPassed": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Number of rules that passed."
+                        },
+                        "rulesFailed": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Number of rules that failed."
+                        },
+                        "checks": {
+                            "type": "array",
+                            "description": "Per-rule detail. Consumers can use this to understand which specific checks are failing.",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "rule",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "rule": {
+                                        "type": "string",
+                                        "description": "Machine-readable rule identifier, matching the rule name in the ODCS contract.",
+                                        "examples": [
+                                            "customer_id_not_null",
+                                            "amount_positive",
+                                            "event_date_not_future"
+                                        ]
+                                    },
+                                    "column": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Column or field the rule applies to. Null for dataset-level rules."
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "passed",
+                                            "failed",
+                                            "warning",
+                                            "skipped"
+                                        ],
+                                        "description": "Result of this rule evaluation."
+                                    },
+                                    "failRate": {
+                                        "type": [
+                                            "number",
+                                            "null"
+                                        ],
+                                        "minimum": 0,
+                                        "maximum": 1,
+                                        "description": "Fraction of rows that violated this rule (0.0–1.0). Null for rules that do not produce a rate."
+                                    },
+                                    "nullRate": {
+                                        "type": [
+                                            "number",
+                                            "null"
+                                        ],
+                                        "minimum": 0,
+                                        "maximum": 1,
+                                        "description": "Fraction of null values in the target column. Populated for not-null rules."
+                                    },
+                                    "message": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Human-readable explanation for a failed or warning result.",
+                                        "maxLength": 512
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "outputPorts": {
+            "type": "array",
+            "description": "Per-output-port health breakdown. Each entry corresponds to an outputPort declared in the ODPS YAML, identified by name+version and linked via contractId. Allows consumers to evaluate the health of the specific port they depend on.",
+            "items": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "contractId",
+                    "status"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Output port name as declared in the ODPS YAML outputPorts[].name.",
+                        "examples": [
+                            "rawtransactions",
+                            "consolidatedtransactions"
+                        ]
+                    },
+                    "version": {
+                        "type": "string",
+                        "description": "Output port version as declared in the ODPS YAML outputPorts[].version.",
+                        "examples": [
+                            "1.0.0",
+                            "2.0.0"
+                        ]
+                    },
+                    "contractId": {
+                        "type": "string",
+                        "description": "ODCS contract UUID as declared in ODPS YAML outputPorts[].contractId. The contract is the authoritative source of SLO objectives and quality rules for this port."
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "healthy",
+                            "degraded",
+                            "critical",
+                            "unknown"
+                        ],
+                        "description": "Any-case composite health for this specific output port."
+                    },
+                    "freshness": {
+                        "$ref": "#/properties/dynamic/properties/freshness",
+                        "description": "Freshness metrics scoped to this output port."
+                    },
+                    "quality": {
+                        "$ref": "#/properties/dynamic/properties/quality",
+                        "description": "Quality rule results scoped to this output port."
+                    },
+                    "usage": {
+                        "type": "object",
+                        "description": "Aggregate consumption signals scoped to this output port and its ODCS contract. Answers 'is this contract actively used?' at the port level — complement to the per-consumer breakdown in contractUsage[].",
+                        "properties": {
+                            "activeConsumers": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "minimum": 0,
+                                "description": "Number of distinct consumers that accessed this output port during the observation period."
+                            },
+                            "queryCount": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ],
+                                "minimum": 0,
+                                "description": "Total queries or API calls against this output port during the observation period."
+                            },
+                            "lastAccessedAt": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "format": "date-time",
+                                "description": "UTC timestamp of the most recent consumer access on this output port."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "lineage": {
+            "type": "object",
+            "description": "Upstream dependency health. Surfaces whether the data products feeding this one are themselves healthy, enabling mesh-level impact analysis.",
+            "properties": {
+                "upstreamProducts": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "contractId",
+                            "status"
+                        ],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the upstream data product.",
+                                "examples": [
+                                    "payments",
+                                    "orders"
+                                ]
+                            },
+                            "contractId": {
+                                "type": "string",
+                                "description": "ODCS contract UUID of the upstream output port this product consumes, as declared in ODPS inputPorts[].contractId."
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "healthy",
+                                    "degraded",
+                                    "critical",
+                                    "unknown"
+                                ],
+                                "description": "Last known health status of the upstream product. Sourced from that product's own /observe/metrics endpoint."
+                            },
+                            "lastSeenAt": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "format": "date-time",
+                                "description": "UTC timestamp of the last successful data receipt from this upstream product."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "usage": {
+            "type": "object",
+            "description": "Product-wide consumer usage signals aggregated across all output ports over the observation period. From Implementing Data Mesh: usage metrics demonstrate the data product's value and inform governance decisions. For per-contract and per-consumer breakdowns see outputPorts[].usage and contractUsage[].",
+            "properties": {
+                "activeConsumers": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "minimum": 0,
+                    "description": "Number of distinct consumers that accessed any output port during the observation period."
+                },
+                "queryCount": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "minimum": 0,
+                    "description": "Total number of queries or API calls made against all output ports during the observation period."
+                },
+                "lastAccessedAt": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "format": "date-time",
+                    "description": "UTC timestamp of the most recent consumer access across all output ports."
+                }
+            }
+        },
+        "contractUsage": {
+            "type": "array",
+            "description": "Per-consumer, per-contract usage breakdown over the observation period. Provides the finest-grained consumption view: which consumer is hitting which ODCS contract, how often, and whether they are experiencing the SLAs they were promised. Dehghani notes that consumer-reported SLO experience is the ground truth for data product fitness — this array captures that signal explicitly.",
+            "items": {
+                "type": "object",
+                "required": [
+                    "contractId",
+                    "consumerId"
+                ],
+                "properties": {
+                    "contractId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ODCS contract UUID identifying which output port contract this consumption record relates to. Matches outputPorts[].contractId."
+                    },
+                    "consumerId": {
+                        "type": "string",
+                        "description": "Identifier of the consuming entity — typically the consuming data product ID, service name, or platform identifier as registered in the mesh.",
+                        "examples": [
+                            "bi-platform",
+                            "ml-platform",
+                            "fbe8d147-28db-4f1d-bedf-a3fe9f458427"
+                        ]
+                    },
+                    "queryCount": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "description": "Number of queries or API calls this consumer made against the contract's output port during the observation period."
+                    },
+                    "lastAccessedAt": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time",
+                        "description": "UTC timestamp of this consumer's most recent access."
+                    },
+                    "avgResponseTimeMs": {
+                        "type": [
+                            "number",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "description": "Average query response time in milliseconds experienced by this consumer during the observation period. Consumer-side latency may differ from producer-side SLO measurements due to network or middleware."
+                    },
+                    "p95ResponseTimeMs": {
+                        "type": [
+                            "number",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "description": "95th percentile response time in milliseconds experienced by this consumer. Primary signal for response time SLO evaluation from the consumer perspective."
+                    },
+                    "sloBreachesReported": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "description": "Number of SLO breaches reported by this consumer against this contract during the observation period. A non-zero value here when the producer's own slo.* shows met=true indicates a perception gap that warrants investigation."
+                    },
+                    "sloBreachDetails": {
+                        "type": "array",
+                        "description": "Optional detail on each consumer-reported SLO breach. Useful for reconciling producer-observed vs. consumer-experienced fitness.",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "dimension",
+                                "reportedAt"
+                            ],
+                            "properties": {
+                                "dimension": {
+                                    "type": "string",
+                                    "enum": [
+                                        "freshness",
+                                        "quality",
+                                        "responseTime",
+                                        "uptime"
+                                    ],
+                                    "description": "The SLO dimension the consumer observed as breached."
+                                },
+                                "reportedAt": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "UTC timestamp when the breach was reported or detected."
+                                },
+                                "detail": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Human-readable description of the breach as experienced by the consumer.",
+                                    "maxLength": 512
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "customProperties": {
+            "type": "array",
+            "description": "Extension point for platform-specific or domain-specific metrics not covered by the standard schema. Mirrors the customProperties pattern used throughout Bitol ODPS.",
+            "items": {
+                "type": "object",
+                "required": [
+                    "property",
+                    "value"
+                ],
+                "properties": {
+                    "property": {
+                        "type": "string",
+                        "description": "Property key, using reverse-DNS namespacing to avoid collisions.",
+                        "examples": [
+                            "com.myplatform.databricks.clusterName",
+                            "com.mydomain.regulatory.dataClassification"
+                        ]
+                    },
+                    "value": {
+                        "description": "Property value. Any JSON-serialisable type is permitted."
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Human-readable explanation of what this property measures."
+                    }
+                }
+            }
+        }
+    },
+    "additionalProperties": false,
+    "examples": [
+        {
+            "schemaVersion": "1.0.0",
+            "productId": "fbe8d147-28db-4f1d-bedf-a3fe9f458427",
+            "asOf": "2026-03-13T09:00:00Z",
+            "period": "PT1H",
+            "status": "critical",
+            "physical": {
+                "pipeline": {
+                    "lastRunAt": "2026-03-13T08:45:00Z",
+                    "durationSeconds": null,
+                    "status": "failed",
+                    "recordsProcessed": null,
+                    "computeCreditsUsed": null,
+                    "failureReason": "Source system unavailable: connection timeout after 30s"
+                },
+                "storage": {
+                    "sizeBytes": 2147483648,
+                    "partitionCount": 365
+                }
+            },
+            "static": {
+                "schema": {
+                    "version": "2.3.0",
+                    "lastValidatedAt": "2026-03-13T08:00:00Z",
+                    "driftDetected": false,
+                    "breakingChangeSinceVersion": null,
+                    "columnCount": 24
+                }
+            },
+            "dynamic": {
+                "volume": {
+                    "rowCount": 1042893,
+                    "rowCountDelta": 0,
+                    "expectedRangeMin": 1000000,
+                    "expectedRangeMax": 1100000,
+                    "withinExpectation": true
+                },
+                "freshness": {
+                    "lastUpdatedAt": "2026-03-13T07:45:00Z",
+                    "lagMinutes": 75,
+                    "maxAllowedLagMinutes": 30,
+                    "withinExpectation": false
+                },
+                "quality": {
+                    "rulesTotal": 12,
+                    "rulesPassed": 9,
+                    "rulesFailed": 3,
+                    "checks": [
+                        {
+                            "rule": "warehouse_id_not_null",
+                            "column": "warehouse_id",
+                            "status": "failed",
+                            "nullRate": 0.043,
+                            "failRate": null,
+                            "message": "4.3% of rows have null warehouse_id"
+                        },
+                        {
+                            "rule": "quantity_positive",
+                            "column": "quantity",
+                            "status": "failed",
+                            "nullRate": null,
+                            "failRate": 0.002,
+                            "message": "0.2% of rows have non-positive quantity"
+                        },
+                        {
+                            "rule": "product_id_ref_check",
+                            "column": "product_id",
+                            "status": "failed",
+                            "nullRate": null,
+                            "failRate": 0.011,
+                            "message": "1.1% of product_ids have no match in products table"
+                        },
+                        {
+                            "rule": "stock_level_not_null",
+                            "column": "stock_level",
+                            "status": "passed",
+                            "nullRate": 0.0,
+                            "failRate": null,
+                            "message": null
+                        }
+                    ]
+                }
+            },
+            "slo": {
+                "uptime": {
+                    "objectivePct": 99.5,
+                    "actualPct": 99.9,
+                    "windowDays": 30,
+                    "met": true
+                },
+                "freshness": {
+                    "objectiveMinutes": 30,
+                    "actualMinutes": 75,
+                    "met": false
+                },
+                "qualityScore": {
+                    "objectivePassRate": 1.0,
+                    "actualPassRate": 0.75,
+                    "met": false
+                },
+                "responseTime": null
+            },
+            "outputPorts": [
+                {
+                    "name": "inventory_snapshot",
+                    "version": "2.0.0",
+                    "contractId": "c2798941-1b7e-4b03-9e0d-955b1a872b33",
+                    "status": "critical",
+                    "freshness": {
+                        "lastUpdatedAt": "2026-03-13T07:45:00Z",
+                        "lagMinutes": 75,
+                        "maxAllowedLagMinutes": 30,
+                        "withinExpectation": false
+                    },
+                    "quality": {
+                        "rulesTotal": 12,
+                        "rulesPassed": 9,
+                        "rulesFailed": 3,
+                        "checks": []
+                    },
+                    "usage": {
+                        "activeConsumers": 2,
+                        "queryCount": 94,
+                        "lastAccessedAt": "2026-03-13T08:58:00Z"
+                    }
+                }
+            ],
+            "lineage": {
+                "upstreamProducts": [
+                    {
+                        "name": "wms-events",
+                        "contractId": "dbb7b1eb-7628-436e-8914-2a00638ba6db",
+                        "status": "critical",
+                        "lastSeenAt": "2026-03-13T07:44:00Z"
+                    }
+                ]
+            },
+            "usage": {
+                "activeConsumers": 4,
+                "queryCount": 187,
+                "lastAccessedAt": "2026-03-13T08:58:00Z"
+            },
+            "contractUsage": [
+                {
+                    "contractId": "c2798941-1b7e-4b03-9e0d-955b1a872b33",
+                    "consumerId": "bi-platform",
+                    "queryCount": 134,
+                    "lastAccessedAt": "2026-03-13T08:58:00Z",
+                    "avgResponseTimeMs": 143,
+                    "p95ResponseTimeMs": 289,
+                    "sloBreachesReported": 0,
+                    "sloBreachDetails": []
+                },
+                {
+                    "contractId": "c2798941-1b7e-4b03-9e0d-955b1a872b33",
+                    "consumerId": "ml-platform",
+                    "queryCount": 53,
+                    "lastAccessedAt": "2026-03-13T07:12:00Z",
+                    "avgResponseTimeMs": 310,
+                    "p95ResponseTimeMs": 612,
+                    "sloBreachesReported": 1,
+                    "sloBreachDetails": [
+                        {
+                            "dimension": "freshness",
+                            "reportedAt": "2026-03-13T08:10:00Z",
+                            "detail": "Data not updated after 75 min — pipeline failure not reflected in producer SLO status at time of access"
+                        }
+                    ]
+                }
+            ],
+            "customProperties": [
+                {
+                    "property": "com.myplatform.databricks.clusterName",
+                    "value": "inventory-pipeline-cluster",
+                    "description": "Databricks cluster used for pipeline execution"
+                }
+            ]
+        }
+    ]
+}

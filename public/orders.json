@@ -1,0 +1,12 @@
+[
+    {
+        "id": "CUST-001",
+        "customer_id": "OD-001",
+        "order_detail": "1 Orange juice"
+    },
+    {
+        "id": "CUST-002",
+        "customer_id": "OD-002",
+        "order_detail": "2 Apple juice"
+    }
+]

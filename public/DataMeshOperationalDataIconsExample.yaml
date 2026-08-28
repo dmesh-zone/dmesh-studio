@@ -1,0 +1,397 @@
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "database-data-source"
+  name: Database data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: database
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "oracle-data-source"
+  name: Oracle data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: oracle
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "rds-oracle-data-source"
+  name: Oracle data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdsoracle
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "rds-aurora-data-source"
+  name: RDS Aurora data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdsaurora
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "rds-mariadb-data-source"
+  name: RDS MariaDB data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdsmariadb
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "rds-mysql-data-source"
+  name: RDS MySQL data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdsmysql
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "rds-postgresql-data-source"
+  name: RDS PostgreSQL data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdspostgresql
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "rds-sqlserver-data-source"
+  name: RDS SQL Server data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: rdssqlserver
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "sharepoint-data-source"
+  name: SharePoint data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: sharepoint
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "reltio-mdm-data-source"
+  name: Reltio MDM data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: reltio
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "veeva-vault-data-source"
+  name: Veeva Vault data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: veevavault
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "ftp-data-source"
+  name: Ftp data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: ftp
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "salesforce-data-source"
+  name: Salesforce data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: salesforce
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "sap-data-source"
+  name: SAP data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: sap
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "service-now-data-source"
+  name: Service Now data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: servicenow
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "s3-data-source"
+  name: S3 data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: s3
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "redshift-data-source"
+  name: Redshift data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: redshift
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "google-analytics-data-source"
+  name: Google Analytics data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: googleanalytics
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "atlassian-data-source"
+  name: Atlassian data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: atlassian 
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "jira-data-source"
+  name: Jira data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: jira 
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "databricks-data-product"
+  name: Databricks data product
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: sourceAligned
+    - property: technology
+      value: databricks
+  outputPorts:
+  - name: my_delta_table
+    contractId: "my-databricks-contract-1"
+    version: "1"
+  - name: my_iceberg_table
+    contractId: "my-databricks-contract-1"
+    version: "1"
+  - name: my_odata_endpoint
+    contractId: "my-databricks-contract-1"
+    version: "1"
+  - name: my_api
+    contractId: "my-databricks-contract-1"
+    version: "1"
+  - name: my_generic_table
+    contractId: "my-databricks-contract-1"
+    version: "1"
+- kind: DataContract
+  apiVersion: v3.0.1
+  version: "1"
+  status: active
+  id: "my-databricks-contract-1"
+  schema:
+  - name: "my_delta_table"
+    customProperties:
+    - property: technology
+      value: deltalake
+  - name: "my_iceberg_table"
+    customProperties:
+    - property: technology
+      value: iceberg
+  - name: "my_odata_endpoint"
+    customProperties:
+    - property: technology
+      value: odata
+  - name: "my_api"
+    customProperties:
+    - property: technology
+      value: api
+  - name: "my_generic_table"
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "snowflake-data-product"
+  name: Snowflake data product
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: sourceAligned
+    - property: technology
+      value: snowflake
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "generic-data-product"
+  name: Generic data product
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: curated
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "kafka-data-product"
+  name: Kafka data product
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: consumerAligned
+    - property: technology
+      value: kafka
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "kinesis-data-product"
+  name: Kinesis data product
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: consumerAligned
+    - property: technology
+      value: kinesis
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "agent-data-product"
+  name: Agent
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: agent
+    - property: technology
+      value: agent
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "powerbi-application"
+  name: Power BI Application
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: application
+    - property: technology
+      value: powerbi
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "application"
+  name: Generic Application
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: application
+    - property: technology
+      value: application
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "tibco-data-source"
+  name: Tibco data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: tibco
+  outputPorts: []
+- kind: DataProduct
+  apiVersion: v1.0.0
+  id: "tibco-dv-12n-data-source"
+  name: Tibco DV 12N data source
+  domain: acme
+  status: active
+  customProperties:
+    - property: dataProductTier
+      value: dataSource
+    - property: technology
+      value: tibcodv12n
+  outputPorts: []
+

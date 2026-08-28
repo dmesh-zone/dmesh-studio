@@ -1,0 +1,25 @@
+/* YAML Line Numbers */
+.yaml-container {
+    counter-reset: yaml-line;
+}
+
+.yaml-line {
+    position: relative;
+    counter-increment: yaml-line;
+}
+
+.yaml-line::before {
+    content: counter(yaml-line);
+    position: absolute;
+    left: 8px;
+    /* Fixed distance from left edge */
+    top: 0;
+    color: #94a3b8;
+    /* Slate-400 */
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    user-select: none;
+    text-align: right;
+    width: 24px;
+    /* Fixed width for numbers */
+}

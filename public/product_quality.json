@@ -1,0 +1,12 @@
+[
+    {
+        "quality_id": "QA-001",
+        "product_id": "FP-001",
+        "avg_quality_score": 97.5
+    },
+    {
+        "quality_id": "QA-002",
+        "product_id": "FP-002",
+        "avg_quality_score": 56.4
+    }
+]
