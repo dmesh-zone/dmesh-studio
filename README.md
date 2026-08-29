@@ -3,7 +3,7 @@
 [![CodeQL](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/codeql.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/codeql.yml)
 [![Snyk Security Scan](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/snyk.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/snyk.yml)
 
-A React-based visualization tool for exploring Data Mesh registries, Data Products, Data Contracts, and Data Usage Agreements.
+A React-based visualization tool for exploring Data Mesh dataMeshOperationsList, Data Products, Data Contracts, and Data Usage Agreements.
 
 Live demo: https://dmesh-zone.github.io/dmesh-studio
 
@@ -25,7 +25,7 @@ Live demo: https://dmesh-zone.github.io/dmesh-studio
 
 ## Configuration
 
-The application is configured through `./public/config.yaml`. This file controls the default registry URL, visual appearance, and data product tiers.
+The application is configured through `./public/config.yaml`. This file controls the default dataMeshOperations URL, visual appearance, and data product tiers.
 Additionally, you can create a `./public/customConfig.yaml` file to override any settings in `config.yaml` without modifying the core configuration file.
 
 ### Configuration File Structure
@@ -43,7 +43,7 @@ tiers:
 
 #### `defaultDataMeshOperationalDataUrl` (required)
 
-The path or URL to your Data Mesh registry YAML or JSON file.
+The path or URL to your Data Mesh data mesh operations YAML or JSON file.
 
 **Examples:**
 local file: 
@@ -190,17 +190,17 @@ Simulated health follows a distribution of 70% Healthy, 20% Degraded, and 10% Cr
 
 ### CLI Simulation
 
-You can use the simulation module to generate metrics for a registry file from the command line:
+You can use the simulation module to generate metrics for a data mesh operations file from the command line:
 
 ```bash
 # Generate simulated metrics for all dimensions
-node src/ObsSimulation.js public/MyRegistry.yaml
+node src/ObsSimulation.js public/MyData Mesh Operations.yaml
 
 # Generate specific dimensions
-node src/ObsSimulation.js public/MyRegistry.yaml Pipeline,SLOs
+node src/ObsSimulation.js public/MyData Mesh Operations.yaml Pipeline,SLOs
 ```
 
-This will create a new file `public/MyRegistry-with-sim-metrics.yaml` containing the original data plus the simulated observability metrics.
+This will create a new file `public/MyData Mesh Operations-with-sim-metrics.yaml` containing the original data plus the simulated observability metrics.
 
 ## Troubleshooting
 
@@ -231,22 +231,22 @@ If you see a red "Configuration Error" banner:
 - Check that the file contains valid YAML structure
 - Use a YAML validator to check syntax
 
-### Registry Loading Errors
+### Data Mesh Operations Loading Errors
 
-**"Failed to fetch registry"**
-- Verify the registry URL in `defaultDataMeshOperationalDataUrl` is correct
-- Ensure the registry file exists at the specified path
+**"Failed to fetch dataMeshOperations"**
+- Verify the dataMeshOperations URL in `defaultDataMeshOperationalDataUrl` is correct
+- Ensure the data mesh operations file exists at the specified path
 - Check browser console for CORS errors if loading from external URL
 
 **"Invalid YAML format"**
-- Validate your registry YAML file
+- Validate your data mesh operations YAML file
 - Ensure proper indentation (use spaces, not tabs)
 - Check for syntax errors in the YAML
 
 ### No Data Products Displayed
 
 - Check that domains are selected in the Domain Selector dropdown
-- Verify your registry contains Data Products with `kind: DataProduct`
+- Verify your dataMeshOperations contains Data Products with `kind: DataProduct`
 - Use the global filter to search for specific products
 
 ### Icons Not Displaying
@@ -255,7 +255,7 @@ If you see a red "Configuration Error" banner:
 - Verify paths in `iconMap` start with `/icons/`
 - Check that icon file names match exactly (case-sensitive)
 
-## Registry File Format
+## Data Mesh Operations File Format
 
 The application expects a YAML file containing an array of Data Mesh entries that must conform with one of the following standards and specifications:
 * [Open Data Product Standard](https://bitol-io.github.io/open-data-product-standard/v1.0.0)
@@ -267,7 +267,7 @@ The application expects a YAML file containing an array of Data Mesh entries tha
 - `DataContract`: Schema definitions with columns, types, and relationships
 - `DataUsageAgreement`: Agreements between providers and consumers
 
-See the included `public/DataMeshPetsRegistry.yaml` for a complete example.
+See the included `public/DataMeshPetsData Mesh Operations.yaml` for a complete example.
 
 ## Browser Compatibility
 

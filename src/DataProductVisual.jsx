@@ -16,7 +16,7 @@
 
 import React from 'react';
 
-export default function DataProductVisual({ data, registry = [] }) {
+export default function DataProductVisual({ data, dataMeshOperations = [] }) {
     // data is the full YAML object for the Data Product
 
     const [copied, setCopied] = React.useState(false);
@@ -288,8 +288,8 @@ export default function DataProductVisual({ data, registry = [] }) {
                                         let consumerName = agreement?.consumer?.name || agreement?.name || agreement?.consumerName || agreement?.consumerDataProductName || '-';
                                         const consumerId = rawConsumerId;
                                         
-                                        if (rawConsumerId !== '-' && registry) {
-                                            const consumerNode = registry.find(n => n.id === rawConsumerId);
+                                        if (rawConsumerId !== '-' && dataMeshOperations) {
+                                            const consumerNode = dataMeshOperations.find(n => n.id === rawConsumerId);
                                             if (consumerNode) {
                                                 consumerDomain = consumerNode.domain || '-';
                                                 

@@ -16,7 +16,7 @@
 
 import React from 'react';
 
-export default function RegistryModal({ isOpen, onClose, currentUrl, registries = [], onLoad, onLoadText }) {
+export default function DataMeshOperationsModal({ isOpen, onClose, currentUrl, dataMeshOperationsList = [], onLoad, onLoadText }) {
     const [url, setUrl] = React.useState('');
     const [showOptions, setShowOptions] = React.useState(false);
     const [isSearching, setIsSearching] = React.useState(false);
@@ -64,13 +64,13 @@ export default function RegistryModal({ isOpen, onClose, currentUrl, registries 
         }
     };
 
-    // registries is now expected to be [{ original: string, normalized: string }]
+    // dataMeshOperationsList is now expected to be [{ original: string, normalized: string }]
     const filteredOptions = isSearching && url
-        ? (registries || []).filter(reg =>
+        ? (dataMeshOperationsList || []).filter(reg =>
             (reg.original || '').toLowerCase().includes(url.toLowerCase()) ||
             (reg.normalized || '').toLowerCase().includes(url.toLowerCase())
         )
-        : (registries || []);
+        : (dataMeshOperationsList || []);
 
     return (
         <>

@@ -25,7 +25,7 @@ import InteractiveJson from './InteractiveJson';
 import ExampleTable from './ExampleTable';
 import QualityTable from './QualityTable';
 import RelationshipEdge from './RelationshipEdge';
-import { validateRegistry } from './ValidationService';
+import { validateDataMeshOperations } from './ValidationService';
 import YAML from 'yaml';
 import * as ObsSim from './ObsSimulation';
 
@@ -35,7 +35,7 @@ import GlobalFilter from './GlobalFilter';
 import DataProductVisual from './DataProductVisual';
 import DataContractVisual from './DataContractVisual';
 import DataUsageAgreementVisual from './DataUsageAgreementVisual';
-import RegistryModal from './RegistryModal';
+import DataMeshOperationsModal from './DataMeshOperationsModal';
 import ObservabilityDrilldown from './ObservabilityDrilldown';
 import ErrorBoundary from './ErrorBoundary';
 import { useThemeContext } from './ThemeContext';
@@ -89,16 +89,16 @@ function Flow({ isExpanded = false }) {
     // Theme Context
     const { mode, setThemeFromConfig } = useThemeContext();
 
-    // Registry State - URL will be loaded from config.json
-    const [registryUrl, setRegistryUrl] = React.useState('');
+    // Data Mesh Operations State - URL will be loaded from config.json
+    const [dataMeshOperationsUrl, setDataMeshOperationsUrl] = React.useState('');
 
-    const [dataMeshRegistry, setDataMeshOperationalData] = React.useState([]);
-    const [dataMeshRegistryRaw, setDataMeshOperationalDataRaw] = React.useState('');
+    const [dataMeshOperations, setDataMeshOperationalData] = React.useState([]);
+    const [dataMeshOperationsRaw, setDataMeshOperationalDataRaw] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
-    const [config, setConfig] = React.useState({ iconMap: {}, tiers: {}, domainPalette: [], defaultDataMeshOperationalDataUrl: '', registries: [], 'single-domain-default-filter': false, 'zoom-to-fit-columns': true }); // Config state
+    const [config, setConfig] = React.useState({ iconMap: {}, tiers: {}, domainPalette: [], defaultDataMeshOperationalDataUrl: '', dataMeshOperationsList: [], 'single-domain-default-filter': false, 'zoom-to-fit-columns': true }); // Config state
     const [configError, setConfigError] = React.useState(null); // Track config loading errors
-    const [showRegistryModal, setShowRegistryModal] = React.useState(false);
+    const [showDataMeshOperationsModal, setShowDataMeshOperationsModal] = React.useState(false);
 
     const [allEnvsData, setAllEnvsData] = React.useState([]);
     const [selectedEnv, setSelectedEnv] = React.useState('');
@@ -165,7 +165,7 @@ function Flow({ isExpanded = false }) {
 
                 // Validate required fields
                 if (!data.defaultDataMeshOperationalDataUrl) {
-                    setConfigError('config.yaml is missing required field "defaultDataMeshOperationalDataUrl". Please add this field with the path to your registry YAML file.');
+                    setConfigError('config.yaml is missing required field "defaultDataMeshOperationalDataUrl". Please add this field with the path to your data mesh operations YAML file.');
                     return;
                 }
 
@@ -175,7 +175,7 @@ function Flow({ isExpanded = false }) {
                     tiers: data.tiers || {},
                     observability: data.observability || {},
                     defaultDataMeshOperationalDataUrl: normalizePath(data.defaultDataMeshOperationalDataUrl),
-                    registries: (data.sampleDataMeshOperationalDataUrls || []).map(reg => ({
+                    dataMeshOperationsList: (data.sampleDataMeshOperationalDataUrls || []).map(reg => ({
                         original: reg,
                         normalized: normalizePath(reg)
                     }))
@@ -192,8 +192,8 @@ function Flow({ isExpanded = false }) {
                 // Keep the initial config.theme name so the useEffect can use it
                 // We don't append to DOM here.
 
-                // Set initial registry URL from config
-                setRegistryUrl(loadedConfig.defaultDataMeshOperationalDataUrl);
+                // Set initial dataMeshOperations URL from config
+                setDataMeshOperationsUrl(loadedConfig.defaultDataMeshOperationalDataUrl);
             })
             .catch(err => {
                 console.error("Failed to load config.yaml", err);
@@ -369,7 +369,7 @@ function Flow({ isExpanded = false }) {
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
 
-    // Ensure activeDimension is valid for the current registry
+    // Ensure activeDimension is valid for the current dataMeshOperations
     React.useEffect(() => {
         if (availableDimensions.length > 0) {
             // Mapping current activeDimension back to labels to check existence
@@ -387,12 +387,12 @@ function Flow({ isExpanded = false }) {
 
     const [isResizing, setIsResizing] = React.useState(false);
 
-    const processRegistryText = (text) => {
+    const processDataMeshOperationsText = (text) => {
         setDataMeshOperationalDataRaw(text);
 
         // Check if response is HTML instead of YAML (common when file doesn't exist)
         if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
-            throw new Error(`Registry file not found or invalid format. The content starts with HTML instead of YAML.`);
+            throw new Error(`Data Mesh Operations file not found or invalid format. The content starts with HTML instead of YAML.`);
         }
 
         let parsed;
@@ -403,7 +403,7 @@ function Flow({ isExpanded = false }) {
         }
 
         if (!parsed) {
-            console.warn("Parsed registry is empty");
+            console.warn("Parsed dataMeshOperations is empty");
             setDataMeshOperationalData([]);
             setAllEnvsData([]);
         } else {
@@ -422,7 +422,7 @@ function Flow({ isExpanded = false }) {
         let latestAsOf = 0;
 
         // First pass: find the latest asOf date to calculate offset if needed
-        dataMeshRegistry.forEach(item => {
+        dataMeshOperations.forEach(item => {
             if (item.kind === 'DataProductObservability' && item.observedAt) {
                 const asOfTime = new Date(item.observedAt).getTime();
                 if (asOfTime > latestAsOf) {
@@ -438,10 +438,10 @@ function Flow({ isExpanded = false }) {
             return new Date(new Date(isoStr).getTime() + timeOffset).toISOString();
         }
 
-        dataMeshRegistry.forEach(item => {
+        dataMeshOperations.forEach(item => {
             if (item.kind === 'DataProductObservability') {
                 if (timeOffset > 0) {
-                    // Deep clone to avoid mutating original registry
+                    // Deep clone to avoid mutating original dataMeshOperations
                     const clonedItem = JSON.parse(JSON.stringify(item));
                     if (clonedItem.observedAt) clonedItem.observedAt = shiftTimeIso(clonedItem.observedAt);
 
@@ -462,7 +462,7 @@ function Flow({ isExpanded = false }) {
 
         // Add simulated metrics for designated dimensions
         if (isTestMode && simulatedDims.size > 0) {
-            const simulatedMetrics = ObsSim.simulateRegistryMetrics(dataMeshRegistry, Array.from(simulatedDims), config?.observability);
+            const simulatedMetrics = ObsSim.simulateDataMeshOperationsMetrics(dataMeshOperations, Array.from(simulatedDims), config?.observability);
             simulatedMetrics.forEach(metric => {
                 // Merge simulated data into existing metrics (replace completely)
                 metrics.set(metric.id, metric);
@@ -470,17 +470,17 @@ function Flow({ isExpanded = false }) {
         }
 
         setMetricsMap(metrics);
-    }, [dataMeshRegistry, adjustMetricsTime, isTestMode, simulatedDims]);
+    }, [dataMeshOperations, adjustMetricsTime, isTestMode, simulatedDims]);
 
-    const handleLoadRegistryText = (text) => {
+    const handleLoadDataMeshOperationsText = (text) => {
         setIsLoading(true);
         setError(null);
         try {
-            processRegistryText(text);
+            processDataMeshOperationsText(text);
             setSelection({ id: null, kind: null });
-            setRegistryUrl(''); // Clear URL if loading from clipboard
+            setDataMeshOperationsUrl(''); // Clear URL if loading from clipboard
         } catch (err) {
-            console.error("Error loading registry from text:", err);
+            console.error("Error loading dataMeshOperations from text:", err);
             setError(err.message);
             setDataMeshOperationalData([]);
             setAllEnvsData([]);
@@ -489,27 +489,27 @@ function Flow({ isExpanded = false }) {
         }
     };
 
-    // Fetch Registry
+    // Fetch Data Mesh Operations
     React.useEffect(() => {
         // Don't fetch if URL is not set yet (waiting for config to load)
-        if (!registryUrl) {
+        if (!dataMeshOperationsUrl) {
             return;
         }
 
-        const fetchRegistry = async () => {
+        const fetchDataMeshOperations = async () => {
             setIsLoading(true);
             setError(null);
             try {
-                const normalizedUrl = normalizePath(registryUrl);
+                const normalizedUrl = normalizePath(dataMeshOperationsUrl);
                 const response = await fetch(normalizedUrl);
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch registry from "${registryUrl}" (normalized to "${normalizedUrl}") (${response.status} ${response.statusText}). Please check the URL in config.yaml.`);
+                    throw new Error(`Failed to fetch dataMeshOperations from "${dataMeshOperationsUrl}" (normalized to "${normalizedUrl}") (${response.status} ${response.statusText}). Please check the URL in config.yaml.`);
                 }
                 const text = await response.text();
-                processRegistryText(text);
+                processDataMeshOperationsText(text);
                 setSelection({ id: null, kind: null });
             } catch (err) {
-                console.error("Error loading registry:", err);
+                console.error("Error loading dataMeshOperations:", err);
                 setError(err.message);
                 setDataMeshOperationalData([]);
                 setAllEnvsData([]);
@@ -518,14 +518,14 @@ function Flow({ isExpanded = false }) {
             }
         };
 
-        fetchRegistry();
-    }, [registryUrl]);
+        fetchDataMeshOperations();
+    }, [dataMeshOperationsUrl]);
 
     // Available Domains
     const availableDomains = React.useMemo(() => {
-        const dps = dataMeshRegistry.filter(item => item.kind === 'DataProduct' && item.domain);
+        const dps = dataMeshOperations.filter(item => item.kind === 'DataProduct' && item.domain);
         return Array.from(new Set(dps.map(n => n.domain))).sort();
-    }, [dataMeshRegistry]);
+    }, [dataMeshOperations]);
 
     // Initial default: Select all domains if unselected? Or starts empty (showing all)?
     // Usually "no selection" = "show all". The DomainSelector has "All" button.
@@ -533,7 +533,7 @@ function Flow({ isExpanded = false }) {
     // Actually, multiselect usually implies "show what is selected".
     // If I select "Domain A", I only see Domain A.
     // Let's auto-select ALL domains on load so the view is populated.
-    // Auto-select domains when registry loads/changes
+    // Auto-select domains when dataMeshOperations loads/changes
     // If a domain is provided in the URL (e.g., ?domain=petstore), filter by that domain.
     React.useEffect(() => {
         if (availableDomains.length > 0) {
@@ -566,11 +566,11 @@ function Flow({ isExpanded = false }) {
 
     // Auto-select node if ID is provided in URL (?id=...)
     React.useEffect(() => {
-        if (dataMeshRegistry.length > 0) {
+        if (dataMeshOperations.length > 0) {
             const params = new URLSearchParams(window.location.search);
             const idParam = params.get('id');
             if (idParam) {
-                const target = dataMeshRegistry.find(item =>
+                const target = dataMeshOperations.find(item =>
                     String(item.id).toLowerCase() === idParam.toLowerCase()
                 );
                 if (target) {
@@ -581,14 +581,14 @@ function Flow({ isExpanded = false }) {
                 }
             }
         }
-    }, [dataMeshRegistry]);
+    }, [dataMeshOperations]);
 
     // Auto-compact mode logic
-    const prevRegistryRef = React.useRef(null);
+    const prevDataMeshOperationsRef = React.useRef(null);
     React.useEffect(() => {
-        if (dataMeshRegistry && dataMeshRegistry.length > 0 && dataMeshRegistry !== prevRegistryRef.current) {
-            prevRegistryRef.current = dataMeshRegistry;
-            const dataMeshNodes = dataMeshRegistry.filter(item => item.kind === 'DataProduct');
+        if (dataMeshOperations && dataMeshOperations.length > 0 && dataMeshOperations !== prevDataMeshOperationsRef.current) {
+            prevDataMeshOperationsRef.current = dataMeshOperations;
+            const dataMeshNodes = dataMeshOperations.filter(item => item.kind === 'DataProduct');
             const columnCounts = {};
             dataMeshNodes.forEach(node => {
                 const tier = node.customProperties?.find(p => p.property === 'dataProductTier')?.value;
@@ -603,18 +603,18 @@ function Flow({ isExpanded = false }) {
                 setCompactMode(false);
             }
         }
-    }, [dataMeshRegistry, config]);
+    }, [dataMeshOperations, config]);
 
-    // Process Registry into Nodes/Edges
+    // Process Data Mesh Operations into Nodes/Edges
     React.useEffect(() => {
-        if (!dataMeshRegistry || dataMeshRegistry.length === 0) {
+        if (!dataMeshOperations || dataMeshOperations.length === 0) {
             setNodes([]);
             setEdges([]);
             return;
         }
 
-        const dataMeshNodes = dataMeshRegistry.filter(item => item.kind === 'DataProduct' || item.kind === 'DataContract');
-        const dataMeshEdges = dataMeshRegistry.filter(item => item.dataUsageAgreementSpecification);
+        const dataMeshNodes = dataMeshOperations.filter(item => item.kind === 'DataProduct' || item.kind === 'DataContract');
+        const dataMeshEdges = dataMeshOperations.filter(item => item.dataUsageAgreementSpecification);
 
         // Domain Coloring Logic
         const uniqueDomains = Array.from(new Set(dataMeshNodes
@@ -860,7 +860,7 @@ function Flow({ isExpanded = false }) {
         setNodes([...initialNodes, ...headerNodes]);
         setEdges(initialEdges);
 
-    }, [dataMeshRegistry, setNodes, setEdges, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy, showDomainLabels, showDescriptionsExpanded]);
+    }, [dataMeshOperations, setNodes, setEdges, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy, showDomainLabels, showDescriptionsExpanded]);
 
     // Handle hover states separately to avoid recreating nodes
     React.useEffect(() => {
@@ -953,24 +953,24 @@ function Flow({ isExpanded = false }) {
     const [validationResults, setValidationResults] = React.useState(null);
     const [showValidationModal, setShowValidationModal] = React.useState(false);
 
-    // Automatic validation when registry is loaded or changed
+    // Automatic validation when dataMeshOperations is loaded or changed
     React.useEffect(() => {
-        if (!isLoading && dataMeshRegistry && dataMeshRegistry.length > 0) {
-            const errors = validateRegistry(dataMeshRegistry, dataMeshRegistryRaw);
+        if (!isLoading && dataMeshOperations && dataMeshOperations.length > 0) {
+            const errors = validateDataMeshOperations(dataMeshOperations, dataMeshOperationsRaw);
             setValidationResults(errors);
-        } else if (!isLoading && (!dataMeshRegistry || dataMeshRegistry.length === 0)) {
+        } else if (!isLoading && (!dataMeshOperations || dataMeshOperations.length === 0)) {
             setValidationResults(null);
         }
-    }, [dataMeshRegistry, dataMeshRegistryRaw, isLoading]);
+    }, [dataMeshOperations, dataMeshOperationsRaw, isLoading]);
 
-    const handleValidateRegistry = () => {
+    const handleValidateDataMeshOperations = () => {
         setShowValidationModal(true);
     };
 
-    // Helper to find nodes in the raw registry
+    // Helper to find nodes in the raw dataMeshOperations
     const dataMeshNodes = React.useMemo(() =>
-        dataMeshRegistry.filter(item => item.kind === 'DataProduct' || item.kind === 'DataContract'),
-        [dataMeshRegistry]);
+        dataMeshOperations.filter(item => item.kind === 'DataProduct' || item.kind === 'DataContract'),
+        [dataMeshOperations]);
 
     // Filter nodes and edges based on selection
     const contractViewNodes = React.useMemo(() => {
@@ -978,7 +978,7 @@ function Flow({ isExpanded = false }) {
             return null;
         }
 
-        // Helper to find nodes in the raw registry
+        // Helper to find nodes in the raw dataMeshOperations
         const contractData = dataMeshNodes.find(n => String(n.id) === String(selection.id) && n.kind === 'DataContract');
 
         if (contractData) {
@@ -1295,8 +1295,8 @@ function Flow({ isExpanded = false }) {
         };
 
         const relatedNodes = [centralNode];
-        // Re-construct edges from registry to traverse
-        const dataMeshEdges = dataMeshRegistry.filter(item => item.dataUsageAgreementSpecification).map(edge => ({
+        // Re-construct edges from dataMeshOperations to traverse
+        const dataMeshEdges = dataMeshOperations.filter(item => item.dataUsageAgreementSpecification).map(edge => ({
             id: edge.id,
             source: edge.provider.dataProductId,
             target: edge.consumer.dataProductId
@@ -1329,7 +1329,7 @@ function Flow({ isExpanded = false }) {
         });
 
         return relatedNodes;
-    }, [selection, nodes, dataMeshNodes, dataMeshRegistry, compactMode]);
+    }, [selection, nodes, dataMeshNodes, dataMeshOperations, compactMode]);
 
     // Mesh filtering visibility logic
     const meshFilterNodes = React.useMemo(() => {
@@ -1357,7 +1357,7 @@ function Flow({ isExpanded = false }) {
 
                 for (const port of outputPorts) {
                     if (port.contractId) {
-                        const contract = dataMeshRegistry.find(item => String(item.id) === String(port.contractId) && item.kind === 'DataContract');
+                        const contract = dataMeshOperations.find(item => String(item.id) === String(port.contractId) && item.kind === 'DataContract');
                         if (contract) {
                             if (contract.customProperties && contract.customProperties.some(prop => String(prop.value).toLowerCase().includes(searchText))) {
                                 matchesContractProps = true;
@@ -1386,7 +1386,7 @@ function Flow({ isExpanded = false }) {
 
         // 2. Identify Neighbors (Producers and Consumers) of Primary Matches
         // We need the edges to find neighbors
-        const allEdges = dataMeshRegistry.filter(item => item.dataUsageAgreementSpecification).map(edge => ({
+        const allEdges = dataMeshOperations.filter(item => item.dataUsageAgreementSpecification).map(edge => ({
             source: edge.provider.dataProductId,
             target: edge.consumer.dataProductId
         }));
@@ -1474,7 +1474,7 @@ function Flow({ isExpanded = false }) {
 
         return layoutedNodes;
 
-    }, [selection, nodes, dataMeshNodes, dataMeshRegistry, selectedDomains, globalFilterText, compactMode, config.tiers]);
+    }, [selection, nodes, dataMeshNodes, dataMeshOperations, selectedDomains, globalFilterText, compactMode, config.tiers]);
 
 
     const visibleNodes = contractViewNodes || lineageViewNodes || meshFilterNodes || nodes;
@@ -1618,8 +1618,8 @@ function Flow({ isExpanded = false }) {
 
         // If Drill Down
         if (selection.id) {
-            // Re-construct initial edges from registry state for filtering
-            const initialEdges = dataMeshRegistry
+            // Re-construct initial edges from dataMeshOperations state for filtering
+            const initialEdges = dataMeshOperations
                 .filter(item => item.dataUsageAgreementSpecification)
                 .map(edge => ({
                     id: edge.id,
@@ -1648,7 +1648,7 @@ function Flow({ isExpanded = false }) {
         const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
         return edges.filter(e => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target));
 
-    }, [selection.id, edges, dataMeshRegistry, hoveredEdgeId, visibleNodes, contractViewNodes, contractViewEdges]);
+    }, [selection.id, edges, dataMeshOperations, hoveredEdgeId, visibleNodes, contractViewNodes, contractViewEdges]);
 
 
     const onNodeClick = React.useCallback((event, node) => {
@@ -1679,7 +1679,7 @@ function Flow({ isExpanded = false }) {
         }
 
         if (selection.kind === 'DataContract') {
-            const dataMeshNodes = dataMeshRegistry.filter(item => item.kind === 'DataProduct' || item.kind === 'DataContract');
+            const dataMeshNodes = dataMeshOperations.filter(item => item.kind === 'DataProduct' || item.kind === 'DataContract');
             // Find the producer (upstream Data Product)
             const producerNode = dataMeshNodes.find(n => n.outputPorts?.some(p => String(p.contractId) === String(selection.id)));
             if (producerNode) {
@@ -1689,7 +1689,7 @@ function Flow({ isExpanded = false }) {
         }
         // Default: Reset to Mesh
         setSelection({ id: null, kind: null });
-    }, [selection, dataMeshRegistry]);
+    }, [selection, dataMeshOperations]);
 
     const backButtonLabel = React.useMemo(() => {
         if (!selection.id) return '';
@@ -1700,7 +1700,7 @@ function Flow({ isExpanded = false }) {
 
     const onEdgeClick = React.useCallback((event, edge) => {
         event.stopPropagation();
-        const agreement = dataMeshRegistry.find(item => item.id === edge.id);
+        const agreement = dataMeshOperations.find(item => item.id === edge.id);
         if (agreement) {
             const customEvent = new CustomEvent('open-side-panel', {
                 detail: {
@@ -1710,7 +1710,7 @@ function Flow({ isExpanded = false }) {
             });
             window.dispatchEvent(customEvent);
         }
-    }, [dataMeshRegistry]);
+    }, [dataMeshOperations]);
 
     const onEdgeMouseEnter = React.useCallback((event, edge) => {
         setHoveredEdgeId(edge.id);
@@ -1809,11 +1809,11 @@ function Flow({ isExpanded = false }) {
         let extension = '';
 
         if (format === 'yaml') {
-            content = YAML.stringify(dataMeshRegistry);
+            content = YAML.stringify(dataMeshOperations);
             type = 'text/yaml';
             extension = 'yaml';
         } else if (format === 'json') {
-            content = JSON.stringify(dataMeshRegistry, null, 2);
+            content = JSON.stringify(dataMeshOperations, null, 2);
             type = 'application/json';
             extension = 'json';
         }
@@ -1841,9 +1841,9 @@ function Flow({ isExpanded = false }) {
     const copyDataToClipboard = (format) => {
         let content = '';
         if (format === 'yaml') {
-            content = YAML.stringify(dataMeshRegistry);
+            content = YAML.stringify(dataMeshOperations);
         } else if (format === 'json') {
-            content = JSON.stringify(dataMeshRegistry, null, 2);
+            content = JSON.stringify(dataMeshOperations, null, 2);
         }
         navigator.clipboard.writeText(content);
         setCopiedFormat(`test-${format}`);
@@ -1913,7 +1913,7 @@ function Flow({ isExpanded = false }) {
                 </div>
             )}
 
-            {/* Registry Error Banner */}
+            {/* Data Mesh Operations Error Banner */}
             {error && !configError && (
                 <div style={{
                     position: 'absolute',
@@ -1936,7 +1936,7 @@ function Flow({ isExpanded = false }) {
                         </svg>
                         <div style={{ flex: 1 }}>
                             <h3 style={{ margin: '0 0 8px 0', color: '#991b1b', fontSize: '16px', fontWeight: '600' }}>
-                                Registry Loading Error
+                                Data Mesh Operations Loading Error
                             </h3>
                             <p style={{ margin: '0 0 12px 0', color: '#7f1d1d', fontSize: '14px', lineHeight: '1.5' }}>
                                 {error}
@@ -2068,14 +2068,14 @@ function Flow({ isExpanded = false }) {
                         {!selection.id && validationResults?.length > 0 && (
                             <button
                                 className="btn btn-danger"
-                                onClick={handleValidateRegistry}
+                                onClick={handleValidateDataMeshOperations}
                                 disabled={isLoading || error}
                                 style={{
                                     padding: '8px 16px',
                                     height: '32px' // Match input height roughly
                                 }}
                             >
-                                Found {validationResults.length} Registry Error(s)
+                                Found {validationResults.length} Data Mesh Operations Error(s)
                             </button>
                         )}
 
@@ -2455,7 +2455,7 @@ function Flow({ isExpanded = false }) {
 
                         <div style={{ flex: 1, overflow: 'auto', marginBottom: '20px' }}>
                             {validationResults?.length === 0 ? (
-                                <p style={{ color: '#4b5563' }}>All registry items match the provided schemas.</p>
+                                <p style={{ color: '#4b5563' }}>All dataMeshOperations items match the provided schemas.</p>
                             ) : (
                                 <div>
                                     <p style={{ color: '#4b5563', fontWeight: '500' }}>Found {validationResults.length} errors:</p>
@@ -2591,7 +2591,7 @@ function Flow({ isExpanded = false }) {
                                         {sidePanelType === 'examples' ? 'Examples' :
                                             sidePanelType === 'dq' ? 'Data Quality' :
                                                 sidePanelType === 'observability' ? (() => {
-                                                    const dp = dataMeshRegistry.find(item => item.id === sidePanelNodeId);
+                                                    const dp = dataMeshOperations.find(item => item.id === sidePanelNodeId);
                                                     if (dp) {
                                                         const businessName = dp.customProperties?.find(p => p.property === 'dataProductBusinessName')?.value;
                                                         const label = businessName || dp.name;
@@ -2773,7 +2773,7 @@ function Flow({ isExpanded = false }) {
                                 />
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-product-yaml' ? (
                                 <ErrorBoundary>
-                                    <DataProductVisual data={sidePanelContent.originalData || sidePanelContent} registry={dataMeshRegistry} />
+                                    <DataProductVisual data={sidePanelContent.originalData || sidePanelContent} dataMeshOperations={dataMeshOperations} />
                                 </ErrorBoundary>
                             ) : sidePanelTab === 'visual' && sidePanelType === 'data-contract-yaml' ? (
                                 <DataContractVisual
@@ -3121,9 +3121,9 @@ function Flow({ isExpanded = false }) {
                             </div>
                         </button>
 
-                        {/* Load Registry */}
+                        {/* Load Data Mesh Operations */}
                         <button
-                            onClick={() => setShowRegistryModal(true)}
+                            onClick={() => setShowDataMeshOperationsModal(true)}
                             style={{
                                 width: '34px',
                                 height: '34px',
@@ -3145,7 +3145,7 @@ function Flow({ isExpanded = false }) {
                                 e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
                                 e.currentTarget.style.transform = 'scale(1)';
                             }}
-                            title="Load Registry"
+                            title="Load Data Mesh Operations"
                         >
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -3158,14 +3158,14 @@ function Flow({ isExpanded = false }) {
                 </div>
             )}
 
-            {/* Registry Modal */}
-            <RegistryModal
-                isOpen={showRegistryModal}
-                onClose={() => setShowRegistryModal(false)}
-                currentUrl={registryUrl}
-                registries={config.registries || []}
-                onLoad={(url) => setRegistryUrl(url)}
-                onLoadText={(text) => handleLoadRegistryText(text)}
+            {/* Data Mesh Operations Modal */}
+            <DataMeshOperationsModal
+                isOpen={showDataMeshOperationsModal}
+                onClose={() => setShowDataMeshOperationsModal(false)}
+                currentUrl={dataMeshOperationsUrl}
+                dataMeshOperationsList={config.dataMeshOperationsList || []}
+                onLoad={(url) => setDataMeshOperationsUrl(url)}
+                onLoadText={(text) => handleLoadDataMeshOperationsText(text)}
             />
         </div>
     );

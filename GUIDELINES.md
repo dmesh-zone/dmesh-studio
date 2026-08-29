@@ -1,7 +1,7 @@
 # Data Mesh Studio Development Standards
 
 ## 1. Project Overview
-A React-based visualization tool for Data Mesh registries, utilizing React Flow (`@xyflow/react`) for graph rendering, Material UI (MUI) for standardized UI components, and AJV for schema validation against ODCS (Open Data Contract Standard) and ODPS (Open Data Product Specification).
+A React-based visualization tool for Data Mesh dataMeshOperationsList, utilizing React Flow (`@xyflow/react`) for graph rendering, Material UI (MUI) for standardized UI components, and AJV for schema validation against ODCS (Open Data Contract Standard) and ODPS (Open Data Product Specification).
 
 ## 2. Coding Conventions
 
@@ -61,7 +61,7 @@ window.dispatchEvent(event);
 ### Schema Standards
 - **ODCS**: Open Data Contract Standard (stored in `src/schemas/odcs-...`).
 - **ODPS**: Open Data Product Specification (stored in `src/schemas/odps-...`).
-- **Validation**: All registry items should be validated via `src/ValidationService.js`.
+- **Validation**: All dataMeshOperations items should be validated via `src/ValidationService.js`.
 
 ### Validation Service Logic
 When adding new validation rules:

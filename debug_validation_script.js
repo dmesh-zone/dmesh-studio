@@ -34,13 +34,13 @@ try {
     process.exit(1);
 }
 
-console.log('Parsing registry...');
-const registryRaw = fs.readFileSync(path.join(__dirname, 'public/DataMeshOperationalDataPetsExample.yaml'), 'utf8');
-const registry = YAML.parse(registryRaw);
+console.log('Parsing dataMeshOperations...');
+const dataMeshOperationsRaw = fs.readFileSync(path.join(__dirname, 'public/DataMeshOperationalDataPetsExample.yaml'), 'utf8');
+const dataMeshOperations = YAML.parse(dataMeshOperationsRaw);
 
 console.log('Validating items...');
 const errors = [];
-registry.forEach((item, index) => {
+dataMeshOperations.forEach((item, index) => {
     let validateFn = null;
     let type = 'Unknown';
 
@@ -72,5 +72,5 @@ console.log(`Validation complete. Found ${errors.length} errors.`);
 if (errors.length > 0) {
     console.log(JSON.stringify(errors, null, 2));
 } else {
-    console.log('Registry is valid!');
+    console.log('Data Mesh Operations is valid!');
 }

@@ -241,21 +241,21 @@ function DataProductsTable() {
                 const defaultEnv = configData['default-environment'] || envList[envList.length - 1];
                 setEnvFilter(defaultEnv);
 
-                // 2. Fetch Registry Data
-                const registryUrl = normalizePath(configData.defaultDataMeshOperationalDataUrl);
-                const registryRes = await fetch(registryUrl);
-                if (!registryRes.ok) throw new Error(`Failed to load registry from ${registryUrl}`);
-                const registryText = await registryRes.text();
-                const registryData = YAML.parse(registryText);
+                // 2. Fetch Data Mesh Operations Data
+                const dataMeshOperationsUrl = normalizePath(configData.defaultDataMeshOperationalDataUrl);
+                const dataMeshOperationsRes = await fetch(dataMeshOperationsUrl);
+                if (!dataMeshOperationsRes.ok) throw new Error(`Failed to load dataMeshOperations from ${dataMeshOperationsUrl}`);
+                const dataMeshOperationsText = await dataMeshOperationsRes.text();
+                const dataMeshOperationsData = YAML.parse(dataMeshOperationsText);
 
-                if (!registryData) {
+                if (!dataMeshOperationsData) {
                     setProductsList([]);
                     setIsLoading(false);
                     return;
                 }
 
                 // 3. Process Products
-                const envsData = Array.isArray(registryData) ? registryData : [registryData];
+                const envsData = Array.isArray(dataMeshOperationsData) ? dataMeshOperationsData : [dataMeshOperationsData];
 
                 // Collect all products and track their presence in environments
                 const productsMap = new Map();

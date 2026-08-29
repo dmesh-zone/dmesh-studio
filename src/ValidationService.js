@@ -56,21 +56,21 @@ try {
     console.error("Failed to compile Metrics schema", e);
 }
 
-export const validateRegistry = (registry, rawRegistry) => {
+export const validateDataMeshOperations = (dataMeshOperations, rawDataMeshOperations) => {
     const errors = [];
     let doc = null;
     let lineCounter = null;
 
-    if (rawRegistry) {
+    if (rawDataMeshOperations) {
         try {
             lineCounter = new YAML.LineCounter();
-            doc = YAML.parseDocument(rawRegistry, { lineCounter });
+            doc = YAML.parseDocument(rawDataMeshOperations, { lineCounter });
         } catch (e) {
             console.error("Failed to parse YAML document for line numbers", e);
         }
     }
 
-    registry.forEach((item, index) => {
+    dataMeshOperations.forEach((item, index) => {
         let validateFn = null;
         let type = 'Unknown';
 

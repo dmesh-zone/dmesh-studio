@@ -50,7 +50,7 @@ const createCheck = (name, status, severity, value, unit, threshold, message) =>
     return check;
 };
 
-export const generatePipelineMetrics = (statusOverride, registry, dp, configObs) => {
+export const generatePipelineMetrics = (statusOverride, dataMeshOperations, dp, configObs) => {
     const status = statusOverride || getRandomStatus();
     const isCritical = status === 'critical';
     const isDegraded = status === 'degraded';
@@ -79,7 +79,7 @@ export const generatePipelineMetrics = (statusOverride, registry, dp, configObs)
     ];
 };
 
-export const generateConsumptionMetrics = (statusOverride, registry, dp, configObs) => {
+export const generateConsumptionMetrics = (statusOverride, dataMeshOperations, dp, configObs) => {
     const status = statusOverride || getRandomStatus();
     const isCritical = status === 'critical';
     const isDegraded = status === 'degraded';
@@ -93,10 +93,10 @@ export const generateConsumptionMetrics = (statusOverride, registry, dp, configO
     const dcCheckName = dimConfig?.dataContractCheck;
     const dcMetricsNames = dimConfig?.dataContractMetrics || [];
 
-    if (dp && registry && dp.outputPorts && dp.outputPorts.length > 0 && dcCheckName) {
+    if (dp && dataMeshOperations && dp.outputPorts && dp.outputPorts.length > 0 && dcCheckName) {
         dp.outputPorts.forEach(op => {
             if (op.contractId) {
-                const contract = registry.find(item => item.id === op.contractId && item.kind === 'DataContract');
+                const contract = dataMeshOperations.find(item => item.id === op.contractId && item.kind === 'DataContract');
                 if (contract && contract.schema) {
                     contract.schema.forEach(schema => {
                         const targetId = `${op.contractId}/${schema.name}`;
@@ -157,7 +157,7 @@ export const generateConsumptionMetrics = (statusOverride, registry, dp, configO
     return [...baseMetrics, ...dcResults];
 };
 
-export const generateFreshnessMetrics = (statusOverride, registry, dp, configObs) => {
+export const generateFreshnessMetrics = (statusOverride, dataMeshOperations, dp, configObs) => {
     const status = statusOverride || getRandomStatus();
     const isCritical = status === 'critical';
     const isDegraded = status === 'degraded';
@@ -174,10 +174,10 @@ export const generateFreshnessMetrics = (statusOverride, registry, dp, configObs
     const dcCheckName = configObs?.dimensions?.Latency?.dataContractCheck || 'dcDataLatencyCheck';
     const dcMetricsNames = configObs?.dimensions?.Latency?.dataContractMetrics || [];
     
-    if (dp && registry && dp.outputPorts && dp.outputPorts.length > 0) {
+    if (dp && dataMeshOperations && dp.outputPorts && dp.outputPorts.length > 0) {
         dp.outputPorts.forEach(op => {
             if (op.contractId) {
-                const contract = registry.find(item => item.id === op.contractId && item.kind === 'DataContract');
+                const contract = dataMeshOperations.find(item => item.id === op.contractId && item.kind === 'DataContract');
                 if (contract && contract.schema) {
                     contract.schema.forEach(schema => {
                         const targetId = `${op.contractId}/${schema.name}`;
@@ -247,7 +247,7 @@ export const generateFreshnessMetrics = (statusOverride, registry, dp, configObs
     }
 };
 
-export const generateQualityMetrics = (statusOverride, registry, dp, configObs) => {
+export const generateQualityMetrics = (statusOverride, dataMeshOperations, dp, configObs) => {
     const status = statusOverride || getRandomStatus();
     const isCritical = status === 'critical';
     const isDegraded = status === 'degraded';
@@ -271,7 +271,7 @@ export const generateQualityMetrics = (statusOverride, registry, dp, configObs) 
     ];
 };
 
-export const simulateRegistryMetrics = (dataMeshOperationalData, dimensions = [], configObs = null) => {
+export const simulateDataMeshOperationsMetrics = (dataMeshOperationalData, dimensions = [], configObs = null) => {
     if (!dataMeshOperationalData) return [];
 
     const dimsToGen = dimensions.length > 0 ? dimensions : ['Pipeline', 'Quality', 'Freshness', 'Consumption'];
@@ -356,12 +356,12 @@ const runCli = async () => {
 
     const args = process.argv.slice(2);
     if (args.length === 0) {
-        console.log('Usage: node ObsSimulation.js <path-to-registry.yaml>');
+        console.log('Usage: node ObsSimulation.js <path-to-dataMeshOperations.yaml>');
         return process.exit(1);
     }
 
-    const registryPath = path.resolve(args[0]);
-    if (!fs.existsSync(registryPath)) {
+    const dataMeshOperationsPath = path.resolve(args[0]);
+    if (!fs.existsSync(dataMeshOperationsPath)) {
         console.error(`Error: File not found`);
         return process.exit(1);
     }
@@ -377,13 +377,13 @@ const runCli = async () => {
         dimensions = Object.keys(configObs.dimensions);
     }
 
-    const fileContent = fs.readFileSync(registryPath, 'utf8');
-    const registry = YAML.parse(fileContent);
-    const metrics = simulateRegistryMetrics(registry, dimensions, configObs);
+    const fileContent = fs.readFileSync(dataMeshOperationsPath, 'utf8');
+    const dataMeshOperations = YAML.parse(fileContent);
+    const metrics = simulateDataMeshOperationsMetrics(dataMeshOperations, dimensions, configObs);
 
-    if (Array.isArray(registry)) {
-        const updated = [...registry, ...metrics];
-        fs.writeFileSync(registryPath.replace('.yaml', '-with-sim-metrics.yaml'), YAML.stringify(updated));
+    if (Array.isArray(dataMeshOperations)) {
+        const updated = [...dataMeshOperations, ...metrics];
+        fs.writeFileSync(dataMeshOperationsPath.replace('.yaml', '-with-sim-metrics.yaml'), YAML.stringify(updated));
     }
 };
 
