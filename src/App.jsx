@@ -23,7 +23,9 @@ import HubIcon from '@mui/icons-material/Hub';
 import LayersIcon from '@mui/icons-material/Layers';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useThemeContext } from './ThemeContext';
+import SettingsView from './SettingsView';
 
 function App() {
   const [currentView, setCurrentView] = useState('mesh');
@@ -181,16 +183,60 @@ function App() {
               )}
             </Box>
           </Tooltip>
+          {/* Settings Navigation Target */}
+          <Tooltip title={!isExpanded ? "Settings" : ""} placement="right">
+            <Box
+              onClick={() => setCurrentView('settings')}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: isExpanded ? 'flex-start' : 'center',
+                cursor: 'pointer',
+                px: isExpanded ? 2.5 : 0,
+                height: 48,
+                borderLeft: currentView === 'settings' ? '3px solid' : '3px solid transparent',
+                borderColor: currentView === 'settings' ? (mode === 'dark' ? '#ffffff' : '#111111') : 'transparent',
+                backgroundColor: currentView === 'settings'
+                  ? (mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)')
+                  : 'transparent',
+                transition: 'all 0.15s ease',
+                '&:hover': {
+                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+                }
+              }}
+            >
+              <SettingsIcon 
+                sx={{ 
+                  mr: isExpanded ? 2 : 0, 
+                  color: mode === 'dark' ? '#ffffff' : '#111111',
+                  fontSize: 22,
+                  transition: 'margin 0.2s ease'
+                }} 
+              />
+              {isExpanded && (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: currentView === 'settings' ? 700 : 400,
+                    color: mode === 'dark' ? '#ffffff' : '#111111',
+                    whiteSpace: 'nowrap',
+                    opacity: isExpanded ? 1 : 0,
+                    transition: 'opacity 0.2s ease',
+                  }}
+                >
+                  Settings
+                </Typography>
+              )}
+            </Box>
+          </Tooltip>
         </Box>
       </Box>
 
       {/* Main Content Area */}
       <Box sx={{ flexGrow: 1, height: '100%', overflow: 'hidden', position: 'relative' }}>
-        {currentView === 'mesh' ? (
-          <Flow isExpanded={isExpanded} />
-        ) : (
-          <DataProductsTable />
-        )}
+        {currentView === 'mesh' && <Flow isExpanded={isExpanded} />}
+        {currentView === 'products' && <DataProductsTable />}
+        {currentView === 'settings' && <SettingsView />}
       </Box>
     </Box>
   );
