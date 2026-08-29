@@ -1803,17 +1803,19 @@ function Flow({ isExpanded = false }) {
             </React.Fragment>
         );
     };
-    const downloadData = (format) => {
+    const downloadData = (format, isMulti = false) => {
         let content = '';
         let type = '';
         let extension = '';
 
+        const targetData = isMulti ? allEnvsData : dataMeshOperations;
+
         if (format === 'yaml') {
-            content = YAML.stringify(dataMeshOperations);
+            content = YAML.stringify(targetData);
             type = 'text/yaml';
             extension = 'yaml';
         } else if (format === 'json') {
-            content = JSON.stringify(dataMeshOperations, null, 2);
+            content = JSON.stringify(targetData, null, 2);
             type = 'application/json';
             extension = 'json';
         }
@@ -1838,15 +1840,16 @@ function Flow({ isExpanded = false }) {
         URL.revokeObjectURL(url);
     };
 
-    const copyDataToClipboard = (format) => {
+    const copyDataToClipboard = (format, isMulti = false) => {
         let content = '';
+        const targetData = isMulti ? allEnvsData : dataMeshOperations;
         if (format === 'yaml') {
-            content = YAML.stringify(dataMeshOperations);
+            content = YAML.stringify(targetData);
         } else if (format === 'json') {
-            content = JSON.stringify(dataMeshOperations, null, 2);
+            content = JSON.stringify(targetData, null, 2);
         }
         navigator.clipboard.writeText(content);
-        setCopiedFormat(`test-${format}`);
+        setCopiedFormat(isMulti ? `test-multi-${format}` : `test-${format}`);
         setTimeout(() => setCopiedFormat(null), 2000);
     };
 
@@ -1855,8 +1858,10 @@ function Flow({ isExpanded = false }) {
             {/* Secret Test Mode Toggle */}
             <div
                 onClick={() => {
-                    if (!window.location.hash.includes('#test')) {
-                        setIsTestMode(prev => !prev);
+                    if (window.location.hash.includes('#test')) {
+                        window.location.hash = '';
+                    } else {
+                        window.location.hash = '#test';
                     }
                 }}
                 style={{
@@ -2517,7 +2522,7 @@ function Flow({ isExpanded = false }) {
                     elementsSelectable={false}
                 >
                     <Background />
-                    <Controls position="bottom-right" />
+                    <Controls position="bottom-left" />
                     {/* <MiniMap position="bottom-right" /> */}
                     <svg style={{ position: 'absolute', top: 0, left: 0 }}>
                         <defs>
@@ -2905,7 +2910,7 @@ function Flow({ isExpanded = false }) {
                     style={{
                         position: 'fixed',
                         bottom: 0,
-                        left: 0,
+                        right: 0,
                         padding: '24px',
                         zIndex: 100,
                         display: 'flex',
@@ -3120,6 +3125,107 @@ function Flow({ isExpanded = false }) {
                                 }}>J</span>
                             </div>
                         </button>
+
+                        {config?.['multi-environment'] && Array.isArray(config['multi-environment']) && allEnvsData.length > 0 && (
+                            <React.Fragment>
+                                {/* Copy Multi YAML */}
+                                <button
+                                    onClick={() => copyDataToClipboard('yaml', true)}
+                                    style={{
+                                        width: '34px', height: '34px', borderRadius: '17px',
+                                        background: copiedFormat === 'test-multi-yaml' ? '#10b981' : 'var(--button-secondary-bg, #f3f4f6)',
+                                        border: 'none', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (copiedFormat !== 'test-multi-yaml') e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                                        e.currentTarget.style.transform = 'scale(1.05)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (copiedFormat !== 'test-multi-yaml') e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                                        e.currentTarget.style.transform = 'scale(1)';
+                                    }}
+                                    title="Copy All Environments as YAML"
+                                >
+                                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        {copiedFormat === 'test-multi-yaml' ? (
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        ) : (
+                                            <>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                <span style={{ position: 'absolute', top: '-2px', right: '-12px', fontSize: '9px', fontWeight: 'bold', color: 'var(--button-secondary-text, white)', textShadow: '0 0 2px rgba(0,0,0,0.5)' }}>MY</span>
+                                            </>
+                                        )}
+                                    </div>
+                                </button>
+                                {/* Download Multi YAML */}
+                                <button
+                                    onClick={() => downloadData('yaml', true)}
+                                    style={{
+                                        width: '34px', height: '34px', borderRadius: '17px',
+                                        background: 'var(--button-secondary-bg, #f3f4f6)',
+                                        border: 'none', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)'; e.currentTarget.style.transform = 'scale(1.05)'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                                    title="Download All Environments as YAML"
+                                >
+                                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                        <span style={{ position: 'absolute', top: '-2px', right: '-12px', fontSize: '9px', fontWeight: 'bold', color: 'var(--button-secondary-text, white)', textShadow: '0 0 2px rgba(0,0,0,0.5)' }}>MY</span>
+                                    </div>
+                                </button>
+                                {/* Copy Multi JSON */}
+                                <button
+                                    onClick={() => copyDataToClipboard('json', true)}
+                                    style={{
+                                        width: '34px', height: '34px', borderRadius: '17px',
+                                        background: copiedFormat === 'test-multi-json' ? '#10b981' : 'var(--button-secondary-bg, #f3f4f6)',
+                                        border: 'none', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (copiedFormat !== 'test-multi-json') e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)';
+                                        e.currentTarget.style.transform = 'scale(1.05)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (copiedFormat !== 'test-multi-json') e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)';
+                                        e.currentTarget.style.transform = 'scale(1)';
+                                    }}
+                                    title="Copy All Environments as JSON"
+                                >
+                                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        {copiedFormat === 'test-multi-json' ? (
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        ) : (
+                                            <>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                <span style={{ position: 'absolute', top: '-2px', right: '-12px', fontSize: '9px', fontWeight: 'bold', color: 'var(--button-secondary-text, white)', textShadow: '0 0 2px rgba(0,0,0,0.5)' }}>MJ</span>
+                                            </>
+                                        )}
+                                    </div>
+                                </button>
+                                {/* Download Multi JSON */}
+                                <button
+                                    onClick={() => downloadData('json', true)}
+                                    style={{
+                                        width: '34px', height: '34px', borderRadius: '17px',
+                                        background: 'var(--button-secondary-bg, #f3f4f6)',
+                                        border: 'none', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--button-secondary-hover-bg, #e5e7eb)'; e.currentTarget.style.transform = 'scale(1.05)'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--button-secondary-bg, #f3f4f6)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                                    title="Download All Environments as JSON"
+                                >
+                                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--button-secondary-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                        <span style={{ position: 'absolute', top: '-2px', right: '-12px', fontSize: '9px', fontWeight: 'bold', color: 'var(--button-secondary-text, white)', textShadow: '0 0 2px rgba(0,0,0,0.5)' }}>MJ</span>
+                                    </div>
+                                </button>
+                            </React.Fragment>
+                        )}
 
                         {/* Load Data Mesh Operations */}
                         <button
