@@ -25,7 +25,16 @@ import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrow
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useThemeContext } from './ThemeContext';
-import SettingsView from './SettingsView';
+import pages from './pages';
+import YAML from 'yaml';
+import * as MuiIcons from '@mui/icons-material';
+import ReactMarkdown from 'react-markdown';
+import pageCustomisationMarkdown from '../page-customisation.md?raw';
+
+const normalizePath = (path) => {
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  return (baseUrl + path).replace(/\/\//g, '/');
+};
 
 function App() {
   const [currentView, setCurrentView] = useState('mesh');
@@ -43,6 +52,23 @@ function App() {
     const themeUrl = `${baseUrl}/themes/${mode}-theme.css`.replace('//', '/');
     themeLink.href = import.meta.env.DEV ? `${themeUrl}?t=${Date.now()}` : themeUrl;
   }, [mode]);
+
+  const [navConfig, setNavConfig] = useState(null);
+
+  React.useEffect(() => {
+    Promise.all([
+      fetch(normalizePath(`/config.yaml?t=${Date.now()}`)).then(r => r.ok ? r.text() : ''),
+      fetch(normalizePath(`/customConfig.yaml?t=${Date.now()}`)).then(r => r.ok ? r.text() : '')
+    ]).then(([configText, customConfigText]) => {
+        let baseConfig = {};
+        let customConfig = {};
+        try { if (configText) baseConfig = YAML.parse(configText) || {}; } catch (e) {}
+        try { if (customConfigText) customConfig = YAML.parse(customConfigText) || {}; } catch (e) {}
+        
+        const mergedNav = customConfig.navigation || baseConfig.navigation;
+        setNavConfig(mergedNav);
+    });
+  }, []);
 
   return (
     <Box sx={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden', bgcolor: 'var(--m3-surface, #f5f5f5)' }}>
@@ -90,153 +116,100 @@ function App() {
 
         {/* Navigation Items */}
         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, width: '100%', pt: 1 }}>
-          {/* Data Mesh Navigation Target */}
-          <Tooltip title={!isExpanded ? "Data Mesh" : ""} placement="right">
-            <Box
-              onClick={() => setCurrentView('mesh')}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: isExpanded ? 'flex-start' : 'center',
-                cursor: 'pointer',
-                px: isExpanded ? 2.5 : 0,
-                height: 48,
-                borderLeft: currentView === 'mesh' ? '3px solid' : '3px solid transparent',
-                borderColor: currentView === 'mesh' ? (mode === 'dark' ? '#ffffff' : '#111111') : 'transparent',
-                backgroundColor: currentView === 'mesh'
-                  ? (mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)')
-                  : 'transparent',
-                transition: 'all 0.15s ease',
-                '&:hover': {
-                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
-                }
-              }}
-            >
-              <HubIcon 
-                sx={{ 
-                  mr: isExpanded ? 2 : 0, 
-                  color: mode === 'dark' ? '#ffffff' : '#111111',
-                  fontSize: 22,
-                  transition: 'margin 0.2s ease'
-                }} 
-              />
+          {navConfig?.sections?.map((section, sIdx) => (
+            <React.Fragment key={sIdx}>
               {isExpanded && (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontWeight: currentView === 'mesh' ? 700 : 400,
-                    color: mode === 'dark' ? '#ffffff' : '#111111',
-                    whiteSpace: 'nowrap',
-                    opacity: isExpanded ? 1 : 0,
-                    transition: 'opacity 0.2s ease',
-                  }}
-                >
-                  Data Mesh
+                <Typography variant="overline" sx={{ px: 2, pt: 1, pb: 0.5, color: 'text.secondary', fontWeight: 'bold' }}>
+                  {section.name}
                 </Typography>
               )}
-            </Box>
-          </Tooltip>
-
-          {/* Data Products Navigation Target */}
-          <Tooltip title={!isExpanded ? "Data Products" : ""} placement="right">
-            <Box
-              onClick={() => setCurrentView('products')}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: isExpanded ? 'flex-start' : 'center',
-                cursor: 'pointer',
-                px: isExpanded ? 2.5 : 0,
-                height: 48,
-                borderLeft: currentView === 'products' ? '3px solid' : '3px solid transparent',
-                borderColor: currentView === 'products' ? (mode === 'dark' ? '#ffffff' : '#111111') : 'transparent',
-                backgroundColor: currentView === 'products'
-                  ? (mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)')
-                  : 'transparent',
-                transition: 'all 0.15s ease',
-                '&:hover': {
-                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
-                }
-              }}
-            >
-              <LayersIcon 
-                sx={{ 
-                  mr: isExpanded ? 2 : 0, 
-                  color: mode === 'dark' ? '#ffffff' : '#111111',
-                  fontSize: 22,
-                  transition: 'margin 0.2s ease'
-                }} 
-              />
-              {isExpanded && (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontWeight: currentView === 'products' ? 700 : 400,
-                    color: mode === 'dark' ? '#ffffff' : '#111111',
-                    whiteSpace: 'nowrap',
-                    opacity: isExpanded ? 1 : 0,
-                    transition: 'opacity 0.2s ease',
-                  }}
-                >
-                  Data Products
-                </Typography>
-              )}
-            </Box>
-          </Tooltip>
-          {/* Settings Navigation Target */}
-          <Tooltip title={!isExpanded ? "Settings" : ""} placement="right">
-            <Box
-              onClick={() => setCurrentView('settings')}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: isExpanded ? 'flex-start' : 'center',
-                cursor: 'pointer',
-                px: isExpanded ? 2.5 : 0,
-                height: 48,
-                borderLeft: currentView === 'settings' ? '3px solid' : '3px solid transparent',
-                borderColor: currentView === 'settings' ? (mode === 'dark' ? '#ffffff' : '#111111') : 'transparent',
-                backgroundColor: currentView === 'settings'
-                  ? (mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)')
-                  : 'transparent',
-                transition: 'all 0.15s ease',
-                '&:hover': {
-                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
-                }
-              }}
-            >
-              <SettingsIcon 
-                sx={{ 
-                  mr: isExpanded ? 2 : 0, 
-                  color: mode === 'dark' ? '#ffffff' : '#111111',
-                  fontSize: 22,
-                  transition: 'margin 0.2s ease'
-                }} 
-              />
-              {isExpanded && (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontWeight: currentView === 'settings' ? 700 : 400,
-                    color: mode === 'dark' ? '#ffffff' : '#111111',
-                    whiteSpace: 'nowrap',
-                    opacity: isExpanded ? 1 : 0,
-                    transition: 'opacity 0.2s ease',
-                  }}
-                >
-                  Settings
-                </Typography>
-              )}
-            </Box>
-          </Tooltip>
+              {section.pages.map((page) => {
+                const IconComponent = MuiIcons[page.icon] || MuiIcons[page.icon + 'Icon'] || LayersIcon;
+                return (
+                  <Tooltip key={page.id} title={!isExpanded ? page.title : ""} placement="right">
+                    <Box
+                      onClick={() => setCurrentView(page.id)}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: isExpanded ? 'flex-start' : 'center',
+                        cursor: 'pointer',
+                        px: isExpanded ? 2.5 : 0,
+                        height: 48,
+                        borderLeft: currentView === page.id ? '3px solid' : '3px solid transparent',
+                        borderColor: currentView === page.id ? (mode === 'dark' ? '#ffffff' : '#111111') : 'transparent',
+                        backgroundColor: currentView === page.id
+                          ? (mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)')
+                          : 'transparent',
+                        transition: 'all 0.15s ease',
+                        '&:hover': {
+                          backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+                        }
+                      }}
+                    >
+                      <IconComponent 
+                        sx={{ 
+                          mr: isExpanded ? 2 : 0, 
+                          color: mode === 'dark' ? '#ffffff' : '#111111',
+                          fontSize: 22,
+                          transition: 'margin 0.2s ease'
+                        }} 
+                      />
+                      {isExpanded && (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: currentView === page.id ? 700 : 400,
+                            color: mode === 'dark' ? '#ffffff' : '#111111',
+                            whiteSpace: 'nowrap',
+                            opacity: isExpanded ? 1 : 0,
+                            transition: 'opacity 0.2s ease',
+                          }}
+                        >
+                          {page.title}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Tooltip>
+                );
+              })}
+            </React.Fragment>
+          ))}
         </Box>
       </Box>
 
       {/* Main Content Area */}
       <Box sx={{ flexGrow: 1, height: '100%', overflow: 'hidden', position: 'relative' }}>
-        {currentView === 'mesh' && <Flow isExpanded={isExpanded} />}
-        {currentView === 'products' && <DataProductsTable />}
-        {currentView === 'settings' && <SettingsView />}
+        {(() => {
+          let ActiveComponent = null;
+          if (navConfig) {
+            for (const section of navConfig.sections) {
+              const page = section.pages.find(p => p.id === currentView);
+              if (page && pages[page.component]) {
+                ActiveComponent = pages[page.component];
+                break;
+              }
+            }
+          }
+          if (ActiveComponent) {
+            return <ActiveComponent isExpanded={isExpanded} />;
+          }
+          return (
+            <Box sx={{ p: 4, height: '100%', overflow: 'auto' }}>
+              <Box sx={{ 
+                p: 4, 
+                borderRadius: 2, 
+                boxShadow: '0 4px 6px rgba(0,0,0,0.05)', 
+                bgcolor: 'background.paper',
+                '& h1, & h2, & h3': { mt: 0, mb: 2 },
+                '& p': { mb: 2 },
+                '& pre': { p: 2, bgcolor: 'rgba(0,0,0,0.05)', borderRadius: 1, overflowX: 'auto' }
+              }}>
+                <ReactMarkdown>{pageCustomisationMarkdown}</ReactMarkdown>
+              </Box>
+            </Box>
+          );
+        })()}
       </Box>
     </Box>
   );

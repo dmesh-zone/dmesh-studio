@@ -1,4 +1,23 @@
 # default config.yaml can be overridden by customConfig.yaml
+
+# see customisation.md to learn how to add new pages or override existing ones
+navigation:
+  sections:
+    - name: ""
+      pages:
+        - id: "mesh"
+          title: "Data Mesh"
+          icon: "Hub"
+          component: "DataMesh"
+        - id: "products"
+          title: "Data Products"
+          icon: "Layers"
+          component: "DataProducts"
+        - id: "settings"
+          title: "Settings"
+          icon: "Settings"
+          component: "Settings"
+
 defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsMultiEnvExample.yaml
 multi-environment: ["Dev", "QA", "Prod"]
 # multi-environment: ["Dev", "QA", "Prod"]
