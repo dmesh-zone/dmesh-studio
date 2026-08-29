@@ -30,6 +30,8 @@ sandbox/*
 
 # Project specific
 customConfig.yaml
+_customConfig.yaml
 scratch/*
 public/customTheme.css
 public/themes/custom-theme.css
+src/pages/custom/*
