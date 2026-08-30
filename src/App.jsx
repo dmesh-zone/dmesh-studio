@@ -42,16 +42,33 @@ function App() {
   const [isExpanded, setIsExpanded] = useState(true);
   const { mode } = useThemeContext();
   React.useEffect(() => {
-    let themeLink = document.getElementById('theme-link');
-    if (!themeLink) {
-        themeLink = document.createElement('link');
-        themeLink.id = 'theme-link';
-        themeLink.rel = 'stylesheet';
-        document.head.appendChild(themeLink);
-    }
-    const baseUrl = import.meta.env.BASE_URL || '/';
-    const themeUrl = `${baseUrl}/themes/${mode}-theme.css`.replace('//', '/');
-    themeLink.href = import.meta.env.DEV ? `${themeUrl}?t=${Date.now()}` : themeUrl;
+    const applyTheme = async () => {
+      let themeLink = document.getElementById('theme-link');
+      if (!themeLink) {
+          themeLink = document.createElement('link');
+          themeLink.id = 'theme-link';
+          themeLink.rel = 'stylesheet';
+          document.head.appendChild(themeLink);
+      }
+      
+      const baseUrl = import.meta.env.BASE_URL || '/';
+      const customThemeUrl = `${baseUrl}/themes/custom/${mode}-theme.css`.replace('//', '/');
+      const baseThemeUrl = `${baseUrl}/themes/base/${mode}-theme.css`.replace('//', '/');
+      
+      try {
+        const response = await fetch(customThemeUrl, { method: 'HEAD' });
+        if (response.ok) {
+           themeLink.href = import.meta.env.DEV ? `${customThemeUrl}?t=${Date.now()}` : customThemeUrl;
+           return;
+        }
+      } catch (e) {
+        console.warn('Could not check for custom theme', e);
+      }
+
+      themeLink.href = import.meta.env.DEV ? `${baseThemeUrl}?t=${Date.now()}` : baseThemeUrl;
+    };
+    
+    applyTheme();
   }, [mode]);
 
   const [navConfig, setNavConfig] = useState(null);

@@ -26,8 +26,6 @@ multi-environment: ["Dev", "QA", "Prod"]
 single-domain-default-filter: False # Default is False
 zoom-to-fit-columns: True # Default is True
 
-theme: light
-
 # Customise domain names by mapping their names as they appear in the domain filter to a more user-friendly name
 domainNameCustomisation:
   "food_production": "Food Production"

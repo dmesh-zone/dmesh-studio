@@ -87,7 +87,7 @@ export default Flow;
 
 function Flow({ isExpanded = false }) {
     // Theme Context
-    const { mode, setThemeFromConfig } = useThemeContext();
+    const { mode } = useThemeContext();
 
     // Data Mesh Operations State - URL will be loaded from config.json
     const [dataMeshOperationsUrl, setDataMeshOperationsUrl] = React.useState('');
@@ -183,15 +183,6 @@ function Flow({ isExpanded = false }) {
                 setConfig(loadedConfig);
                 setConfigError(null);
 
-                // Pass theme config to context, but do NOT inject link here
-                // We will handle link injection in a dedicated useEffect responding to mode
-                if (loadedConfig.theme) {
-                    setThemeFromConfig(loadedConfig.theme);
-                }
-
-                // Keep the initial config.theme name so the useEffect can use it
-                // We don't append to DOM here.
-
                 // Set initial dataMeshOperations URL from config
                 setDataMeshOperationsUrl(loadedConfig.defaultDataMeshOperationalDataUrl);
             })
@@ -200,35 +191,6 @@ function Flow({ isExpanded = false }) {
                 setConfigError(err.message);
             });
     }, []);
-
-    // Effect to handle CSS theme file injection based on mode
-    React.useEffect(() => {
-        if (!config) return;
-
-        let activeThemeName = 'light';
-        const configThemeName = typeof config.theme === 'string' ? config.theme : 'light';
-
-        if (configThemeName === 'light' || configThemeName === 'dark') {
-            activeThemeName = mode; // Obey user toggle
-        } else {
-            // For custom themes, switch to "dark" if dark mode is requested, or fallback to the custom string.
-            // Ideally we'd load 'custom-dark' but we'll use 'dark' as the base.
-            activeThemeName = mode === 'dark' ? 'dark' : configThemeName;
-        }
-
-        let themeLink = document.getElementById('theme-link');
-        if (!themeLink) {
-            themeLink = document.createElement('link');
-            themeLink.id = 'theme-link';
-            themeLink.rel = 'stylesheet';
-        }
-        // Always append it to the end of the head so it takes precedence over Vite's injected <style> tags
-        document.head.appendChild(themeLink);
-
-        const baseUrl = import.meta.env.BASE_URL || '/';
-        const themeUrl = `${baseUrl}/themes/${activeThemeName}-theme.css`.replace('//', '/');
-        themeLink.href = import.meta.env.DEV ? `${themeUrl}?t=${Date.now()}` : themeUrl;
-    }, [mode, config]);
 
     // React Flow State
     const [nodes, setNodes, onNodesChange] = useNodesState([]);

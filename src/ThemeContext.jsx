@@ -15,8 +15,6 @@ export const CustomThemeProvider = ({ children }) => {
         return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     });
 
-    const [configTheme, setConfigTheme] = useState(null);
-
     // Persist mode to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('theme', mode);
@@ -53,46 +51,15 @@ export const CustomThemeProvider = ({ children }) => {
             },
         };
 
-        if (configTheme) {
-            if (typeof configTheme === 'string') {
-                // If string, we might just use the active mode unless configTheme itself overrides
-                // but Flow.jsx handles appending the CSS link for string-based themes.
-                // We'll just stick to our mode for MUI components.
-            } else if (typeof configTheme === 'object') {
-                // Merge config object into themeOptions. 
-                // We map known keys like primary, secondary.
-                if (configTheme.mode) {
-                    themeOptions.palette.mode = configTheme.mode;
-                }
-                if (configTheme.primary) {
-                    themeOptions.palette.primary = { main: configTheme.primary };
-                }
-                if (configTheme.secondary) {
-                    themeOptions.palette.secondary = { main: configTheme.secondary };
-                }
-                // Inject CSS variables to root
-                const rootStyle = document.documentElement.style;
-                Object.keys(configTheme).forEach(key => {
-                    if (key.startsWith('--')) {
-                        rootStyle.setProperty(key, configTheme[key]);
-                    }
-                });
-            }
-        }
-
         return createTheme(themeOptions);
-    }, [mode, configTheme]);
+    }, [mode]);
 
     const toggleTheme = () => {
         setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
     };
 
-    const setThemeFromConfig = (loadedTheme) => {
-        setConfigTheme(loadedTheme);
-    };
-
     return (
-        <ThemeContext.Provider value={{ mode, setMode, toggleTheme, setThemeFromConfig, configTheme }}>
+        <ThemeContext.Provider value={{ mode, setMode, toggleTheme }}>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 {children}
