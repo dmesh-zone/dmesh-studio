@@ -2,6 +2,9 @@
   /* Typography */
   --font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 
+  /* Primary Theme Color */
+  --primary-main: #90caf9;
+
   /* React Flow Overrides */
   --xy-background-color: #141414;
   --xy-background-pattern-dots-color: #777;

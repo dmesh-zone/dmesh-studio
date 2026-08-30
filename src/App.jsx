@@ -30,6 +30,7 @@ import YAML from 'yaml';
 import * as MuiIcons from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 import pageCustomisationMarkdown from '../page-customisation.md?raw';
+import Banner from './banner';
 
 const normalizePath = (path) => {
   const baseUrl = import.meta.env.BASE_URL || '/';
@@ -71,9 +72,11 @@ function App() {
   }, []);
 
   return (
-    <Box sx={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden', bgcolor: 'var(--m3-surface, #f5f5f5)' }}>
-      {/* Navigation Drawer/Rail */}
-      <Box
+    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100vw', height: '100vh', overflow: 'hidden', bgcolor: 'var(--m3-surface, #f5f5f5)' }}>
+      <Banner />
+      <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
+        {/* Navigation Drawer/Rail */}
+        <Box
         sx={{
           width: isExpanded ? 240 : 72,
           display: 'flex',
@@ -210,6 +213,7 @@ function App() {
             </Box>
           );
         })()}
+      </Box>
       </Box>
     </Box>
   );
