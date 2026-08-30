@@ -9,7 +9,7 @@ export default function Avatar() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <MuiAvatar
                 sx={{
-                    bgcolor: 'var(--primary-main, #6750A4)',
+                    bgcolor: 'primary.main',
                     width: 32,
                     height: 32,
                     fontSize: '0.875rem'

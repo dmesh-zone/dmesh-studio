@@ -15,6 +15,8 @@ export const CustomThemeProvider = ({ children }) => {
         return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     });
 
+    const [primaryColor, setPrimaryColor] = useState(null);
+
     // Persist mode to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('theme', mode);
@@ -31,7 +33,7 @@ export const CustomThemeProvider = ({ children }) => {
             palette: {
                 mode,
                 primary: {
-                    main: '#6750A4', // M3 seed color
+                    main: primaryColor || (mode === 'dark' ? '#90caf9' : '#1976d2'), // Use dynamic color, else fallback
                 },
                 ...(mode === 'dark' && {
                     background: {
@@ -52,14 +54,14 @@ export const CustomThemeProvider = ({ children }) => {
         };
 
         return createTheme(themeOptions);
-    }, [mode]);
+    }, [mode, primaryColor]);
 
     const toggleTheme = () => {
         setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
     };
 
     return (
-        <ThemeContext.Provider value={{ mode, setMode, toggleTheme }}>
+        <ThemeContext.Provider value={{ mode, setMode, toggleTheme, setPrimaryColor }}>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 {children}

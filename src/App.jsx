@@ -40,7 +40,7 @@ const normalizePath = (path) => {
 function App() {
   const [currentView, setCurrentView] = useState('mesh');
   const [isExpanded, setIsExpanded] = useState(true);
-  const { mode } = useThemeContext();
+  const { mode, setPrimaryColor } = useThemeContext();
   React.useEffect(() => {
     const applyTheme = async () => {
       let themeLink = document.getElementById('theme-link');
@@ -52,24 +52,43 @@ function App() {
       }
       
       const baseUrl = import.meta.env.BASE_URL || '/';
-      const customThemeUrl = `${baseUrl}/themes/custom/${mode}-theme.css`.replace('//', '/');
-      const baseThemeUrl = `${baseUrl}/themes/base/${mode}-theme.css`.replace('//', '/');
+      const customThemeUrl = `${baseUrl}themes/custom/${mode}-theme.css`.replace('//', '/');
+      const baseThemeUrl = `${baseUrl}themes/base/${mode}-theme.css`.replace('//', '/');
       
+      let finalUrl = baseThemeUrl;
+
       try {
         const response = await fetch(customThemeUrl, { method: 'HEAD' });
         if (response.ok) {
-           themeLink.href = import.meta.env.DEV ? `${customThemeUrl}?t=${Date.now()}` : customThemeUrl;
-           return;
+           const contentType = response.headers.get('content-type');
+           if (contentType && contentType.includes('text/css')) {
+               finalUrl = customThemeUrl;
+           }
         }
       } catch (e) {
         console.warn('Could not check for custom theme', e);
       }
 
-      themeLink.href = import.meta.env.DEV ? `${baseThemeUrl}?t=${Date.now()}` : baseThemeUrl;
+      themeLink.href = import.meta.env.DEV ? `${finalUrl}?t=${Date.now()}` : finalUrl;
+
+      // Extract primary color to update MUI theme
+      try {
+        const cssResponse = await fetch(finalUrl);
+        const cssText = await cssResponse.text();
+        const match = cssText.match(/--primary-main:\s*(#[0-9a-fA-F]{3,6})/);
+        if (match && match[1]) {
+            setPrimaryColor(match[1]);
+        } else {
+            setPrimaryColor(null);
+        }
+      } catch (e) {
+        console.warn('Could not parse CSS for primary color', e);
+        setPrimaryColor(null);
+      }
     };
     
     applyTheme();
-  }, [mode]);
+  }, [mode, setPrimaryColor]);
 
   const [navConfig, setNavConfig] = useState(null);
 
