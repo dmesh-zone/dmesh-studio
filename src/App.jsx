@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import Flow from './Flow';
 import DataProductsTable from './DataProductsTable';
 import './App.css';
-import { Box, Tooltip, Typography, IconButton } from '@mui/material';
+import { Box, Tooltip, Typography, IconButton, Divider } from '@mui/material';
 import HubIcon from '@mui/icons-material/Hub';
 import LayersIcon from '@mui/icons-material/Layers';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
@@ -158,7 +158,10 @@ function App() {
         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, width: '100%', pt: 1 }}>
           {navConfig?.sections?.map((section, sIdx) => (
             <React.Fragment key={sIdx}>
-              {isExpanded && (
+              {sIdx > 0 && (!section.name || section.name === "") && (
+                <Divider sx={{ my: 1, borderColor: mode === 'dark' ? '#333333' : '#cccccc' }} />
+              )}
+              {isExpanded && section.name && section.name !== "" && (
                 <Typography variant="overline" sx={{ px: 2, pt: 1, pb: 0.5, color: 'text.secondary', fontWeight: 'bold' }}>
                   {section.name}
                 </Typography>
