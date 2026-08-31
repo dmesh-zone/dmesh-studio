@@ -34,4 +34,5 @@ _customConfig.yaml
 public/themes/custom/*
 src/pages/custom/*
 src/banner/custom/*
+public/fonts/custom/*
 scratch/*

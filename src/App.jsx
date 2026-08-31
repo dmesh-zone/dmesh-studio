@@ -48,8 +48,9 @@ function App() {
           themeLink = document.createElement('link');
           themeLink.id = 'theme-link';
           themeLink.rel = 'stylesheet';
-          document.head.appendChild(themeLink);
       }
+      // Always append to head to ensure it's the last stylesheet, overriding index.css
+      document.head.appendChild(themeLink);
       
       const baseUrl = import.meta.env.BASE_URL || '/';
       const customThemeUrl = `${baseUrl}themes/custom/${mode}-theme.css`.replace('//', '/');
