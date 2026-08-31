@@ -48,12 +48,12 @@ The path or URL to your Data Mesh data mesh operations YAML or JSON file.
 **Examples:**
 local file: 
 ```yaml
-defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsExample.yaml
+defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsMultiEnvExample.yaml
 ```
 
 remote file:
 ```yaml
-defaultDataMeshOperationalDataUrl: https://www.example.com/DataMeshOperationalDataPetsExample.yaml
+defaultDataMeshOperationalDataUrl: https://www.example.com/DataMeshOperationalDataPetsMultiEnvExample.yaml
 ```
 
 ### Optional Fields
@@ -101,42 +101,34 @@ tiers:
 
 **Default**: Includes `dataSource`, `sourceAligned`, `curated`, `consumerAligned`, and `application` tiers
 
-### Themes and Styling
+### Customization
 
-All UI colors, including domain palettes, tier backgrounds, and KPI cards, are fully customizable via CSS theme files. Themes are located in `public/themes/`.
+You can fully customize the studio's themes, fonts, banners, components, and configurations without permanently altering the core codebase by maintaining a separate, peer repository.
 
-To customize colors:
-1. Copy or edit `public/themes/custom-theme.css`.
-2. Update the `theme` field in your `config.yaml` to `custom`.
-3. Adjust the CSS variables for `--domain-palette-XX`, `--tier-*-color`, etc.
+A sample customization repository is available at [dmesh-studio-custom-sample](https://github.com/dmesh-zone/dmesh-studio-custom-sample).
 
-To use custom fonts:
-1. Place your font files (e.g., `.otf`, `.ttf`, `.woff2`) in the `public/fonts/custom` directory.
-2. Define the `@font-face` rules at the top of your custom CSS theme file (e.g., `public/themes/custom/light-theme.css`). Ensure relative paths correctly resolve to the font file (e.g., `../../fonts/custom/MyFont.otf`).
-3. Update the typography CSS variables in `:root` to use your new font family.
+This repository illustrates how to customise:
+- Banner, including logo and product name
+- Config, including navigation drawer items, environments supported, etc.
+- Fonts
+- Themes, allowing definition of colors and style for both light and dark themes
+- Pages, allowing adding or overriding navigational drawer target pages 
 
-**Example in `custom-theme.css`:**
-```css
-@font-face {
-  font-family: "OutfitRegular";
-  src: url("../../fonts/base/Outfit-Regular.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-}
+To apply customizations using this approach:
+1. Clone the customization repository into the same parent directory as your `dmesh-studio` project:
+   ```bash
+   git clone git@github.com:dmesh-zone/dmesh-studio-custom-sample.git
+   ```
+2. Navigate into your `dmesh-studio` directory and run the `customization.py` script, passing the suffix of your custom repository (e.g., `sample`):
+   ```bash
+   python3 customization.py sample
+   ```
+   This script will automatically locate the sibling `dmesh-studio-custom-sample` directory and seamlessly copy its `config`, `themes`, `fonts`, `banner`, and `pages` assets into the active `custom/` directories within `dmesh-studio`.
 
-@font-face {
-  font-family: "OutfitBold";
-  src: url("../../fonts/base/Outfit-Bold.otf") format("opentype");
-  font-weight: bold;
-  font-style: normal;
-}
-
-:root {
-  /* Typography - Custom OTF test font */
-  --font-family: "OutfitRegular", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --font-family-heading: "OutfitBold", "OutfitRegular", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-}
-```
+3. To remove all custom assets and revert to the base `dmesh-studio` experience, run:
+   ```bash
+   python3 customization.py off
+   ```
 
 ## Local Development
 
