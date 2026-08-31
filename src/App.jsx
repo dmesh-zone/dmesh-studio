@@ -95,8 +95,8 @@ function App() {
 
   React.useEffect(() => {
     Promise.all([
-      fetch(normalizePath(`/config.yaml?t=${Date.now()}`)).then(r => r.ok ? r.text() : ''),
-      fetch(normalizePath(`/customConfig.yaml?t=${Date.now()}`)).then(r => r.ok ? r.text() : '')
+      fetch(normalizePath(`/config/base/config.yaml?t=${Date.now()}`)).then(r => r.ok ? r.text() : ''),
+      fetch(normalizePath(`/config/custom/config.yaml?t=${Date.now()}`)).then(r => r.ok ? r.text() : '')
     ]).then(([configText, customConfigText]) => {
         let baseConfig = {};
         let customConfig = {};

@@ -42,10 +42,11 @@ def main():
     custom_fonts_dir = os.path.join(public_dir, "fonts", "custom")
     custom_banner_dir = os.path.join(script_dir, "src", "banner", "custom")
     custom_pages_dir = os.path.join(script_dir, "src", "pages", "custom")
+    custom_sample_data_dir = os.path.join(public_dir, "sampleData", "custom")
     
     if action.lower() == "off":
         # Remove custom config file specifically
-        custom_config_path = os.path.join(public_dir, "customConfig.yaml")
+        custom_config_path = os.path.join(public_dir, "config", "custom", "config.yaml")
         if os.path.exists(custom_config_path):
             os.remove(custom_config_path)
             
@@ -54,7 +55,8 @@ def main():
         clear_directory(custom_fonts_dir)
         clear_directory(custom_banner_dir)
         clear_directory(custom_pages_dir)
-        print("Custom config, themes, fonts, banner, and pages have been successfully removed (switched OFF)!")
+        clear_directory(custom_sample_data_dir)
+        print("Custom config, themes, fonts, banner, pages, and sampleData have been successfully removed (switched OFF)!")
     else:
         # Action is an input name, find dmesh-studio-custom-<input>
         source_base = os.path.join(script_dir, "..", f"dmesh-studio-custom-{action}")
@@ -66,7 +68,8 @@ def main():
             
         # Copy config
         src_config = os.path.join(source_base, "config")
-        copy_directory_contents(src_config, public_dir)
+        custom_config_dir = os.path.join(public_dir, "config", "custom")
+        copy_directory_contents(src_config, custom_config_dir)
         
         # Copy themes
         src_themes = os.path.join(source_base, "themes")
@@ -83,6 +86,10 @@ def main():
         # Copy pages
         src_pages = os.path.join(source_base, "pages")
         copy_directory_contents(src_pages, custom_pages_dir)
+        
+        # Copy sampleData
+        src_sample_data = os.path.join(source_base, "sampleData")
+        copy_directory_contents(src_sample_data, custom_sample_data_dir)
         
         print(f"Custom assets from 'dmesh-studio-custom-{action}' have been successfully copied!")
 

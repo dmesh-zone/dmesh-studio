@@ -12,7 +12,7 @@ Live demo: https://dmesh-zone.github.io/dmesh-studio
 - **Interactive Visualization**: Browse Data Products, their relationships, and contracts
 - **Domain Filtering**: Filter by domain and search by name
 - **Data Quality Rules**: View quality rules and validation criteria
-- **Configurable**: Customize icons, colors, and tiers via `config.yaml`
+- **Configurable**: Customize icons, colors, and tiers via `config/base/config.yaml`
 
 ## Views and Drilldowns
 - **DataMesh View**: Default layout displaying all Data Products, Data Contracts, and Data Usage Agreements across domains.
@@ -25,13 +25,13 @@ Live demo: https://dmesh-zone.github.io/dmesh-studio
 
 ## Configuration
 
-The application is configured through `./public/config.yaml`. This file controls the default dataMeshOperations URL, visual appearance, and data product tiers.
-Additionally, you can create a `./public/customConfig.yaml` file to override any settings in `config.yaml` without modifying the core configuration file.
+The application is configured through `./public/config/base/config.yaml`. This file controls the default dataMeshOperations URL, visual appearance, and data product tiers.
+Additionally, you can create a `./public/config/custom/config/custom/config.yaml` file to override any settings in `config/base/config.yaml` without modifying the default configuration file.
 
 ### Configuration File Structure
 
 ```yaml
-defaultDataMeshOperationalDataUrl: /DataMeshOperationalData.yaml
+defaultDataMeshOperationalDataUrl: /sampleData/base/DataMeshOperationalData.yaml
 theme: light
 iconMap:
   ...
@@ -48,12 +48,12 @@ The path or URL to your Data Mesh data mesh operations YAML or JSON file.
 **Examples:**
 local file: 
 ```yaml
-defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsMultiEnvExample.yaml
+defaultDataMeshOperationalDataUrl: /sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
 ```
 
 remote file:
 ```yaml
-defaultDataMeshOperationalDataUrl: https://www.example.com/DataMeshOperationalDataPetsMultiEnvExample.yaml
+defaultDataMeshOperationalDataUrl: https://www.example.com/sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
 ```
 
 ### Optional Fields
@@ -200,25 +200,25 @@ This will create a new file `public/MyData Mesh Operations-with-sim-metrics.yaml
 
 If you see a red "Configuration Error" banner:
 
-**"Failed to load config.yaml"**
-- Ensure `public/config.yaml` exists
+**"Failed to load config/base/config.yaml"**
+- Ensure `public/config/base/config.yaml` exists
 - Check that the file is valid YAML (proper indentation, no tabs)
 - Verify file permissions
 
-**"config.yaml is empty"**
+**"config/base/config.yaml is empty"**
 - Add configuration settings to the file
 - See the Configuration section above for the required structure
 
-**"config.yaml contains invalid YAML syntax"**
+**"config/base/config.yaml contains invalid YAML syntax"**
 - Check indentation (use spaces, not tabs)
 - Ensure colons have spaces after them
 - Validate your YAML using an online validator
 
-**"config.yaml is missing required field 'defaultDataMeshOperationalDataUrl'"**
-- Add the `defaultDataMeshOperationalDataUrl` field to your config.yaml
-- Example: `defaultDataMeshOperationalDataUrl: /DataMeshOperationalData.yaml`
+**"config/base/config.yaml is missing required field 'defaultDataMeshOperationalDataUrl'"**
+- Add the `defaultDataMeshOperationalDataUrl` field to your config/base/config.yaml
+- Example: `defaultDataMeshOperationalDataUrl: /sampleData/base/DataMeshOperationalData.yaml`
 
-**"config.yaml must contain a valid YAML document"**
+**"config/base/config.yaml must contain a valid YAML document"**
 - Ensure the file is not empty
 - Check that the file contains valid YAML structure
 - Use a YAML validator to check syntax

@@ -20,7 +20,7 @@ import './index.css'
 import App from './App.jsx'
 import { CustomThemeProvider } from './ThemeContext.jsx'
 
-// Theme is dynamically loaded in Flow.jsx based on config.yaml
+// Theme is dynamically loaded in Flow.jsx based on config/base/config.yaml
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -48,7 +48,7 @@ export default function About() {
 ```
 
 **Step 2: Add to Navigation Configuration**
-Open your `public/customConfig.yaml` (or `config.yaml`) and add your new page to a navigation section. Make sure the `component` matches the folder name you created in Step 1.
+Open your `public/config/custom/config/base/config.yaml` (or `config/base/config.yaml`) and add your new page to a navigation section. Make sure the `component` matches the folder name you created in Step 1.
 
 ```yaml
     - name: "Other views"
@@ -65,9 +65,9 @@ That's it! The application will automatically discover your component and render
 
 ## Configuring the Navigation Drawer
 
-The navigation drawer is driven entirely by configuration. You can modify `public/customConfig.yaml` to define which pages show up, how they are grouped into sections, and what icons they use.
+The navigation drawer is driven entirely by configuration. You can modify `public/config/custom/config/base/config.yaml` to define which pages show up, how they are grouped into sections, and what icons they use.
 
-### `customConfig.yaml` Example
+### `config/custom/config.yaml` Example
 
 ```yaml
 navigation:
@@ -107,4 +107,4 @@ For each page in the `navigation` block:
 - **`icon`**: The name of the Material-UI icon to display (e.g., "Hub" renders `<HubIcon />`).
 - **`component`**: The registered component name (matching the folder name in `src/pages/base` or `src/pages/custom`).
 
-By modifying `customConfig.yaml`, your organization can add new navigation items or hide existing ones without modifying the React source code.
+By modifying `config/custom/config.yaml`, your organization can add new navigation items or hide existing ones without modifying the React source code.

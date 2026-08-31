@@ -35,7 +35,7 @@ try {
 }
 
 console.log('Parsing dataMeshOperations...');
-const dataMeshOperationsRaw = fs.readFileSync(path.join(__dirname, 'public/DataMeshOperationalDataPetsExample.yaml'), 'utf8');
+const dataMeshOperationsRaw = fs.readFileSync(path.join(__dirname, 'public/sampleData/base/DataMeshOperationalDataPetsExample.yaml'), 'utf8');
 const dataMeshOperations = YAML.parse(dataMeshOperationsRaw);
 
 console.log('Validating items...');

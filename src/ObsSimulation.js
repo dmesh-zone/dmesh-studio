@@ -367,7 +367,7 @@ const runCli = async () => {
     }
 
     let configObs = null;
-    const configPath = path.resolve('public/config.yaml');
+    const configPath = path.resolve('public/config/base/config.yaml');
     if (fs.existsSync(configPath)) {
         configObs = YAML.parse(fs.readFileSync(configPath, 'utf8'))?.observability;
     }

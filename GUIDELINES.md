@@ -33,7 +33,7 @@ All source files (`.js`, `.jsx`, `.css`) must begin with the Apache 2.0 license 
 - **Styles**: Prefer a mix of M3 CSS variables for theme and inline styles for dynamic node properties.
 
 ### Styling Strategy
-- **Global Tokens & Theming**: The application relies on MUI dynamic theming and CSS variables. Configuration is separated into base and custom environments (`public/config.yaml` vs `public/customConfig.yaml`). Theming uses a base and custom architecture (`public/themes/base/` vs `public/themes/custom/`).
+- **Global Tokens & Theming**: The application relies on MUI dynamic theming and CSS variables. Configuration is separated into base and custom environments (`public/config/base/config.yaml` vs `public/config/custom/config/base/config.yaml`). Theming uses a base and custom architecture (`public/themes/base/` vs `public/themes/custom/`).
 - **Inline Styles**: Use for node-specific layout (width, height, dynamic background colors).
 - **Interactive Elements**: Use CSS classes for hover effects and shared UI components (e.g., `.yaml-pill`, `.output-ports-pill`).
 - **Component Overrides**: Features like the top banner (`src/banner`) and navigation pages (`src/pages`) utilize a dynamic `import.meta.glob` loading strategy, automatically prioritizing custom components placed in their respective `custom/` subdirectories over the `base/` defaults.

@@ -35,4 +35,6 @@ public/themes/custom/*
 src/pages/custom/*
 src/banner/custom/*
 public/fonts/custom/*
+public/config/custom/*
+public/sampleData/custom/*
 scratch/*

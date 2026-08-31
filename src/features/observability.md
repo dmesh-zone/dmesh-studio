@@ -280,7 +280,7 @@ Requirements are expressed as user stories following the standard format: As a [
 - All metric values are sourced from the `results` array of the `DataProductObservability` payload.
 
 - **Dynamic Visualization Specifics:**
-  - Card layout is entirely dynamically driven by `config.yaml` which defines the exact `dimensions` to map payload keys into the UI.
+  - Card layout is entirely dynamically driven by `config/base/config.yaml` which defines the exact `dimensions` to map payload keys into the UI.
   - Data points map dynamically to a designated visually prominent `keyResult` (rendering explicitly with primary status colors against expected string variables directly beside it natively).
   - Conditionally failing checks will broadcast detailed `message` strings in CRITICAL red strictly mapped immediately below the primary metric.
   - Remaining metrics are populated into an ordered dynamically mapping `secondaryMetrics` list, injecting threshold RAG grade variables directly onto numbered values when their thresholds evaluate to `severity: critical` or `severity: warning` gracefully.
@@ -426,10 +426,10 @@ The following state machine governs the Observe Mode lifecycle:
 
 | **Dimension** | **Icon** | **Scope** | **Source in /observe/metrics** |
 | --- | --- | --- | --- |
-| Pipeline      | ▸        | Most recent pipeline run status and duration    | dynamic `results` mapped mapped by config.yaml |
-| Consumption   | ◈        | Overall consumption response time objective evaluation | dynamic `results` mapped mapped by config.yaml |
-| Freshness     | ⧗        | Data lag vs. max allowed lag from ODCS contract | dynamic `results` mapped mapped by config.yaml |
-| Quality       | ✦        | Quality rule pass rate from ODCS contract rules | dynamic `results` mapped mapped by config.yaml |
+| Pipeline      | ▸        | Most recent pipeline run status and duration    | dynamic `results` mapped mapped by config/base/config.yaml |
+| Consumption   | ◈        | Overall consumption response time objective evaluation | dynamic `results` mapped mapped by config/base/config.yaml |
+| Freshness     | ⧗        | Data lag vs. max allowed lag from ODCS contract | dynamic `results` mapped mapped by config/base/config.yaml |
+| Quality       | ✦        | Quality rule pass rate from ODCS contract rules | dynamic `results` mapped mapped by config/base/config.yaml |
 
 ### 3.5 Drilldown Panel Layout
 

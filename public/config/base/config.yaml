@@ -1,4 +1,4 @@
-# default config.yaml can be overridden by customConfig.yaml
+# default config/base/config.yaml can be overridden by config/custom/config.yaml
 
 # see customisation.md to learn how to add new pages or override existing ones
 navigation:
@@ -18,7 +18,7 @@ navigation:
           icon: "Settings"
           component: "Settings"
 
-defaultDataMeshOperationalDataUrl: /DataMeshOperationalDataPetsMultiEnvExample.yaml
+defaultDataMeshOperationalDataUrl: /sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
 multi-environment: ["Dev", "QA", "Prod"]
 # multi-environment: ["Dev", "QA", "Prod"]
 # default-environment: "Prod" # By default last environment in the list is selected as the default environment
@@ -33,15 +33,16 @@ domainNameCustomisation:
 
 sampleDataMeshOperationalDataUrls:
   - http://localhost:8000/dmesh/discover
-  - /DataMeshOperationalDataPetsExample.yaml
-  - /DataMeshOperationalDataLongStringExample.yaml
-  - /DataMeshOperationalDataIconsExample.yaml
-  - /DataMeshOperationalDataIdCollisionExample.yaml
-  - /DataMeshOperationalDataGenExample.yaml
-  - /DataMeshOperationalDataDqExample.yaml
-  - /DataMeshOperationalDataPortAdapterExample.yaml
-  - /DataMeshOperationalDataObservability.yaml
-  - /DataMeshOperationalDataObservabilityLight.yaml
+  - /sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
+  - /sampleData/base/DataMeshOperationalDataPetsExample.yaml
+  - /sampleData/base/DataMeshOperationalDataLongStringExample.yaml
+  - /sampleData/base/DataMeshOperationalDataIconsExample.yaml
+  - /sampleData/base/DataMeshOperationalDataIdCollisionExample.yaml
+  - /sampleData/base/DataMeshOperationalDataGenExample.yaml
+  - /sampleData/base/DataMeshOperationalDataDqExample.yaml
+  - /sampleData/base/DataMeshOperationalDataPortAdapterExample.yaml
+  - /sampleData/base/DataMeshOperationalDataObservability.yaml
+  - /sampleData/base/DataMeshOperationalDataObservabilityLight.yaml
 
 iconMap:
   dataproduct: /icons/dataproduct.svg

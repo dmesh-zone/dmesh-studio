@@ -118,14 +118,14 @@ function Flow({ isExpanded = false }) {
     // Load Config
     React.useEffect(() => {
         Promise.all([
-            fetch(normalizePath(`/config.yaml?t=${Date.now()}`))
+            fetch(normalizePath(`/config/base/config.yaml?t=${Date.now()}`))
                 .then(res => {
                     if (!res.ok) {
                         throw new Error(`Failed to load config.yaml (${res.status} ${res.statusText}). Make sure the file exists in the public directory.`);
                     }
                     return res.text();
                 }),
-            fetch(normalizePath(`/customConfig.yaml?t=${Date.now()}`))
+            fetch(normalizePath(`/config/custom/config.yaml?t=${Date.now()}`))
                 .then(res => res.ok ? res.text() : null)
                 .catch(() => null)
         ])
