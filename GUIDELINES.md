@@ -33,9 +33,10 @@ All source files (`.js`, `.jsx`, `.css`) must begin with the Apache 2.0 license 
 - **Styles**: Prefer a mix of M3 CSS variables for theme and inline styles for dynamic node properties.
 
 ### Styling Strategy
-- **Global Tokens & Theming**: The application relies on MUI dynamic theming and CSS variables. Theming is configurable via `public/config.yaml` and CSS theme files (e.g., `public/themes/custom-theme.css`).
+- **Global Tokens & Theming**: The application relies on MUI dynamic theming and CSS variables. Configuration is separated into base and custom environments (`public/config.yaml` vs `public/customConfig.yaml`). Theming uses a base and custom architecture (`public/themes/base/` vs `public/themes/custom/`).
 - **Inline Styles**: Use for node-specific layout (width, height, dynamic background colors).
 - **Interactive Elements**: Use CSS classes for hover effects and shared UI components (e.g., `.yaml-pill`, `.output-ports-pill`).
+- **Component Overrides**: Features like the top banner (`src/banner`) and navigation pages (`src/pages`) utilize a dynamic `import.meta.glob` loading strategy, automatically prioritizing custom components placed in their respective `custom/` subdirectories over the `base/` defaults.
 
 ## 3. Communication Patterns
 
@@ -71,7 +72,7 @@ When adding new validation rules:
 ## 5. UI/UX Principles
 - **Pill Badges**: Use rounded badges for counts, statuses, and navigation shortcuts.
 - **Banners**: Nodes must include a colored banner displaying the object type or domain name.
-- **Typography**: Typography is customizable via CSS themes. Custom fonts can be loaded from the `public/fonts` directory and defined in the active theme CSS. `Inter` serves as the default fallback.
+- **Typography**: Typography is customizable via CSS themes. Custom fonts can be placed in the `public/fonts/custom/` directory and defined using `@font-face` inside the active custom theme CSS. `Roboto` serves as the primary base fallback.
 - **Elevation**: Follow M3 elevation levels (`--m3-elevation-1` through `3`) for cards and modals.
 
 ## 6. Security and CI/CD
