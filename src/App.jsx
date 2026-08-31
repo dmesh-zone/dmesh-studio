@@ -16,7 +16,7 @@
 
 import React, { useState } from 'react';
 import Flow from './Flow';
-import DataProductsTable from './DataProductsTable';
+
 import './App.css';
 import { Box, Tooltip, Typography, IconButton, Divider } from '@mui/material';
 import HubIcon from '@mui/icons-material/Hub';

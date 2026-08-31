@@ -41,6 +41,7 @@ def main():
     custom_themes_dir = os.path.join(public_dir, "themes", "custom")
     custom_fonts_dir = os.path.join(public_dir, "fonts", "custom")
     custom_banner_dir = os.path.join(script_dir, "src", "banner", "custom")
+    custom_pages_dir = os.path.join(script_dir, "src", "pages", "custom")
     
     if action.lower() == "off":
         # Remove custom config file specifically
@@ -52,7 +53,8 @@ def main():
         clear_directory(custom_themes_dir)
         clear_directory(custom_fonts_dir)
         clear_directory(custom_banner_dir)
-        print("Custom config, themes, fonts, and banner have been successfully removed (switched OFF)!")
+        clear_directory(custom_pages_dir)
+        print("Custom config, themes, fonts, banner, and pages have been successfully removed (switched OFF)!")
     else:
         # Action is an input name, find dmesh-studio-custom-<input>
         source_base = os.path.join(script_dir, "..", f"dmesh-studio-custom-{action}")
@@ -77,6 +79,10 @@ def main():
         # Copy banner
         src_banner = os.path.join(source_base, "banner")
         copy_directory_contents(src_banner, custom_banner_dir)
+        
+        # Copy pages
+        src_pages = os.path.join(source_base, "pages")
+        copy_directory_contents(src_pages, custom_pages_dir)
         
         print(f"Custom assets from 'dmesh-studio-custom-{action}' have been successfully copied!")
 
