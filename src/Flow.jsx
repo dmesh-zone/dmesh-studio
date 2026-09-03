@@ -201,7 +201,15 @@ function Flow({ isExpanded = false }) {
     const [rfInstance, setRfInstance] = React.useState(null);
 
     // Filter State
-    const [selectedDomains, setSelectedDomains] = React.useState([]);
+    const [selectedDomains, setSelectedDomains] = React.useState(() => {
+        try {
+            const stored = localStorage.getItem('dmesh-selected-domains');
+            return stored ? JSON.parse(stored) : [];
+        } catch { return []; }
+    });
+    React.useEffect(() => {
+        localStorage.setItem('dmesh-selected-domains', JSON.stringify(selectedDomains));
+    }, [selectedDomains]);
     const [globalFilterText, setGlobalFilterText] = React.useState('');
 
     // Side Panel State
@@ -518,11 +526,18 @@ function Flow({ isExpanded = false }) {
                 setSelectedDomains(matchingDomains);
                 return;
             }
-            if (config && config['single-domain-default-filter']) {
-                setSelectedDomains([availableDomains[0]]);
-            } else {
-                setSelectedDomains(availableDomains);
-            }
+            setSelectedDomains(prev => {
+                if (prev && prev.length > 0) {
+                    const validDomains = prev.filter(d => availableDomains.includes(d));
+                    if (validDomains.length > 0) {
+                        return validDomains;
+                    }
+                }
+                if (config && config['single-domain-default-filter']) {
+                    return [availableDomains[0]];
+                }
+                return availableDomains;
+            });
         }
     }, [availableDomains, config]);
 

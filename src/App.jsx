@@ -39,7 +39,18 @@ const normalizePath = (path) => {
 
 function App() {
   const [currentView, setCurrentView] = useState('mesh');
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(() => {
+    const saved = localStorage.getItem('dmesh-nav-expanded');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  const toggleExpanded = () => {
+    setIsExpanded((prev) => {
+      const next = !prev;
+      localStorage.setItem('dmesh-nav-expanded', JSON.stringify(next));
+      return next;
+    });
+  };
   const { mode, setPrimaryColor } = useThemeContext();
   React.useEffect(() => {
     const applyTheme = async () => {
@@ -120,7 +131,7 @@ function App() {
           flexDirection: 'column',
           borderRight: '1px solid',
           borderColor: mode === 'dark' ? '#333333' : '#cccccc',
-          backgroundColor: mode === 'dark' ? '#111111' : '#f5f5f5',
+          backgroundColor: mode === 'dark' ? '#000000' : '#ffffff',
           flexShrink: 0,
           transition: 'width 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           overflowX: 'hidden',
@@ -140,7 +151,7 @@ function App() {
           }}
         >
           <IconButton 
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={toggleExpanded}
             size="small"
             sx={{
               color: mode === 'dark' ? '#ffffff' : '#111111',

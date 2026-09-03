@@ -15,7 +15,7 @@ export default function Banner({ LogoComponent, AvatarComponent, ProductNameComp
                 height: 64,
                 borderBottom: '1px solid',
                 borderColor: mode === 'dark' ? '#333333' : '#cccccc',
-                backgroundColor: mode === 'dark' ? '#111111' : '#f5f5f5',
+                backgroundColor: mode === 'dark' ? '#000000' : '#ffffff',
                 color: mode === 'dark' ? '#ffffff' : '#111111',
                 flexShrink: 0
             }}
