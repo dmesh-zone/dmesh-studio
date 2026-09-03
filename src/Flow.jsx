@@ -101,7 +101,15 @@ function Flow({ isExpanded = false }) {
     const [showDataMeshOperationsModal, setShowDataMeshOperationsModal] = React.useState(false);
 
     const [allEnvsData, setAllEnvsData] = React.useState([]);
-    const [selectedEnv, setSelectedEnv] = React.useState('');
+    const [selectedEnv, setSelectedEnv] = React.useState(() => {
+        return localStorage.getItem('dmesh-selected-env') || '';
+    });
+    
+    React.useEffect(() => {
+        if (selectedEnv) {
+            localStorage.setItem('dmesh-selected-env', selectedEnv);
+        }
+    }, [selectedEnv]);
 
     React.useEffect(() => {
         if (config?.['multi-environment'] && Array.isArray(config['multi-environment']) && allEnvsData.length > 0) {
