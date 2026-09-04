@@ -70,7 +70,15 @@ class OperationalData {
                     const type = item.customProperties?.find(p => p.property === 'dataProductTier')?.value || 'dataSource';
                     
                     // Filter early if tierFilter is provided
-                    if (tierFilter && type !== tierFilter) return;
+                    if (tierFilter) {
+                        if (Array.isArray(tierFilter)) {
+                            if (!tierFilter.includes(type)) return;
+                        } else if (typeof tierFilter === 'function') {
+                            if (!tierFilter(type)) return;
+                        } else if (type !== tierFilter) {
+                            return;
+                        }
+                    }
 
                     const id = item.id;
                     const domain = item.domain || 'unknown';
@@ -80,7 +88,7 @@ class OperationalData {
                     domainsSet.add(domain);
                     typesSet.add(type);
 
-                    const key = `${domain}::${name}`;
+                    const key = id;
                     if (!productsMap.has(key)) {
                         productsMap.set(key, {
                             id,

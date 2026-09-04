@@ -100,7 +100,7 @@ const TypeSelector = ({ types, selectedTypes, onChange }) => {
     );
 };
 
-export default function DataProductTabular({ title, tierFilter = null, customControls, renderTable }) {
+export default function DataProductTabular({ title, tierFilter = null, customControls, renderAboveTable, renderTable }) {
     const { mode } = useThemeContext();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -270,23 +270,25 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                                 </svg>
                             </div>
                         </th>
+                        {allTypes.length > 1 && (
+                            <th onClick={() => handleSort('type')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    Type
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '4px', opacity: sortConfig.key === 'type' ? 1 : 0.4 }}>
+                                        {sortConfig.key === 'type' && sortConfig.direction === 'desc' ? <polyline points="6 9 12 15 18 9"></polyline> : sortConfig.key === 'type' && sortConfig.direction === 'asc' ? <polyline points="18 15 12 9 6 15"></polyline> : <><polyline points="7 10 12 5 17 10"></polyline><polyline points="7 14 12 19 17 14"></polyline></>}
+                                    </svg>
+                                </div>
+                            </th>
+                        )}
                         <th onClick={() => handleSort('name')} style={{ cursor: 'pointer', userSelect: 'none' }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                Data Product Name
+                                {allTypes.length === 1 ? `${formatType(allTypes[0])} Name` : 'Data Product Name'}
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '4px', opacity: sortConfig.key === 'name' ? 1 : 0.4 }}>
                                     {sortConfig.key === 'name' && sortConfig.direction === 'desc' ? <polyline points="6 9 12 15 18 9"></polyline> : sortConfig.key === 'name' && sortConfig.direction === 'asc' ? <polyline points="18 15 12 9 6 15"></polyline> : <><polyline points="7 10 12 5 17 10"></polyline><polyline points="7 14 12 19 17 14"></polyline></>}
                                 </svg>
                             </div>
                         </th>
                         <th>Purpose</th>
-                        <th onClick={() => handleSort('type')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                Type
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '4px', opacity: sortConfig.key === 'type' ? 1 : 0.4 }}>
-                                    {sortConfig.key === 'type' && sortConfig.direction === 'desc' ? <polyline points="6 9 12 15 18 9"></polyline> : sortConfig.key === 'type' && sortConfig.direction === 'asc' ? <polyline points="18 15 12 9 6 15"></polyline> : <><polyline points="7 10 12 5 17 10"></polyline><polyline points="7 14 12 19 17 14"></polyline></>}
-                                </svg>
-                            </div>
-                        </th>
                         <th>Stage</th>
                     </tr>
                 </thead>
@@ -294,15 +296,15 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                     {paginatedProducts.map((prod) => (
                         <tr key={prod.id}>
                             <td>{formatDomain(prod.domain)}</td>
+                            {allTypes.length > 1 && <td>{formatType(prod.type)}</td>}
                             <td style={{ fontWeight: '500' }}>{prod.name}</td>
                             <td style={{ maxWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word' }}>{prod.purpose}</td>
-                            <td>{formatType(prod.type)}</td>
                             <td><span className="custom-chip" style={{ fontSize: '11px', padding: '2px 8px', fontWeight: 'bold' }}>{prod.highestEnv}</span></td>
                         </tr>
                     ))}
                     {sortedProducts.length === 0 && (
                         <tr>
-                            <td colSpan={5} style={{ textAlign: 'center', padding: '32px', color: 'var(--m3-on-surface-variant, #6b7280)' }}>
+                            <td colSpan={allTypes.length > 1 ? 5 : 4} style={{ textAlign: 'center', padding: '32px', color: 'var(--m3-on-surface-variant, #6b7280)' }}>
                                 No data products match the selected filters.
                             </td>
                         </tr>
@@ -387,6 +389,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                 {customControls && customControls}
             </Box>
 
+            {renderAboveTable && renderAboveTable({ sortedProducts })}
             {renderTable ? renderTable({ 
                 paginatedProducts, 
                 sortedProducts,
