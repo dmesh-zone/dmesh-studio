@@ -96,10 +96,10 @@ class OperationalData {
                             name,
                             purpose,
                             type,
-                            envs: new Set()
+                            envs: new Map()
                         });
                     }
-                    productsMap.get(key).envs.add(envName);
+                    productsMap.get(key).envs.set(envName, item);
                 }
             });
         });
@@ -109,15 +109,22 @@ class OperationalData {
             let highestEnv = 'None';
             for (let i = envList.length - 1; i >= 0; i--) {
                 const envName = envList[i];
-                const match = Array.from(prod.envs).find(e => String(e).toLowerCase() === String(envName).toLowerCase());
+                const match = Array.from(prod.envs.keys()).find(e => String(e).toLowerCase() === String(envName).toLowerCase());
                 if (match) {
                     highestEnv = envName;
                     break;
                 }
             }
+            
+            // Extract the raw item from the highest environment, or first available
+            const matchKey = Array.from(prod.envs.keys()).find(e => String(e).toLowerCase() === String(highestEnv).toLowerCase());
+            const rawItem = matchKey ? prod.envs.get(matchKey) : Array.from(prod.envs.values())[0];
+
             return {
                 ...prod,
-                highestEnv
+                highestEnv,
+                raw: rawItem,
+                envs: new Set(prod.envs.keys()) // Revert envs back to a Set of names to avoid breaking existing usages
             };
         });
 

@@ -7,12 +7,19 @@ import {
     Radio,
     TableContainer,
     Paper,
-    CircularProgress
+    CircularProgress,
+    Drawer,
+    IconButton,
+    Divider,
+    Tooltip
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useThemeContext } from '../ThemeContext';
 import DomainSelector from '../DomainSelector';
 import GlobalFilter from '../GlobalFilter';
 import OperationalData from '../services/OperationalData';
+import { resolveOdpsPath } from '../utils/odpsPath';
 
 export const formatType = (type) => {
     if (!type) return '';
@@ -100,17 +107,20 @@ const TypeSelector = ({ types, selectedTypes, onChange }) => {
     );
 };
 
-export default function DataProductTabular({ title, tierFilter = null, customControls, renderAboveTable, renderTable }) {
+export default function DataProductTabular({ title, tierFilter = null, customControls, renderAboveTable, renderTable, tableDescriptor, sidePanelDescriptor }) {
     const { mode } = useThemeContext();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [productsList, setProductsList] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState(null);
     
     // Configurations
     const [environments, setEnvironments] = useState(['Dev', 'QA', 'Prod']);
     const [allDomains, setAllDomains] = useState([]);
     const [allTypes, setAllTypes] = useState([]);
     const [domainNameCustomisation, setDomainNameCustomisation] = useState({});
+    const [iconMap, setIconMap] = useState({});
+    const [technologyNameMap, setTechnologyNameMap] = useState({});
 
     // Filter states
     const [envFilter, setEnvFilter] = useState('');
@@ -123,6 +133,37 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
+    // Side panel state and resizing logic
+    const [sidePanelWidth, setSidePanelWidth] = useState(1000);
+    const [isResizing, setIsResizing] = useState(false);
+
+    const startResizing = React.useCallback((mouseDownEvent) => {
+        mouseDownEvent.preventDefault();
+        setIsResizing(true);
+    }, []);
+
+    const stopResizing = React.useCallback(() => {
+        setIsResizing(false);
+    }, []);
+
+    const resize = React.useCallback((mouseMoveEvent) => {
+        if (isResizing) {
+            const newWidth = document.body.clientWidth - mouseMoveEvent.clientX;
+            if (newWidth > 300 && newWidth < 1200) {
+                setSidePanelWidth(newWidth);
+            }
+        }
+    }, [isResizing]);
+
+    useEffect(() => {
+        window.addEventListener('mousemove', resize);
+        window.addEventListener('mouseup', stopResizing);
+        return () => {
+            window.removeEventListener('mousemove', resize);
+            window.removeEventListener('mouseup', stopResizing);
+        };
+    }, [resize, stopResizing]);
+
     useEffect(() => {
         const load = async () => {
             try {
@@ -133,6 +174,8 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                 setAllTypes(data.types);
                 setEnvironments(data.environments);
                 setDomainNameCustomisation(data.config.domainNameCustomisation || {});
+                setIconMap(data.config.iconMap || {});
+                setTechnologyNameMap(data.config.technologyNameMap || {});
 
                 // Initialize environment filter
                 const defaultEnv = data.config['default-environment'] || data.environments[data.environments.length - 1];
@@ -214,15 +257,19 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         let sortableItems = [...filteredProducts];
         if (sortConfig.key !== null) {
             sortableItems.sort((a, b) => {
-                const aValue = String(a[sortConfig.key]).toLowerCase();
-                const bValue = String(b[sortConfig.key]).toLowerCase();
+                // If tableDescriptor is present, sortConfig.key is an odpsDescriptor
+                let aRaw = tableDescriptor ? resolveOdpsPath(a, sortConfig.key) : a[sortConfig.key];
+                let bRaw = tableDescriptor ? resolveOdpsPath(b, sortConfig.key) : b[sortConfig.key];
+                
+                const aValue = String(aRaw !== undefined ? aRaw : '').toLowerCase();
+                const bValue = String(bRaw !== undefined ? bRaw : '').toLowerCase();
                 if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
                 if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
                 return 0;
             });
         }
         return sortableItems;
-    }, [filteredProducts, sortConfig]);
+    }, [filteredProducts, sortConfig, tableDescriptor]);
 
     const paginatedProducts = useMemo(() => {
         const start = page * rowsPerPage;
@@ -238,6 +285,11 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     };
 
     const formatDomain = (d) => domainNameCustomisation[d] || d;
+    const formatTechnology = (val) => {
+        if (!val) return val;
+        const normalized = String(val).toLowerCase().replace(/\s+/g, '');
+        return technologyNameMap?.[normalized] || val;
+    };
 
     if (isLoading) {
         return (
@@ -256,61 +308,97 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         );
     }
 
-    // Default table rendering
-    const renderDefaultTable = () => (
-        <TableContainer component={Paper} sx={{ bgcolor: 'var(--m3-surface, #ffffff)', border: '1px solid var(--m3-outline-variant, #e2e8f0)', backgroundImage: 'none', color: 'inherit', boxShadow: 'none', borderRadius: '8px', overflow: 'hidden' }}>
-            <table className="custom-table">
-                <thead>
-                    <tr>
-                        <th onClick={() => handleSort('domain')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                Domain
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '4px', opacity: sortConfig.key === 'domain' ? 1 : 0.4 }}>
-                                    {sortConfig.key === 'domain' && sortConfig.direction === 'desc' ? <polyline points="6 9 12 15 18 9"></polyline> : sortConfig.key === 'domain' && sortConfig.direction === 'asc' ? <polyline points="18 15 12 9 6 15"></polyline> : <><polyline points="7 10 12 5 17 10"></polyline><polyline points="7 14 12 19 17 14"></polyline></>}
-                                </svg>
-                            </div>
-                        </th>
-                        {allTypes.length > 1 && (
-                            <th onClick={() => handleSort('type')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    Type
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '4px', opacity: sortConfig.key === 'type' ? 1 : 0.4 }}>
-                                        {sortConfig.key === 'type' && sortConfig.direction === 'desc' ? <polyline points="6 9 12 15 18 9"></polyline> : sortConfig.key === 'type' && sortConfig.direction === 'asc' ? <polyline points="18 15 12 9 6 15"></polyline> : <><polyline points="7 10 12 5 17 10"></polyline><polyline points="7 14 12 19 17 14"></polyline></>}
-                                    </svg>
-                                </div>
-                            </th>
-                        )}
-                        <th onClick={() => handleSort('name')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                {allTypes.length === 1 ? `${formatType(allTypes[0])} Name` : 'Data Product Name'}
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '4px', opacity: sortConfig.key === 'name' ? 1 : 0.4 }}>
-                                    {sortConfig.key === 'name' && sortConfig.direction === 'desc' ? <polyline points="6 9 12 15 18 9"></polyline> : sortConfig.key === 'name' && sortConfig.direction === 'asc' ? <polyline points="18 15 12 9 6 15"></polyline> : <><polyline points="7 10 12 5 17 10"></polyline><polyline points="7 14 12 19 17 14"></polyline></>}
-                                </svg>
-                            </div>
-                        </th>
-                        <th>Purpose</th>
-                        <th>Stage</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {paginatedProducts.map((prod) => (
-                        <tr key={prod.id}>
-                            <td>{formatDomain(prod.domain)}</td>
-                            {allTypes.length > 1 && <td>{formatType(prod.type)}</td>}
-                            <td style={{ fontWeight: '500' }}>{prod.name}</td>
-                            <td style={{ maxWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word' }}>{prod.purpose}</td>
-                            <td><span className="custom-chip" style={{ fontSize: '11px', padding: '2px 8px', fontWeight: 'bold' }}>{prod.highestEnv}</span></td>
-                        </tr>
-                    ))}
-                    {sortedProducts.length === 0 && (
+    const renderDynamicTable = () => {
+        const columns = tableDescriptor || [
+            { columnName: "Domain", odpsDescriptor: "domain", textMapper: (val, ctx) => ctx.formatDomain(val) },
+            { columnName: "Type", odpsDescriptor: "_customProperty(\"dataProductTier\")", textMapper: (val, ctx) => ctx.formatType(val) },
+            { columnName: "Data Product Name", odpsDescriptor: "name", sidePanelLink: true },
+            { columnName: "Purpose", odpsDescriptor: "description.purpose" },
+            { columnName: "Stage", odpsDescriptor: "_highestEnv", displayFormat: "chip" }
+        ];
+        
+        return (
+            <TableContainer component={Paper} sx={{ bgcolor: 'var(--m3-surface, #ffffff)', border: '1px solid var(--m3-outline-variant, #e2e8f0)', backgroundImage: 'none', color: 'inherit', boxShadow: 'none', borderRadius: '8px', overflow: 'hidden' }}>
+                <table className="custom-table">
+                    <thead>
                         <tr>
-                            <td colSpan={allTypes.length > 1 ? 5 : 4} style={{ textAlign: 'center', padding: '32px', color: 'var(--m3-on-surface-variant, #6b7280)' }}>
-                                No data products match the selected filters.
-                            </td>
+                            {columns.map((col, i) => (
+                                <th key={i} onClick={() => col.odpsDescriptor && handleSort(col.odpsDescriptor)} style={{ cursor: col.odpsDescriptor ? 'pointer' : 'default', userSelect: 'none' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        {col.columnName}
+                                        {col.odpsDescriptor && (
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '4px', opacity: sortConfig.key === col.odpsDescriptor ? 1 : 0.4 }}>
+                                                {sortConfig.key === col.odpsDescriptor && sortConfig.direction === 'desc' ? <polyline points="6 9 12 15 18 9"></polyline> : sortConfig.key === col.odpsDescriptor && sortConfig.direction === 'asc' ? <polyline points="18 15 12 9 6 15"></polyline> : <><polyline points="7 10 12 5 17 10"></polyline><polyline points="7 14 12 19 17 14"></polyline></>}
+                                            </svg>
+                                        )}
+                                    </div>
+                                </th>
+                            ))}
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {paginatedProducts.map((prod) => (
+                            <tr key={prod.id}>
+                                {columns.map((col, i) => {
+                                    let val = resolveOdpsPath(prod, col.odpsDescriptor);
+                                    if (col.textMapper) val = col.textMapper(val, { formatDomain, formatTechnology, formatType, iconMap, technologyNameMap });
+                                    
+                                    let content = val;
+                                    if (col.displayFormat === 'chip') {
+                                        content = <span className="custom-chip" style={{ fontSize: '11px', padding: '2px 8px', fontWeight: 'bold' }}>{val}</span>;
+                                    }
+                                    
+                                    if (col.iconMapper && val) {
+                                        const normalized = String(val).toLowerCase().replace(/\s+/g, '');
+                                        let imgSrc = iconMap?.[normalized] || `/icons/${normalized}.svg`;
+                                        if (imgSrc && !imgSrc.startsWith('http')) {
+                                            const base = import.meta.env.BASE_URL || '/';
+                                            imgSrc = (base + imgSrc).replace(/\/\//g, '/');
+                                        }
+                                        content = (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                {imgSrc && <img src={imgSrc} alt="" style={{ width: '16px', height: '16px' }} onError={(e) => { e.target.style.display = 'none'; }} />}
+                                                <span>{content}</span>
+                                            </div>
+                                        );
+                                    } else if (col.imageMapper) {
+                                        let imgSrc = col.imageMapper(val, { formatDomain, formatTechnology, formatType, iconMap, technologyNameMap });
+                                        if (imgSrc && !imgSrc.startsWith('http')) {
+                                            const base = import.meta.env.BASE_URL || '/';
+                                            imgSrc = (base + imgSrc).replace(/\/\//g, '/');
+                                        }
+                                        content = (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                {imgSrc && <img src={imgSrc} alt="" style={{ width: '16px', height: '16px' }} onError={(e) => { e.target.style.display = 'none'; }} />}
+                                                <span>{content}</span>
+                                            </div>
+                                        );
+                                    }
+
+                                    if (col.sidePanelLink) {
+                                        content = (
+                                            <span 
+                                                onClick={() => setSelectedProduct(prod)}
+                                                style={{ color: 'var(--m3-primary, #005ce6)', cursor: 'pointer', textDecoration: 'underline', fontWeight: '500' }}
+                                            >
+                                                {content}
+                                            </span>
+                                        );
+                                    }
+
+                                    return <td key={i}>{content}</td>;
+                                })}
+                            </tr>
+                        ))}
+                        {sortedProducts.length === 0 && (
+                            <tr>
+                                <td colSpan={columns.length} style={{ textAlign: 'center', padding: '32px', color: 'var(--m3-on-surface-variant, #6b7280)' }}>
+                                    No data products match the selected filters.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
             
             {/* Pagination Footer */}
             {sortedProducts.length > 0 && (
@@ -320,13 +408,15 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span>Rows per page</span>
+                            <span>Rows per page:</span>
                             <select 
                                 value={rowsPerPage} 
                                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setPage(0); }}
-                                style={{ padding: '4px 24px 4px 8px', borderRadius: '4px', border: '1px solid var(--m3-outline-variant, #e2e8f0)', backgroundColor: 'var(--input-bg, #ffffff)', color: 'inherit', fontSize: '13px', appearance: 'none', cursor: 'pointer', backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center', backgroundSize: '16px' }}
+                                style={{ padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--m3-outline-variant, #e2e8f0)', fontSize: '13px', backgroundColor: 'transparent' }}
                             >
-                                <option value={5}>5</option><option value={10}>10</option><option value={20}>20</option><option value={50}>50</option>
+                                {[10, 25, 50, 100].map(val => (
+                                    <option key={val} value={val}>{val}</option>
+                                ))}
                             </select>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -347,7 +437,8 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                 </div>
             )}
         </TableContainer>
-    );
+        );
+    };
 
     return (
         <Box sx={{ pt: 1.5, pb: 4, px: 4, height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 3, bgcolor: 'var(--m3-surface, #ffffff)', color: 'var(--m3-on-surface, #334155)' }}>
@@ -397,12 +488,93 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                 sortConfig, 
                 formatType, 
                 formatDomain,
+                formatTechnology,
+                iconMap,
+                technologyNameMap,
                 page,
                 rowsPerPage,
                 setPage,
                 setRowsPerPage
-            }) : renderDefaultTable()}
+            }) : renderDynamicTable()}
             
+            {/* Side Panel Drawer */}
+            <Drawer 
+                anchor="right" 
+                open={Boolean(selectedProduct)} 
+                onClose={() => setSelectedProduct(null)}
+                PaperProps={{ 
+                    sx: { 
+                        width: `${sidePanelWidth}px`, 
+                        minWidth: '300px',
+                        maxWidth: '1200px',
+                        borderRadius: '24px 0 0 24px',
+                        bgcolor: 'var(--m3-surface)', 
+                        color: 'var(--m3-on-surface)',
+                        transition: isResizing ? 'none' : undefined,
+                    } 
+                }}
+            >
+                {/* Resize Handle */}
+                <div
+                    onMouseDown={startResizing}
+                    style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: '5px',
+                        cursor: 'ew-resize',
+                        zIndex: 21,
+                        background: 'transparent',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.1)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                />
+
+                {selectedProduct && (
+                    <Box sx={{ p: 3, overflowY: 'auto', flex: 1 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                {resolveOdpsPath(selectedProduct, '_customProperty("dataProductBusinessName")') || selectedProduct.name}
+                            </Typography>
+                            <IconButton onClick={() => setSelectedProduct(null)} size="small"><CloseIcon /></IconButton>
+                        </Box>
+                        <Divider sx={{ mb: 3 }} />
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            {(sidePanelDescriptor || [
+                                { name: "Data Product Name", odpsDescriptor: "name" },
+                                { name: "Domain Technical Name", odpsDescriptor: "domain", textMapper: (val, ctx) => ctx.formatDomain(val) }
+                            ]).map((field, i) => {
+                                let val = resolveOdpsPath(selectedProduct, field.odpsDescriptor);
+                                if (field.textMapper) val = field.textMapper(val, { formatDomain, formatTechnology, formatType, iconMap, technologyNameMap });
+                                return (
+                                    <Box key={i}>
+                                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold', textTransform: 'capitalize' }}>
+                                            {field.name}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mt: 0.5 }}>
+                                            <Typography variant="body2" sx={{ wordBreak: 'break-word', pt: 0.5 }}>
+                                                {val !== undefined && val !== null && val !== '' ? val : '-'}
+                                            </Typography>
+                                            {val !== undefined && val !== null && val !== '' && (
+                                                <Tooltip title="Copy">
+                                                    <IconButton 
+                                                        size="small" 
+                                                        onClick={() => navigator.clipboard.writeText(String(val))}
+                                                        sx={{ opacity: 0.5, '&:hover': { opacity: 1 }, p: 0.5 }}
+                                                    >
+                                                        <ContentCopyIcon sx={{ fontSize: '0.875rem' }} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )}
+                                        </Box>
+                                    </Box>
+                                );
+                            })}
+                        </Box>
+                    </Box>
+                )}
+            </Drawer>
         </Box>
     );
 }
