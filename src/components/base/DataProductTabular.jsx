@@ -16,7 +16,7 @@ import {
     Menu,
     MenuItem
 } from '@mui/material';
-import writeXlsxFile from 'write-excel-file';
+import writeXlsxFile from 'write-excel-file/browser';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
