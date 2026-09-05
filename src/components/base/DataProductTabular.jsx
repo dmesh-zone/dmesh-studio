@@ -12,10 +12,14 @@ import {
     IconButton,
     Divider,
     Tooltip,
-    Link
+    Link,
+    Menu,
+    MenuItem
 } from '@mui/material';
+import * as XLSX from 'xlsx';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useThemeContext } from '../../ThemeContext';
 import DomainSelector from '../../DomainSelector';
 import GlobalFilter from '../../GlobalFilter';
@@ -258,19 +262,98 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         let sortableItems = [...filteredProducts];
         if (sortConfig.key !== null) {
             sortableItems.sort((a, b) => {
-                // If tableDescriptor is present, sortConfig.key is an odpsDescriptor
-                let aRaw = tableDescriptor ? resolveOdpsPath(a, sortConfig.key) : a[sortConfig.key];
-                let bRaw = tableDescriptor ? resolveOdpsPath(b, sortConfig.key) : b[sortConfig.key];
+                let aVal = resolveOdpsPath(a, sortConfig.key);
+                let bVal = resolveOdpsPath(b, sortConfig.key);
                 
-                const aValue = String(aRaw !== undefined ? aRaw : '').toLowerCase();
-                const bValue = String(bRaw !== undefined ? bRaw : '').toLowerCase();
-                if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-                if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+                const colDef = tableDescriptor.find(c => c.odpsDescriptor === sortConfig.key);
+                if (colDef && colDef.textMapper) {
+                    const ctx = { formatDomain, formatTechnology, formatType, iconMap, technologyNameMap };
+                    aVal = colDef.textMapper(aVal, ctx);
+                    bVal = colDef.textMapper(bVal, ctx);
+                }
+
+                if (aVal < bVal) return sortConfig.direction === 'ascending' ? -1 : 1;
+                if (aVal > bVal) return sortConfig.direction === 'ascending' ? 1 : -1;
                 return 0;
             });
         }
         return sortableItems;
-    }, [filteredProducts, sortConfig, tableDescriptor]);
+    }, [filteredProducts, sortConfig, tableDescriptor, domainNameCustomisation, technologyNameMap]);
+
+    // Export Logic
+    const [exportAnchorEl, setExportAnchorEl] = useState(null);
+    const openExportMenu = Boolean(exportAnchorEl);
+
+    const handleExportClick = (event) => setExportAnchorEl(event.currentTarget);
+    const handleExportClose = () => setExportAnchorEl(null);
+
+    const generateExportData = () => {
+        const effectiveTable = tableDescriptor || [
+            { columnName: "Domain", odpsDescriptor: "domain", textMapper: (val, ctx) => ctx.formatDomain(val) },
+            { columnName: "Type", odpsDescriptor: "_customProperty(\"dataProductTier\")", textMapper: (val, ctx) => ctx.formatType(val) },
+            { columnName: "Data Product Name", odpsDescriptor: "name" },
+            { columnName: "Purpose", odpsDescriptor: "description.purpose" },
+            { columnName: "Stage", odpsDescriptor: "_highestEnv" }
+        ];
+
+        const header = [];
+        effectiveTable.forEach(col => header.push(col.columnName));
+        
+        const effectiveSidePanel = sidePanelDescriptor || [
+            { name: "Data Product Name", odpsDescriptor: "name" },
+            { name: "Domain Technical Name", odpsDescriptor: "domain", textMapper: (val, ctx) => ctx.formatDomain(val) }
+        ];
+        
+        effectiveSidePanel.forEach(field => header.push(field.name));
+
+        const data = [header];
+        const ctx = { formatDomain, formatTechnology, formatType, iconMap, technologyNameMap };
+
+        sortedProducts.forEach(prod => {
+            const row = [];
+            // Table columns
+            effectiveTable.forEach(col => {
+                let val = resolveOdpsPath(prod, col.odpsDescriptor);
+                if (col.textMapper) val = col.textMapper(val, ctx);
+                row.push(val !== undefined && val !== null ? String(val) : '');
+            });
+            // Side panel fields
+            effectiveSidePanel.forEach(field => {
+                let val = resolveOdpsPath(prod, field.odpsDescriptor);
+                if (field.textMapper) val = field.textMapper(val, ctx);
+                row.push(val !== undefined && val !== null ? String(val) : '');
+            });
+            data.push(row);
+        });
+        return data;
+    };
+
+    const getExportFilename = () => {
+        const safeTitle = typeof title === 'string' ? title.replace(/\s+/g, '_') : 'DataExport';
+        return `${safeTitle}_${new Date().toISOString().split('T')[0]}`;
+    };
+
+    const handleExportCSV = () => {
+        const data = generateExportData();
+        const csvContent = data.map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(",")).join("\n");
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${getExportFilename()}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        handleExportClose();
+    };
+
+    const handleExportXLSX = () => {
+        const data = generateExportData();
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Export");
+        XLSX.writeFile(wb, `${getExportFilename()}.xlsx`);
+        handleExportClose();
+    };
 
     const paginatedProducts = useMemo(() => {
         const start = page * rowsPerPage;
@@ -451,9 +534,33 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
 
     return (
         <Box sx={{ pt: 1.5, pb: 4, px: 4, height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 3, bgcolor: 'var(--m3-surface, #ffffff)', color: 'var(--m3-on-surface, #334155)' }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'inherit' }}>
-                {title}
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'inherit' }}>
+                    {title}
+                </Typography>
+                
+                <Box>
+                    <Link
+                        component="button"
+                        variant="body2"
+                        onClick={handleExportClick}
+                        sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
+                        underline="none"
+                    >
+                        Export <ExpandMoreIcon fontSize="small" />
+                    </Link>
+                    <Menu
+                        anchorEl={exportAnchorEl}
+                        open={openExportMenu}
+                        onClose={handleExportClose}
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    >
+                        <MenuItem onClick={handleExportCSV}>Export CSV</MenuItem>
+                        <MenuItem onClick={handleExportXLSX}>Export XLSX</MenuItem>
+                    </Menu>
+                </Box>
+            </Box>
 
             {/* Filter Panel */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', mb: 1 }}>

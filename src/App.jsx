@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import Flow from './Flow';
 
 import './App.css';
-import { Box, Tooltip, Typography, IconButton, Divider } from '@mui/material';
+import { Box, Tooltip, Typography, IconButton, Divider, Breadcrumbs } from '@mui/material';
 import HubIcon from '@mui/icons-material/Hub';
 import LayersIcon from '@mui/icons-material/Layers';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
@@ -233,35 +233,69 @@ function App() {
       </Box>
 
       {/* Main Content Area */}
-      <Box sx={{ flexGrow: 1, height: '100%', overflow: 'hidden', position: 'relative' }}>
+      <Box sx={{ flexGrow: 1, height: '100%', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column' }}>
         {(() => {
           let ActiveComponent = null;
+          let activeSection = null;
+          let activePage = null;
+          
           if (navConfig) {
             for (const section of navConfig.sections) {
               const page = section.pages.find(p => p.id === currentView);
-              if (page && pages[page.component]) {
-                ActiveComponent = pages[page.component];
+              if (page) {
+                activeSection = section;
+                activePage = page;
+                if (pages[page.component]) {
+                  ActiveComponent = pages[page.component];
+                }
                 break;
               }
             }
           }
-          if (ActiveComponent) {
-            return <ActiveComponent isExpanded={isExpanded} />;
-          }
+
           return (
-            <Box sx={{ p: 4, height: '100%', overflow: 'auto' }}>
-              <Box sx={{ 
-                p: 4, 
-                borderRadius: 2, 
-                boxShadow: '0 4px 6px rgba(0,0,0,0.05)', 
-                bgcolor: 'background.paper',
-                '& h1, & h2, & h3': { mt: 0, mb: 2 },
-                '& p': { mb: 2 },
-                '& pre': { p: 2, bgcolor: 'rgba(0,0,0,0.05)', borderRadius: 1, overflowX: 'auto' }
-              }}>
-                <ReactMarkdown>{pageCustomisationMarkdown}</ReactMarkdown>
+            <>
+              {activeSection && activePage && (
+                <Box sx={{ px: 4, pt: 1.5, pb: 0, flexShrink: 0 }}>
+                  <Breadcrumbs separator={<MuiIcons.NavigateNext fontSize="small" />} aria-label="breadcrumb">
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary"
+                      onClick={() => {
+                        if (navConfig?.sections?.[0]?.pages?.[0]?.id) {
+                          setCurrentView(navConfig.sections[0].pages[0].id);
+                        }
+                      }}
+                      sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                    >
+                      Home
+                    </Typography>
+                    <Typography variant="body2" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                      {activePage.title}
+                    </Typography>
+                  </Breadcrumbs>
+                </Box>
+              )}
+              <Box sx={{ flexGrow: 1, overflow: 'hidden', position: 'relative' }}>
+                {ActiveComponent ? (
+                  <ActiveComponent isExpanded={isExpanded} />
+                ) : (
+                  <Box sx={{ p: 4, height: '100%', overflow: 'auto' }}>
+                    <Box sx={{ 
+                      p: 4, 
+                      borderRadius: 2, 
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.05)', 
+                      bgcolor: 'background.paper',
+                      '& h1, & h2, & h3': { mt: 0, mb: 2 },
+                      '& p': { mb: 2 },
+                      '& pre': { p: 2, bgcolor: 'rgba(0,0,0,0.05)', borderRadius: 1, overflowX: 'auto' }
+                    }}>
+                      <ReactMarkdown>{pageCustomisationMarkdown}</ReactMarkdown>
+                    </Box>
+                  </Box>
+                )}
               </Box>
-            </Box>
+            </>
           );
         })()}
       </Box>

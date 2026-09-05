@@ -22,7 +22,7 @@ export default memo(({ data, isConnectable }) => {
         <div style={{
             border: '1px solid var(--m3-outline-variant, #e5e7eb)',
             borderRadius: '8px',
-            background: 'var(--m3-surface, white)',
+            background: data.backgroundColor || '#ffffff',
             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
             width: '320px',
             fontFamily: 'var(--font-family, inherit)'
