@@ -7,6 +7,8 @@ A React-based visualization tool for exploring Data Mesh dataMeshOperationsList,
 
 Live demo: https://dmesh-zone.github.io/dmesh-studio
 
+📖 **Release Notes**: See [RELEASE_NOTES.md](RELEASE_NOTES.md) for the latest updates and changes.
+
 ## Features
 
 - **Interactive Visualization**: Browse Data Products, their relationships, and contracts
@@ -119,7 +121,7 @@ This repository illustrates how to customise:
 - Config, including navigation drawer items, environments supported, etc.
 - Fonts
 - Themes, allowing definition of colors and style for both light and dark themes
-- Pages, allowing adding or overriding navigational drawer target pages 
+- Pages (see [PAGE_CUSTOMISATION.md](PAGE_CUSTOMISATION.md)), allowing adding or overriding navigational drawer target pages (e.g., leveraging the `DataProductTabular` component to build custom data product tabular pages in a data-driven, declarative manner)
 
 To apply customizations using this approach:
 1. Clone the customization repository into the same parent directory as your `dmesh-studio` project:
