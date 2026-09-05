@@ -51,6 +51,24 @@ export const CustomThemeProvider = ({ children }) => {
                 h5: { fontFamily: 'var(--font-family-heading, var(--font-family, inherit))' },
                 h6: { fontFamily: 'var(--font-family-heading, var(--font-family, inherit))' },
             },
+            components: {
+                MuiLink: {
+                    styleOverrides: {
+                        root: {
+                            color: 'var(--link-color, #1976d2)',
+                            textDecoration: 'underline',
+                            textDecorationColor: 'var(--link-color, #1976d2)',
+                            '&:hover': {
+                                color: 'var(--link-hover-color, #115293)',
+                                textDecorationColor: 'var(--link-hover-color, #115293)',
+                            }
+                        }
+                    },
+                    defaultProps: {
+                        underline: 'hover',
+                    }
+                }
+            }
         };
 
         return createTheme(themeOptions);

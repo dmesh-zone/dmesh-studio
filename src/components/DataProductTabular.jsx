@@ -11,7 +11,8 @@ import {
     Drawer,
     IconButton,
     Divider,
-    Tooltip
+    Tooltip,
+    Link
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -377,12 +378,20 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
 
                                     if (col.sidePanelLink) {
                                         content = (
-                                            <span 
+                                            <Link 
+                                                component="button"
+                                                variant="body2"
                                                 onClick={() => setSelectedProduct(prod)}
-                                                style={{ color: 'var(--m3-primary, #005ce6)', cursor: 'pointer', textDecoration: 'underline', fontWeight: '500' }}
+                                                sx={{ 
+                                                    cursor: 'pointer', 
+                                                    fontWeight: '500', 
+                                                    textAlign: 'left',
+                                                    fontFamily: 'inherit',
+                                                    fontSize: 'inherit'
+                                                }}
                                             >
                                                 {content}
-                                            </span>
+                                            </Link>
                                         );
                                     }
 
