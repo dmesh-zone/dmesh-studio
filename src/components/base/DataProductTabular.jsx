@@ -16,11 +16,11 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { useThemeContext } from '../ThemeContext';
-import DomainSelector from '../DomainSelector';
-import GlobalFilter from '../GlobalFilter';
-import OperationalData from '../services/OperationalData';
-import { resolveOdpsPath } from '../utils/odpsPath';
+import { useThemeContext } from '../../ThemeContext';
+import DomainSelector from '../../DomainSelector';
+import GlobalFilter from '../../GlobalFilter';
+import OperationalData from '../../services/OperationalData';
+import { resolveOdpsPath } from '../../utils/odpsPath';
 
 export const formatType = (type) => {
     if (!type) return '';

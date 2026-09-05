@@ -29,11 +29,10 @@ sandbox/*
 .env*
 
 # Project specific
-customConfig.yaml
-_customConfig.yaml
 public/themes/custom/*
 src/pages/custom/*
 src/banner/custom/*
+src/components/custom/*
 public/fonts/custom/*
 public/config/custom/*
 public/sampleData/custom/*
