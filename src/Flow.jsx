@@ -2509,8 +2509,15 @@ function Flow({ isExpanded = false }) {
                 >
                     <Background />
                     <Controls position="bottom-left" />
-                    <div style={{ position: 'absolute', bottom: '2px', left: '5px', zIndex: 4, fontSize: '10px', color: 'var(--m3-on-surface-variant, gray)', pointerEvents: 'none' }}>
-                        dmesh studio v{packageJson.version}
+                    <div style={{ position: 'absolute', bottom: '2px', left: '5px', zIndex: 4, fontSize: '10px' }}>
+                        <a 
+                            href="https://github.com/dmesh-zone/dmesh-studio" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={{ textDecoration: 'none', color: '#999' }}
+                        >
+                            dmesh studio v{packageJson.version}
+                        </a>
                     </div>
                     {/* <MiniMap position="bottom-right" /> */}
                     <svg style={{ position: 'absolute', top: 0, left: 0 }}>
