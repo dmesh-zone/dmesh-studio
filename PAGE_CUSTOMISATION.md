@@ -1,6 +1,6 @@
 # Customising Navigation and Pages
 
-Data Mesh Studio is designed to be highly extensible. You can customize the pages available in the application, override existing base pages, and completely control the items that appear in the navigation drawer (including their icons and groupings).
+DMesh Studio is designed to be highly extensible. You can customize the pages available in the application, override existing base pages, and completely control the items that appear in the navigation drawer (including their icons and groupings).
 
 ## Folder Structure
 
@@ -9,7 +9,7 @@ The application's pages are organized to separate the core "base" functionality 
 ```text
 src/
 ├── pages/
-│   ├── base/               # Core pages shipped with Data Mesh Studio
+│   ├── base/               # Core pages shipped with DMesh Studio
 │   │   ├── DataMesh/
 │   │   ├── DataProducts/
 │   │   └── Settings/
@@ -37,7 +37,7 @@ export default function About() {
     return (
         <Box sx={{ p: 4, height: '100%', overflow: 'auto', bgcolor: 'var(--m3-surface, #f5f5f5)' }}>
             <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
-                About Data Mesh Studio
+                About DMesh Studio
             </Typography>
             <Typography variant="body1">
                 This is a custom page added via the plugin architecture!

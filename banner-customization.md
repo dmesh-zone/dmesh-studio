@@ -1,10 +1,10 @@
 # Customizing the Global Banner
 
-Data Mesh Studio provides a plugin-based architecture for the global top banner, making it extremely easy to re-brand the application with your organization's logo, user avatars, and product names without modifying the core source code.
+DMesh Studio provides a plugin-based architecture for the global top banner, making it extremely easy to re-brand the application with your organization's logo, user avatars, and product names without modifying the core source code.
 
 ## Folder Structure
 
-The banner components are located in `src/banner/`. The folder is divided into `base` (the default Data Mesh Studio implementations) and `custom` (your overrides).
+The banner components are located in `src/banner/`. The folder is divided into `base` (the default DMesh Studio implementations) and `custom` (your overrides).
 
 ```text
 src/
