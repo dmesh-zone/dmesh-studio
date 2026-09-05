@@ -16,7 +16,7 @@ import {
     Menu,
     MenuItem
 } from '@mui/material';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -346,12 +346,21 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         handleExportClose();
     };
 
-    const handleExportXLSX = () => {
+    const handleExportXLSX = async () => {
         const data = generateExportData();
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Export");
-        XLSX.writeFile(wb, `${getExportFilename()}.xlsx`);
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet('Export');
+        sheet.addRows(data);
+        const buffer = await workbook.xlsx.writeBuffer();
+        
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${getExportFilename()}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
         handleExportClose();
     };
 

@@ -37,3 +37,5 @@ public/fonts/custom/*
 public/config/custom/*
 public/sampleData/custom/*
 scratch/*
+app.yaml
+app.yaml.bak
