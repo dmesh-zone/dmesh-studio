@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { ReactFlow, Controls, Background, useNodesState, useEdgesState, addEdge, MarkerType, applyNodeChanges, MiniMap } from '@xyflow/react';
+import { ReactFlow, Controls, Background, useNodesState, useEdgesState, addEdge, MarkerType, applyNodeChanges, MiniMap, Panel } from '@xyflow/react';
+import packageJson from '../package.json';
 import '@xyflow/react/dist/style.css';
 import DataProductNode from './DataProductNode';
 import DataProductDetailNode from './DataProductDetailNode';
@@ -2508,6 +2509,9 @@ function Flow({ isExpanded = false }) {
                 >
                     <Background />
                     <Controls position="bottom-left" />
+                    <div style={{ position: 'absolute', bottom: '2px', left: '5px', zIndex: 4, fontSize: '10px', color: 'var(--m3-on-surface-variant, gray)', pointerEvents: 'none' }}>
+                        dmesh studio v{packageJson.version}
+                    </div>
                     {/* <MiniMap position="bottom-right" /> */}
                     <svg style={{ position: 'absolute', top: 0, left: 0 }}>
                         <defs>

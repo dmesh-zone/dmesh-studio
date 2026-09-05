@@ -28,6 +28,13 @@ Live demo: https://dmesh-zone.github.io/dmesh-studio
 The application is configured through `./public/config/base/config.yaml`. This file controls the default dataMeshOperations URL, visual appearance, and data product tiers.
 Additionally, you can create a `./public/config/custom/config/custom/config.yaml` file to override any settings in `config/base/config.yaml` without modifying the default configuration file.
 
+## Customization
+
+DMesh Studio is designed to be easily customized to fit your organization's branding and needs. You can configure themes (light and dark mode), replace logos, map technology icons, and even create completely custom React pages (e.g., custom tabular views for Data Products and Data Sources). 
+
+For a complete guide on overriding styles, assets, components, and pages using the `customization.py` script, please refer to the [Customization Guide](PAGE_CUSTOMISATION.md).
+
+
 ### Configuration File Structure
 
 ```yaml
