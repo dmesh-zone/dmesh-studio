@@ -329,36 +329,85 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     };
 
     const getExportFilename = () => {
-        const safeTitle = typeof title === 'string' ? title.replace(/\s+/g, '_') : 'DataExport';
-        return `${safeTitle}_${new Date().toISOString().split('T')[0]}`;
+        const safeTitle = typeof title === 'string' ? title.toLowerCase().replace(/\s+/g, '-') : 'data-export';
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        return `${safeTitle}-${yyyy}-${mm}-${dd}-${hh}${min}${ss}`;
     };
 
     const handleExportCSV = () => {
         const data = generateExportData();
-        const csvContent = data.map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(",")).join("\n");
+        const csvContent = data.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = `${getExportFilename()}.csv`;
+        link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
+        
+        setTimeout(() => {
+            if (document.body.contains(link)) document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }, 1000);
+        
         handleExportClose();
     };
 
     const handleExportXLSX = async () => {
-        const data = generateExportData();
-        
-        // Map 2D string array to write-excel-file schema
-        const mappedData = data.map(row => 
-            row.map(cell => ({ type: String, value: cell ? String(cell) : '' }))
-        );
+        try {
+            const data = generateExportData();
+            
+            // Map 2D string array to write-excel-file schema
+            const mappedData = data.map(row => 
+                row.map(cell => {
+                    if (!cell) return { type: String, value: '' };
+                    return { type: String, value: String(cell) };
+                })
+            );
 
-        await writeXlsxFile(mappedData, {
-            fileName: `${getExportFilename()}.xlsx`
-        });
-        
-        handleExportClose();
+            const exportFn = writeXlsxFile.default || writeXlsxFile;
+            
+            // The library returns an object with toBlob() and toFile() methods
+            const result = exportFn(mappedData);
+            let rawData;
+            if (result && typeof result.toBlob === 'function') {
+                rawData = await result.toBlob();
+            } else {
+                rawData = await result;
+            }
+            
+            if (rawData) {
+                // Ensure the raw data (Uint8Array) is wrapped in a native Blob
+                let finalBlob = rawData;
+                if (!(rawData instanceof Blob)) {
+                    finalBlob = new Blob([rawData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                }
+                
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(finalBlob);
+                link.download = `${getExportFilename()}.xlsx`;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                
+                setTimeout(() => {
+                    if (document.body.contains(link)) document.body.removeChild(link);
+                    URL.revokeObjectURL(link.href);
+                }, 1000);
+            }
+            
+            handleExportClose();
+        } catch (error) {
+            console.error("XLSX Export Error:", error);
+            alert("Export failed: " + error.message);
+        }
     };
 
     const paginatedProducts = useMemo(() => {
