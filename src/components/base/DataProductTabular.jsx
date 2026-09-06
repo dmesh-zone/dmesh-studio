@@ -460,7 +460,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         ];
         
         return (
-            <TableContainer component={Paper} sx={{ bgcolor: 'var(--m3-surface, #ffffff)', border: '1px solid var(--m3-outline-variant, #e2e8f0)', backgroundImage: 'none', color: 'inherit', boxShadow: 'none', borderRadius: '8px', overflow: 'hidden' }}>
+            <TableContainer component={Paper} sx={{ bgcolor: 'var(--m3-surface, #ffffff)', border: '1px solid var(--m3-outline-variant, #e2e8f0)', backgroundImage: 'none', color: 'inherit', boxShadow: 'none', borderRadius: '8px', overflow: 'auto' }}>
                 <table className="custom-table">
                     <thead>
                         <tr>
@@ -581,7 +581,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                             <select 
                                 value={rowsPerPage} 
                                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setPage(0); }}
-                                style={{ padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--m3-outline-variant, #e2e8f0)', fontSize: '13px', backgroundColor: 'transparent' }}
+                                style={{ padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--m3-outline-variant, #e2e8f0)', fontSize: '13px', backgroundColor: 'transparent', color: 'inherit' }}
                             >
                                 {[10, 25, 50, 100].map(val => (
                                     <option key={val} value={val}>{val}</option>

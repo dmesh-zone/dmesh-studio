@@ -247,6 +247,9 @@ input[type="checkbox"]:checked::after {
 }
 
 .custom-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   background: var(--side-panel-tab-hover-bg, #f3f4f6);
   padding: 16px;
   font-size: 14px;
@@ -388,6 +391,9 @@ input[type="checkbox"]:checked::after {
 }
 
 .custom-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   background-color: var(--m3-surface-variant, #f1f5f9);
   color: var(--m3-on-surface, #334155);
   font-weight: 600;
