@@ -41,6 +41,7 @@ import ObservabilityDrilldown from './ObservabilityDrilldown';
 import ErrorBoundary from './ErrorBoundary';
 import { useThemeContext } from './ThemeContext';
 import ThemeToggle from './ThemeToggle';
+import { resolveOdpsPath } from './utils/odpsPath';
 
 
 const HeaderNode = ({ data }) => (
@@ -205,6 +206,29 @@ function Flow({ isExpanded = false }) {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [selection, setSelection] = React.useState({ id: null, kind: null });
+
+    // Dispatch breadcrumbs based on selection
+    React.useEffect(() => {
+        if (selection.id) {
+            const item = dataMeshOperations.find(d => String(d.id) === String(selection.id));
+            if (item) {
+                const domainAlias = config?.domainNameCustomisation?.[item.domain] || item.domain;
+                if (selection.kind === 'DataProduct') {
+                    const crumb1 = domainAlias ? `${domainAlias} Data Product` : 'Data Product';
+                    const name = resolveOdpsPath(item, '_customProperty("dataProductBusinessName")') || item?.name || selection.id;
+                    const finalName = domainAlias ? `(${domainAlias}) ${name}` : name;
+                    window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: [crumb1, finalName] }));
+                } else if (selection.kind === 'DataContract') {
+                    const crumb1 = domainAlias ? `${domainAlias} Data Contract` : 'Data Contract';
+                    const name = item?.name || selection.id;
+                    const finalName = domainAlias ? `(${domainAlias}) ${name}` : name;
+                    window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: [crumb1, finalName] }));
+                }
+            }
+        } else {
+            window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: [] }));
+        }
+    }, [selection, dataMeshOperations, config]);
     const [hoveredEdgeId, setHoveredEdgeId] = React.useState(null);
     const [hoveredNodeId, setHoveredNodeId] = React.useState(null);
     const [rfInstance, setRfInstance] = React.useState(null);

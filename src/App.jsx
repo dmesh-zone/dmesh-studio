@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Flow from './Flow';
 
 import './App.css';
@@ -38,7 +38,25 @@ const normalizePath = (path) => {
 };
 
 function App() {
-  const [currentView, setCurrentView] = useState('mesh');
+  const [navConfig, setNavConfig] = useState(null);
+  const [currentView, setCurrentView] = useState("mesh");
+  const [pageCustomisationMarkdown, setPageCustomisationMarkdown] = useState("");
+
+  const [dynamicBreadcrumbs, setDynamicBreadcrumbs] = useState([]);
+
+  useEffect(() => {
+    const handleSetBreadcrumbs = (e) => {
+        setDynamicBreadcrumbs(e.detail || []);
+    };
+    window.addEventListener('set-breadcrumbs', handleSetBreadcrumbs);
+    return () => window.removeEventListener('set-breadcrumbs', handleSetBreadcrumbs);
+  }, []);
+
+  useEffect(() => {
+      // Clear dynamic breadcrumbs when view changes
+      setDynamicBreadcrumbs([]);
+  }, [currentView]);
+
   const [isExpanded, setIsExpanded] = useState(() => {
     const saved = localStorage.getItem('dmesh-nav-expanded');
     return saved !== null ? JSON.parse(saved) : true;
@@ -102,7 +120,6 @@ function App() {
     applyTheme();
   }, [mode, setPrimaryColor]);
 
-  const [navConfig, setNavConfig] = useState(null);
 
   React.useEffect(() => {
     Promise.all([
@@ -270,9 +287,32 @@ function App() {
                     >
                       Home
                     </Typography>
-                    <Typography variant="body2" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                    
+                    {/* Add active section if available */}
+                    {activeSection?.name && (
+                        <Typography variant="body2" color="text.secondary">
+                            {activeSection.name}
+                        </Typography>
+                    )}
+                    
+                    <Typography 
+                        variant="body2" 
+                        color={dynamicBreadcrumbs.length > 0 ? "text.secondary" : "text.primary"} 
+                        sx={{ fontWeight: dynamicBreadcrumbs.length > 0 ? 'normal' : 'bold' }}
+                    >
                       {activePage.title}
                     </Typography>
+                    
+                    {dynamicBreadcrumbs.map((crumb, idx) => (
+                        <Typography 
+                            key={idx} 
+                            variant="body2" 
+                            color={idx === dynamicBreadcrumbs.length - 1 ? "text.primary" : "text.secondary"} 
+                            sx={{ fontWeight: idx === dynamicBreadcrumbs.length - 1 ? 'bold' : 'normal' }}
+                        >
+                            {crumb}
+                        </Typography>
+                    ))}
                   </Breadcrumbs>
                 </Box>
               )}
