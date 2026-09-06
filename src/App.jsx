@@ -48,8 +48,17 @@ function App() {
     const handleSetBreadcrumbs = (e) => {
         setDynamicBreadcrumbs(e.detail || []);
     };
+    const handleNavigateToView = (e) => {
+        if (e.detail?.viewId) {
+            setCurrentView(e.detail.viewId);
+        }
+    };
     window.addEventListener('set-breadcrumbs', handleSetBreadcrumbs);
-    return () => window.removeEventListener('set-breadcrumbs', handleSetBreadcrumbs);
+    window.addEventListener('navigate-to-view', handleNavigateToView);
+    return () => {
+        window.removeEventListener('set-breadcrumbs', handleSetBreadcrumbs);
+        window.removeEventListener('navigate-to-view', handleNavigateToView);
+    };
   }, []);
 
   useEffect(() => {

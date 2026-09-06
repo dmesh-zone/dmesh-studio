@@ -18,6 +18,9 @@ import {
 } from '@mui/material';
 import writeXlsxFile from 'write-excel-file/browser';
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import HubIcon from '@mui/icons-material/Hub';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useThemeContext } from '../../ThemeContext';
@@ -516,20 +519,39 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
 
                                     if (col.sidePanelLink) {
                                         content = (
-                                            <Link 
-                                                component="button"
-                                                variant="body2"
-                                                onClick={() => setSelectedProduct(prod)}
-                                                sx={{ 
-                                                    cursor: 'pointer', 
-                                                    fontWeight: '500', 
-                                                    textAlign: 'left',
-                                                    fontFamily: 'inherit',
-                                                    fontSize: 'inherit'
-                                                }}
-                                            >
-                                                {content}
-                                            </Link>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Tooltip title="View more information">
+                                                    <Link 
+                                                        component="button"
+                                                        variant="body2"
+                                                        onClick={() => setSelectedProduct(prod)}
+                                                        sx={{ 
+                                                            cursor: 'pointer', 
+                                                            fontWeight: '500', 
+                                                            textAlign: 'left',
+                                                            fontFamily: 'inherit',
+                                                            fontSize: 'inherit'
+                                                        }}
+                                                    >
+                                                        {content}
+                                                    </Link>
+                                                </Tooltip>
+                                                <Tooltip title="View in Data Mesh">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            window.dispatchEvent(new CustomEvent('navigate-to-view', { detail: { viewId: 'mesh' } }));
+                                                            setTimeout(() => {
+                                                                window.dispatchEvent(new CustomEvent('navigate-to-node', { detail: { id: prod.id, kind: 'DataProduct' } }));
+                                                            }, 100);
+                                                        }}
+                                                        sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' }, p: 0.5 }}
+                                                    >
+                                                        <HubIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Box>
                                         );
                                     }
 

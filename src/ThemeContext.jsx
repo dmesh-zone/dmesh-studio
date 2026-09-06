@@ -67,6 +67,25 @@ export const CustomThemeProvider = ({ children }) => {
                     defaultProps: {
                         underline: 'hover',
                     }
+                },
+                MuiTooltip: {
+                    defaultProps: {
+                        arrow: true,
+                    },
+                    styleOverrides: {
+                        tooltip: {
+                            backgroundColor: '#121212',
+                            color: '#ffffff',
+                            padding: '12px 16px',
+                            borderRadius: '4px',
+                            fontSize: '13px',
+                            fontWeight: '400',
+                            boxShadow: '0px 4px 12px rgba(0,0,0,0.2)',
+                        },
+                        arrow: {
+                            color: '#121212',
+                        }
+                    }
                 }
             }
         };
