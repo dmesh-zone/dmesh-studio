@@ -209,20 +209,37 @@ function Flow({ isExpanded = false }) {
 
     // Dispatch breadcrumbs based on selection
     React.useEffect(() => {
+        const getProductAlias = (itemObj) => {
+            const tier = resolveOdpsPath({ raw: itemObj }, '_customProperty("dataProductTier")');
+            const aliasMap = config?.dataMeshBreadcrumbDataProductAliasMap || {};
+            if (tier && aliasMap[tier]) return aliasMap[tier];
+            return aliasMap["*"] || "Data Product";
+        };
+
         if (selection.id) {
             const item = dataMeshOperations.find(d => String(d.id) === String(selection.id));
             if (item) {
-                const domainAlias = config?.domainNameCustomisation?.[item.domain] || item.domain;
                 if (selection.kind === 'DataProduct') {
-                    const crumb1 = domainAlias ? `${domainAlias} Data Product` : 'Data Product';
-                    const name = resolveOdpsPath(item, '_customProperty("dataProductBusinessName")') || item?.name || selection.id;
+                    const domainAlias = config?.domainNameCustomisation?.[item.domain] || item.domain;
+                    const name = resolveOdpsPath({ raw: item }, '_customProperty("dataProductBusinessName")') || item?.name || selection.id;
                     const finalName = domainAlias ? `(${domainAlias}) ${name}` : name;
-                    window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: [crumb1, finalName] }));
+                    const typeAlias = getProductAlias(item);
+                    window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: [typeAlias, finalName] }));
                 } else if (selection.kind === 'DataContract') {
-                    const crumb1 = domainAlias ? `${domainAlias} Data Contract` : 'Data Contract';
-                    const name = item?.name || selection.id;
-                    const finalName = domainAlias ? `(${domainAlias}) ${name}` : name;
-                    window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: [crumb1, finalName] }));
+                    const producerNode = dataMeshOperations.find(n => n.kind === 'DataProduct' && n.outputPorts?.some(p => String(p.contractId) === String(selection.id)));
+                    if (producerNode) {
+                        const domainAlias = config?.domainNameCustomisation?.[producerNode.domain] || producerNode.domain;
+                        const name = resolveOdpsPath({ raw: producerNode }, '_customProperty("dataProductBusinessName")') || producerNode?.name || producerNode.id;
+                        const finalName = domainAlias ? `(${domainAlias}) ${name}` : name;
+                        const typeAlias = getProductAlias(producerNode);
+                        window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: [typeAlias, finalName, 'Data Contracts'] }));
+                    } else {
+                        // Fallback if producer not found
+                        const domainAlias = config?.domainNameCustomisation?.[item.domain] || item.domain;
+                        const name = item?.name || selection.id;
+                        const finalName = domainAlias ? `(${domainAlias}) ${name}` : name;
+                        window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: ['Data Contract', finalName] }));
+                    }
                 }
             }
         } else {

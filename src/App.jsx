@@ -40,7 +40,6 @@ const normalizePath = (path) => {
 function App() {
   const [navConfig, setNavConfig] = useState(null);
   const [currentView, setCurrentView] = useState("mesh");
-  const [pageCustomisationMarkdown, setPageCustomisationMarkdown] = useState("");
 
   const [dynamicBreadcrumbs, setDynamicBreadcrumbs] = useState([]);
 
