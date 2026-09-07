@@ -16,6 +16,7 @@ import {
     Menu,
     MenuItem
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import writeXlsxFile from 'write-excel-file/browser';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -117,6 +118,7 @@ const TypeSelector = ({ types, selectedTypes, onChange }) => {
 
 export default function DataProductTabular({ title, tierFilter = null, customControls, renderAboveTable, renderTable, tableDescriptor, sidePanelDescriptor }) {
     const { mode } = useThemeContext();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [productsList, setProductsList] = useState([]);
@@ -541,10 +543,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                                                         size="small"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            window.dispatchEvent(new CustomEvent('navigate-to-view', { detail: { viewId: 'mesh' } }));
-                                                            setTimeout(() => {
-                                                                window.dispatchEvent(new CustomEvent('navigate-to-node', { detail: { id: prod.id, kind: 'DataProduct' } }));
-                                                            }, 100);
+                                                            navigate(`/env/${envFilter}/mesh/domain/${prod.domain}/dataproduct/${prod.id}`);
                                                         }}
                                                         sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' }, p: 0.5 }}
                                                     >
