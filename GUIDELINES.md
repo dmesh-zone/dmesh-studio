@@ -81,3 +81,21 @@ When adding new validation rules:
 - **Dependency Management**: Dependencies are regularly updated via Dependabot.
 - **Vulnerability Scanning**: Snyk GitHub Actions are integrated to check for vulnerabilities in `package.json` dependencies (requires `SNYK_TOKEN` repository secret).
 - **Pull Requests**: All new code and PRs must successfully pass these security workflows before merging into `main`.
+
+## 7. Resource URL mapping
+URLs map to navigational targets as follows:
+
+/dmesh-studio/{page.id} -> where page id maps to navigation.sections.pages.id, e.g.
+* /dmesh-studio/env/{env}/mesh
+* /dmesh-studio/env/{env}/products
+* ...
+
+/dmesh-studio/mesh will have further depth as follows:
+Data Mesh level: /dmesh-studio/env/{env}/mesh/
+Data Product level: /dmesh-studio/env/{env}/mesh/domain/{domainId}/dataproduct/{dataproductId}
+Data Product contract level: /dmesh-studio/env/{env}/mesh/domain/{domainId}/dataproduct/{dataproductId}/contracts
+
+
+
+
+

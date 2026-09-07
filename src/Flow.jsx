@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactFlow, Controls, Background, useNodesState, useEdgesState, addEdge, MarkerType, applyNodeChanges, MiniMap, Panel } from '@xyflow/react';
 import packageJson from '../package.json';
 import '@xyflow/react/dist/style.css';
@@ -88,6 +89,10 @@ const normalizePath = (path) => {
 export default Flow;
 
 function Flow({ isExpanded = false }) {
+    // Router Hooks
+    const location = useLocation();
+    const navigate = useNavigate();
+
     // Theme Context
     const { mode } = useThemeContext();
 
@@ -206,6 +211,86 @@ function Flow({ isExpanded = false }) {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [selection, setSelection] = React.useState({ id: null, kind: null });
+
+    // Sync URL -> Selection
+    React.useEffect(() => {
+        if (!dataMeshOperations || dataMeshOperations.length === 0) return;
+        
+        const parts = location.pathname.split('/').filter(Boolean); // e.g. ['env', 'Prod', 'mesh', 'domain', 'food_production', 'dataproduct', '1234']
+        if (parts[0] !== 'env' || parts[2] !== 'mesh') return;
+        
+        const urlEnv = parts[1];
+        if (selectedEnv !== urlEnv) {
+            setSelectedEnv(urlEnv);
+        }
+
+        if (parts.length >= 7 && parts[3] === 'domain' && parts[5] === 'dataproduct') {
+            const dataproductId = parts[6];
+            const isContracts = parts[7] === 'contracts';
+            
+            if (isContracts) {
+                // User wants the contracts for this data product. 
+                // We find the product, get its first output port, and select that contract.
+                const product = dataMeshOperations.find(n => String(n.id) === dataproductId && n.kind === 'DataProduct');
+                if (product && product.outputPorts && product.outputPorts.length > 0) {
+                    const contractId = product.outputPorts[0].contractId;
+                    if (selection.id !== contractId) {
+                        setSelection({ id: contractId, kind: 'DataContract' });
+                    }
+                }
+            } else {
+                if (selection.id !== dataproductId) {
+                    setSelection({ id: dataproductId, kind: 'DataProduct' });
+                }
+            }
+        } else {
+            // Root mesh path
+            if (selection.id !== null) {
+                setSelection({ id: null, kind: null });
+            }
+        }
+    }, [location.pathname, dataMeshOperations]);
+
+    // Sync Selection -> URL
+    const isFirstRun = React.useRef(true);
+    React.useEffect(() => {
+        if (!dataMeshOperations || dataMeshOperations.length === 0) return;
+
+        if (isFirstRun.current) {
+            isFirstRun.current = false;
+            return;
+        }
+
+        if (selection.id) {
+            if (selection.kind === 'DataProduct') {
+                const item = dataMeshOperations.find(d => String(d.id) === String(selection.id));
+                if (item) {
+                    const expectedPath = `/env/${selectedEnv}/mesh/domain/${item.domain}/dataproduct/${item.id}`;
+                    if (location.pathname !== expectedPath) {
+                        navigate(expectedPath, { replace: true });
+                    }
+                } else {
+                    navigate(`/env/${selectedEnv}/mesh`, { replace: true });
+                }
+            } else if (selection.kind === 'DataContract') {
+                const producerNode = dataMeshOperations.find(n => n.kind === 'DataProduct' && n.outputPorts?.some(p => String(p.contractId) === String(selection.id)));
+                if (producerNode) {
+                    const expectedPath = `/env/${selectedEnv}/mesh/domain/${producerNode.domain}/dataproduct/${producerNode.id}/contracts`;
+                    if (location.pathname !== expectedPath) {
+                        navigate(expectedPath, { replace: true });
+                    }
+                } else {
+                    navigate(`/env/${selectedEnv}/mesh`, { replace: true });
+                }
+            }
+        } else {
+            const parts = location.pathname.split('/').filter(Boolean);
+            if (parts.length !== 3 || parts[0] !== 'env' || parts[2] !== 'mesh' || parts[1] !== selectedEnv) {
+                navigate(`/env/${selectedEnv}/mesh`, { replace: true });
+            }
+        }
+    }, [selection, dataMeshOperations, selectedEnv]);
+
 
     // Dispatch breadcrumbs based on selection
     React.useEffect(() => {

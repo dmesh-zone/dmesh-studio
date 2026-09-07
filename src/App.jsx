@@ -15,6 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Flow from './Flow';
 
 import './App.css';
@@ -39,7 +40,22 @@ const normalizePath = (path) => {
 
 function App() {
   const [navConfig, setNavConfig] = useState(null);
-  const [currentView, setCurrentView] = useState("mesh");
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const parts = location.pathname.split('/').filter(Boolean);
+  let currentEnv = 'Prod';
+  let currentView = 'mesh';
+  
+  if (parts.length > 0) {
+      if (parts[0] === 'env' && parts.length >= 2) {
+          currentEnv = parts[1];
+          currentView = parts[2] || 'mesh';
+      } else {
+          currentView = parts[0];
+      }
+  }
 
   const [dynamicBreadcrumbs, setDynamicBreadcrumbs] = useState([]);
 
@@ -49,7 +65,7 @@ function App() {
     };
     const handleNavigateToView = (e) => {
         if (e.detail?.viewId) {
-            setCurrentView(e.detail.viewId);
+            navigate(`/env/${currentEnv}/${e.detail.viewId}`);
         }
     };
     window.addEventListener('set-breadcrumbs', handleSetBreadcrumbs);
@@ -207,7 +223,7 @@ function App() {
                 return (
                   <Tooltip key={page.id} title={!isExpanded ? page.title : ""} placement="right">
                     <Box
-                      onClick={() => setCurrentView(page.id)}
+                      onClick={() => navigate(`/env/${currentEnv}/${page.id}`)}
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -288,7 +304,7 @@ function App() {
                       color="text.secondary"
                       onClick={() => {
                         if (navConfig?.sections?.[0]?.pages?.[0]?.id) {
-                          setCurrentView(navConfig.sections[0].pages[0].id);
+                          navigate(`/env/${currentEnv}/${navConfig.sections[0].pages[0].id}`);
                         }
                       }}
                       sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
