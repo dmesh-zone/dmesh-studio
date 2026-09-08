@@ -32,9 +32,32 @@ Additionally, you can create a `./public/config/custom/config/custom/config.yaml
 
 ## Customization
 
-DMesh Studio is designed to be easily customized to fit your organization's branding and needs. You can configure themes (light and dark mode), replace logos, map technology icons, and even create completely custom React pages (e.g., custom tabular views for Data Products and Data Sources). 
+DMesh Studio is designed to be easily customized to fit your organization's branding and needs. You can fully customize themes, fonts, banners, components, and configurations without permanently altering the core codebase by maintaining a separate, peer repository.
 
-For a complete guide on overriding styles, assets, components, and pages using the `customization.py` script, please refer to the [Customization Guide](PAGE_CUSTOMISATION.md).
+A sample customization repository is available at [dmesh-studio-custom-sample](https://github.com/dmesh-zone/dmesh-studio-custom-sample).
+
+This sample illustrates how to customise:
+- Banner, including logo and product name
+- Config, including navigation drawer items, environments supported, etc.
+- Fonts
+- Themes, allowing definition of colors and style for both light and dark themes
+- Pages (see [PAGE_CUSTOMISATION.md](PAGE_CUSTOMISATION.md)), allowing adding or overriding navigational drawer target pages (e.g., leveraging the `DataProductTabular` component to build custom data product tabular pages in a data-driven, declarative manner)
+
+To apply customizations using this approach:
+1. Clone the customization repository into the same parent directory as your `dmesh-studio` project:
+   ```bash
+   git clone git@github.com:dmesh-zone/dmesh-studio-custom-sample.git
+   ```
+2. Navigate into your `dmesh-studio` directory and run the `customization.py` script, passing the suffix of your custom repository (e.g., `sample`):
+   ```bash
+   python3 customization.py sample
+   ```
+   This script will automatically locate the sibling `dmesh-studio-custom-sample` directory and seamlessly copy its `config`, `themes`, `fonts`, `banner`, and `pages` assets into the active `custom/` directories within `dmesh-studio`.
+
+3. To remove all custom assets and revert to the base `dmesh-studio` experience, run:
+   ```bash
+   python3 customization.py off
+   ```
 
 
 ### Configuration File Structure
@@ -52,7 +75,7 @@ tiers:
 
 #### `defaultDataMeshOperationalDataUrl` (required)
 
-The path or URL to your Data Mesh data mesh operations YAML or JSON file.
+The path or URL to your Data Mesh data mesh operations YAML or JSON data.
 
 **Examples:**
 local file: 
@@ -60,9 +83,9 @@ local file:
 defaultDataMeshOperationalDataUrl: /sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
 ```
 
-remote file:
+example remote file:
 ```yaml
-defaultDataMeshOperationalDataUrl: https://www.example.com/sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
+defaultDataMeshOperationalDataUrl: https://dmesh-zone.com/dmesh/discover
 ```
 
 ### Optional Fields
@@ -110,34 +133,7 @@ tiers:
 
 **Default**: Includes `dataSource`, `sourceAligned`, `curated`, `consumerAligned`, and `application` tiers
 
-### Customization
 
-You can fully customize the studio's themes, fonts, banners, components, and configurations without permanently altering the core codebase by maintaining a separate, peer repository.
-
-A sample customization repository is available at [dmesh-studio-custom-sample](https://github.com/dmesh-zone/dmesh-studio-custom-sample).
-
-This repository illustrates how to customise:
-- Banner, including logo and product name
-- Config, including navigation drawer items, environments supported, etc.
-- Fonts
-- Themes, allowing definition of colors and style for both light and dark themes
-- Pages (see [PAGE_CUSTOMISATION.md](PAGE_CUSTOMISATION.md)), allowing adding or overriding navigational drawer target pages (e.g., leveraging the `DataProductTabular` component to build custom data product tabular pages in a data-driven, declarative manner)
-
-To apply customizations using this approach:
-1. Clone the customization repository into the same parent directory as your `dmesh-studio` project:
-   ```bash
-   git clone git@github.com:dmesh-zone/dmesh-studio-custom-sample.git
-   ```
-2. Navigate into your `dmesh-studio` directory and run the `customization.py` script, passing the suffix of your custom repository (e.g., `sample`):
-   ```bash
-   python3 customization.py sample
-   ```
-   This script will automatically locate the sibling `dmesh-studio-custom-sample` directory and seamlessly copy its `config`, `themes`, `fonts`, `banner`, and `pages` assets into the active `custom/` directories within `dmesh-studio`.
-
-3. To remove all custom assets and revert to the base `dmesh-studio` experience, run:
-   ```bash
-   python3 customization.py off
-   ```
 
 ## Local Development
 
