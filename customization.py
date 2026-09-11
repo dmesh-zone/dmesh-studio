@@ -2,6 +2,8 @@
 import sys
 import os
 import shutil
+import json
+import subprocess
 
 def clear_directory(path):
     if not os.path.exists(path):
@@ -50,6 +52,19 @@ def main():
         if os.path.exists(custom_config_path):
             os.remove(custom_config_path)
             
+        # Remove custom dependencies
+        custom_deps_path = os.path.join(custom_pages_dir, "custom_dependencies.json")
+        if os.path.exists(custom_deps_path):
+            try:
+                with open(custom_deps_path, 'r') as f:
+                    deps = json.load(f)
+                if deps:
+                    print(f"Uninstalling custom dependencies: {', '.join(deps)}")
+                    subprocess.run(["npm", "uninstall"] + deps, cwd=script_dir, check=True)
+            except Exception as e:
+                print(f"Warning: Failed to uninstall custom dependencies: {e}")
+            os.remove(custom_deps_path)
+            
         # Clear custom directories
         clear_directory(custom_themes_dir)
         clear_directory(custom_fonts_dir)
@@ -90,6 +105,26 @@ def main():
         # Copy sampleData
         src_sample_data = os.path.join(source_base, "sampleData")
         copy_directory_contents(src_sample_data, custom_sample_data_dir)
+        
+        # Handle dependencies
+        deps_path = os.path.join(source_base, "dependencies.json")
+        if os.path.exists(deps_path):
+            try:
+                with open(deps_path, 'r') as f:
+                    deps_data = json.load(f)
+                deps = deps_data.get("dependencies", {})
+                if deps:
+                    install_args = [f"{pkg}@{ver}" for pkg, ver in deps.items()]
+                    print(f"Installing custom dependencies: {', '.join(install_args)}")
+                    subprocess.run(["npm", "install"] + install_args, cwd=script_dir, check=True)
+                    
+                    # Save tracker file
+                    custom_deps_path = os.path.join(custom_pages_dir, "custom_dependencies.json")
+                    os.makedirs(custom_pages_dir, exist_ok=True)
+                    with open(custom_deps_path, 'w') as f:
+                        json.dump(list(deps.keys()), f)
+            except Exception as e:
+                print(f"Warning: Failed to install custom dependencies: {e}")
         
         print(f"Custom assets from 'dmesh-studio-custom-{action}' have been successfully copied!")
 

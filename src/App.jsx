@@ -30,7 +30,7 @@ import pages from './pages';
 import YAML from 'yaml';
 import * as MuiIcons from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
-import pageCustomisationMarkdown from '../PAGE_CUSTOMISATION.md?raw';
+import pageCustomisationMarkdown from '../docs/CUSTOM_PAGES.md?raw';
 import Banner from './banner';
 
 const normalizePath = (path) => {
