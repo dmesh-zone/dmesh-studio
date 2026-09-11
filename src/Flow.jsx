@@ -111,7 +111,7 @@ function Flow({ isExpanded = false }) {
     const [selectedEnv, setSelectedEnv] = React.useState(() => {
         return localStorage.getItem('dmesh-selected-env') || '';
     });
-    
+
     React.useEffect(() => {
         if (selectedEnv) {
             localStorage.setItem('dmesh-selected-env', selectedEnv);
@@ -215,10 +215,10 @@ function Flow({ isExpanded = false }) {
     // Sync URL -> Selection
     React.useEffect(() => {
         if (!dataMeshOperations || dataMeshOperations.length === 0) return;
-        
+
         const parts = location.pathname.split('/').filter(Boolean); // e.g. ['env', 'Prod', 'mesh', 'domain', 'food_production', 'dataproduct', '1234']
         if (parts[0] !== 'env' || parts[2] !== 'mesh') return;
-        
+
         const urlEnv = parts[1];
         if (selectedEnv !== urlEnv) {
             setSelectedEnv(urlEnv);
@@ -227,7 +227,7 @@ function Flow({ isExpanded = false }) {
         if (parts.length >= 7 && parts[3] === 'domain' && parts[5] === 'dataproduct') {
             const dataproductId = parts[6];
             const isContracts = parts[7] === 'contracts';
-            
+
             if (isContracts) {
                 // User wants the contracts for this data product. 
                 // We find the product, get its first output port, and select that contract.
@@ -1673,7 +1673,6 @@ function Flow({ isExpanded = false }) {
     React.useEffect(() => {
         if (rfInstance && !isLoading && visibleNodes.length > 0) {
             window.requestAnimationFrame(() => {
-                console.log("FIT_VIEW_LOGIC running. Config value:", config?.['zoom-to-fit-columns']);
                 if (config && config['zoom-to-fit-columns'] !== false) {
                     let minX = Infinity, maxX = -Infinity, minY = Infinity;
                     visibleNodes.forEach(n => {
@@ -2636,10 +2635,10 @@ function Flow({ isExpanded = false }) {
                     <Background />
                     <Controls position="bottom-left" />
                     <div style={{ position: 'absolute', bottom: '2px', left: '5px', zIndex: 4, fontSize: '10px' }}>
-                        <a 
-                            href="https://github.com/dmesh-zone/dmesh-studio" 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                        <a
+                            href="https://github.com/dmesh-zone/dmesh-studio"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             style={{ textDecoration: 'none', color: '#999' }}
                         >
                             dmesh studio v{packageJson.version}

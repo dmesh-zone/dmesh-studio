@@ -44,6 +44,7 @@ def main():
     custom_fonts_dir = os.path.join(public_dir, "fonts", "custom")
     custom_banner_dir = os.path.join(script_dir, "src", "banner", "custom")
     custom_pages_dir = os.path.join(script_dir, "src", "pages", "custom")
+    custom_icons_dir = os.path.join(script_dir, "src", "icons", "custom")
     custom_sample_data_dir = os.path.join(public_dir, "sampleData", "custom")
     
     if action.lower() == "off":
@@ -70,8 +71,9 @@ def main():
         clear_directory(custom_fonts_dir)
         clear_directory(custom_banner_dir)
         clear_directory(custom_pages_dir)
+        clear_directory(custom_icons_dir)
         clear_directory(custom_sample_data_dir)
-        print("Custom config, themes, fonts, banner, pages, and sampleData have been successfully removed (switched OFF)!")
+        print("Custom config, themes, fonts, banner, pages, icons, and sampleData have been successfully removed (switched OFF)!")
     else:
         # Action is an input name, find dmesh-studio-custom-<input>
         source_base = os.path.join(script_dir, "..", f"dmesh-studio-custom-{action}")
@@ -101,6 +103,10 @@ def main():
         # Copy pages
         src_pages = os.path.join(source_base, "pages")
         copy_directory_contents(src_pages, custom_pages_dir)
+        
+        # Copy icons
+        src_icons = os.path.join(source_base, "icons")
+        copy_directory_contents(src_icons, custom_icons_dir)
         
         # Copy sampleData
         src_sample_data = os.path.join(source_base, "sampleData")

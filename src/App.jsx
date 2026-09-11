@@ -29,6 +29,7 @@ import { useThemeContext } from './ThemeContext';
 import pages from './pages';
 import YAML from 'yaml';
 import * as MuiIcons from '@mui/icons-material';
+import { getIcon } from './icons';
 import ReactMarkdown from 'react-markdown';
 import pageCustomisationMarkdown from '../docs/CUSTOM_PAGES.md?raw';
 import Banner from './banner';
@@ -219,7 +220,7 @@ function App() {
                 </Typography>
               )}
               {section.pages.map((page) => {
-                const IconComponent = MuiIcons[page.icon] || MuiIcons[page.icon + 'Icon'] || LayersIcon;
+                const IconComponent = getIcon(page.icon);
                 return (
                   <Tooltip key={page.id} title={!isExpanded ? page.title : ""} placement="right">
                     <Box

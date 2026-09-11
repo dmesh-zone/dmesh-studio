@@ -41,6 +41,7 @@ This sample illustrates how to customise:
 - Config, including navigation drawer items, environments supported, etc.
 - Fonts
 - Themes, allowing definition of colors and style for both light and dark themes
+- Icons, allowing definition of completely custom React SVG icons for the navigation drawer and custom pages.
 - Pages (see [CUSTOM_PAGES.md](docs/CUSTOM_PAGES.md)), allowing adding or overriding navigational drawer target pages (e.g., leveraging the `DataProductTabular` component to build custom data product tabular pages in a data-driven, declarative manner)
 - Dependencies (see [CUSTOM_DEPENDENCIES.md](docs/CUSTOM_DEPENDENCIES.md)), allowing custom React pages to dynamically inject their required third-party npm libraries into the main build.
 
@@ -53,7 +54,7 @@ To apply customizations using this approach:
    ```bash
    python3 customization.py sample
    ```
-   This script will automatically locate the sibling `dmesh-studio-custom-sample` directory, parse and install any required npm dependencies from `dependencies.json`, and seamlessly copy its `config`, `themes`, `fonts`, `banner`, and `pages` assets into the active `custom/` directories within `dmesh-studio`.
+   This script will automatically locate the sibling `dmesh-studio-custom-sample` directory, parse and install any required npm dependencies from `dependencies.json`, and seamlessly copy its `config`, `themes`, `fonts`, `banner`, `icons`, and `pages` assets into the active `custom/` directories within `dmesh-studio`.
 
 3. To remove all custom assets and revert to the base `dmesh-studio` experience, run:
    ```bash

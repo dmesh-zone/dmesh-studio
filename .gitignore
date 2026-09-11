@@ -33,6 +33,7 @@ public/themes/custom/*
 src/pages/custom/*
 src/banner/custom/*
 src/components/custom/*
+src/icons/custom/*
 public/fonts/custom/*
 public/config/custom/*
 public/sampleData/custom/*
