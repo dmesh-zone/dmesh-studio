@@ -27,10 +27,10 @@ const ajv = new Ajv({ allErrors: true, strict: false });
 ajv.addMetaSchema(draft7MetaSchema);
 addFormats(ajv);
 
-let validateDataProduct = () => true;
-let validateDataContract = () => true;
-let validateDUA = () => true;
-let validateMetrics = () => true;
+let validateDataProduct: any = () => true;
+let validateDataContract: any = () => true;
+let validateDUA: any = () => true;
+let validateMetrics: any = () => true;
 
 try {
     validateDataProduct = ajv.compile(dataProductSchema);

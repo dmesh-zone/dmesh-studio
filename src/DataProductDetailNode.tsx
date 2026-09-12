@@ -17,7 +17,7 @@
 import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 
-export default memo(({ data, isConnectable }) => {
+const DataProductDetailNode = memo(({ data, isConnectable }: any) => {
     return (
         <div style={{
             border: '1px solid var(--m3-outline-variant, #e5e7eb)',
@@ -202,3 +202,5 @@ export default memo(({ data, isConnectable }) => {
         </div>
     );
 });
+
+export default DataProductDetailNode;

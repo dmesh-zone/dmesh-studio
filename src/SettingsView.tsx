@@ -25,7 +25,7 @@ export default function SettingsView() {
                     <RadioGroup
                         row
                         value={mode}
-                        onChange={(e) => setMode(e.target.value)}
+                        onChange={(e) => setMode(e.target.value as any)}
                         sx={{ gap: 2 }}
                     >
                     <FormControlLabel 

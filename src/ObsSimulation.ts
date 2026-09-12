@@ -29,16 +29,16 @@ const getRandomStatus = () => {
 
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const createMetric = (name, value, unit) => {
-    const measure = { value };
+const createMetric = (name: any, value: any, unit?: any) => {
+    const measure: any = { value };
     if (unit) measure.unit = unit;
-    return { name, type: 'metric', measure };
+    return { name, type: 'metric', measure } as any;
 };
 
-const createCheck = (name, status, severity, value, unit, threshold, message) => {
-    const measure = { value };
+const createCheck = (name: any, status: any, severity: any, value: any, unit?: any, threshold?: any, message?: any) => {
+    const measure: any = { value };
     if (unit) measure.unit = unit;
-    const check = {
+    const check: any = {
         name,
         type: 'check',
         status,
@@ -47,10 +47,10 @@ const createCheck = (name, status, severity, value, unit, threshold, message) =>
         measure
     };
     if (message) check.message = message;
-    return check;
+    return check as any;
 };
 
-export const generatePipelineMetrics = (statusOverride, dataMeshOperations, dp, configObs) => {
+export const generatePipelineMetrics = (statusOverride: any, ..._args: any[]) => {
     const status = statusOverride || getRandomStatus();
     const isCritical = status === 'critical';
     const isDegraded = status === 'degraded';
@@ -195,7 +195,7 @@ export const generateFreshnessMetrics = (statusOverride, dataMeshOperations, dp,
                         
                         if (schemaStatus === 'fail') {
                             if (worstStatus === 'pass') worstStatus = 'fail';
-                            if (schemaSeverity === 'critical') worstSeverity = 'critical';
+                            if ((schemaSeverity as any) === 'critical') worstSeverity = 'critical';
                         }
                         
                         const check = createCheck(
@@ -247,7 +247,7 @@ export const generateFreshnessMetrics = (statusOverride, dataMeshOperations, dp,
     }
 };
 
-export const generateQualityMetrics = (statusOverride, dataMeshOperations, dp, configObs) => {
+export const generateQualityMetrics = (statusOverride: any, ..._args: any[]) => {
     const status = statusOverride || getRandomStatus();
     const isCritical = status === 'critical';
     const isDegraded = status === 'degraded';
@@ -284,7 +284,7 @@ export const simulateDataMeshOperationsMetrics = (dataMeshOperationalData, dimen
     });
 
     const total = targetDPs.length;
-    let numCrit = Math.round(total * 0.1);
+    const numCrit = Math.round(total * 0.1);
     let numDeg = Math.round(total * 0.2);
     // Adjust boundaries to guarantee remainder equates natively mapped gracefully to Healthy
     if (numCrit + numDeg > total) numDeg = total - numCrit;
@@ -306,7 +306,7 @@ export const simulateDataMeshOperationsMetrics = (dataMeshOperationalData, dimen
 
         const worstDimIndex = Math.floor(Math.random() * dimsToGen.length);
 
-        let results = [];
+        const results = [];
         dimsToGen.forEach((dim, dimIndex) => {
             const healthCheck = configObs?.dimensions?.[dim]?.healthCheck || dim;
 

@@ -1,16 +1,25 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
+/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import { createTheme, ThemeProvider, CssBaseline, ThemeOptions, PaletteMode } from '@mui/material';
 
-const ThemeContext = createContext();
+type ThemeContextType = {
+    mode: PaletteMode;
+    setMode: (mode: PaletteMode) => void;
+    toggleTheme: () => void;
+    setPrimaryColor: (color: string | null) => void;
+    configTheme?: any;
+};
+
+const ThemeContext = createContext<ThemeContextType>({} as ThemeContextType);
 
 export const useThemeContext = () => useContext(ThemeContext);
 
-export const CustomThemeProvider = ({ children }) => {
+export const CustomThemeProvider = ({ children }: { children: ReactNode }) => {
     // Determine initial mode from localStorage or system preference
-    const [mode, setMode] = useState(() => {
+    const [mode, setMode] = useState<PaletteMode>(() => {
         const storedTheme = localStorage.getItem('theme');
         if (storedTheme === 'light' || storedTheme === 'dark') {
-            return storedTheme;
+            return storedTheme as PaletteMode;
         }
         return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     });
@@ -29,7 +38,7 @@ export const CustomThemeProvider = ({ children }) => {
 
     // Apply config-based theme or base mode
     const theme = useMemo(() => {
-        let themeOptions = {
+        const themeOptions: ThemeOptions = {
             palette: {
                 mode,
                 primary: {

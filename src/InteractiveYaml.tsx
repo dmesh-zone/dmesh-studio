@@ -17,7 +17,7 @@
 import React, { useState, useMemo } from 'react';
 import YAML from 'yaml';
 
-const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentProps = null }) => {
+const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentProps = null }: any) => {
     const [expanded, setExpanded] = useState(true);
     const gutter = 60; // Gutter for line numbers
     const indent = gutter + (level * 20);
@@ -33,7 +33,7 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
     const numberColor = '#d97706'; // Amber-600
     const booleanColor = '#9333ea'; // Purple-600
     const nullColor = '#94a3b8'; // Slate-400
-    const wrapperStyle = { paddingLeft: `${indent}px`, fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.6', position: 'relative' };
+    const wrapperStyle: React.CSSProperties = { paddingLeft: `${indent}px`, fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.6', position: 'relative' as any };
 
     // Inline Parent Indicator Helper
     const renderInlineParent = () => {
@@ -231,7 +231,7 @@ const YamlItem = ({ label, value, level = 0, isArrayItem = false, inlineParentPr
     );
 };
 
-const InteractiveYaml = ({ data, filterText }) => {
+const InteractiveYaml = ({ data, filterText }: any) => {
 
     // Convert to YAML Lines if filter is present
     const filteredContent = useMemo(() => {

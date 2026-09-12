@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ReactFlow, Controls, Background, useNodesState, useEdgesState, addEdge, MarkerType, applyNodeChanges, MiniMap, Panel } from '@xyflow/react';
+import { ReactFlow, Controls, Background, useNodesState, useEdgesState, MarkerType, MiniMap, Panel } from '@xyflow/react';
 import packageJson from '../package.json';
 import '@xyflow/react/dist/style.css';
 import DataProductNode from './DataProductNode';
@@ -58,7 +60,7 @@ const nodeTypes = {
     headerNode: HeaderNode
 };
 
-const edgeTypes = {
+const edgeTypes: any = {
     relationshipEdge: RelationshipEdge,
 };
 
@@ -103,7 +105,7 @@ function Flow({ isExpanded = false }) {
     const [dataMeshOperationsRaw, setDataMeshOperationalDataRaw] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
-    const [config, setConfig] = React.useState({ iconMap: {}, tiers: {}, domainPalette: [], defaultDataMeshOperationalDataUrl: '', dataMeshOperationsList: [], 'single-domain-default-filter': false, 'zoom-to-fit-columns': true }); // Config state
+    const [config, setConfig] = React.useState<any>({ iconMap: {}, tiers: {}, domainPalette: [], defaultDataMeshOperationalDataUrl: '', dataMeshOperationsList: [], 'single-domain-default-filter': false, 'zoom-to-fit-columns': true }); // Config state
     const [configError, setConfigError] = React.useState(null); // Track config loading errors
     const [showDataMeshOperationsModal, setShowDataMeshOperationsModal] = React.useState(false);
 
@@ -210,7 +212,7 @@ function Flow({ isExpanded = false }) {
     // React Flow State
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-    const [selection, setSelection] = React.useState({ id: null, kind: null });
+    const [selection, setSelection] = React.useState<any>({ id: null, kind: null });
 
     // Sync URL -> Selection
     React.useEffect(() => {
@@ -379,7 +381,7 @@ function Flow({ isExpanded = false }) {
 
     const [showDomainLabels, setShowDomainLabels] = React.useState(() => localStorage.getItem('showDomainLabels') === 'true');
     React.useEffect(() => {
-        localStorage.setItem('showDomainLabels', showDomainLabels);
+        localStorage.setItem('showDomainLabels', String(showDomainLabels));
     }, [showDomainLabels]);
 
     const [showDescriptionsExpanded, setShowDescriptionsExpanded] = React.useState(() => {
@@ -387,7 +389,7 @@ function Flow({ isExpanded = false }) {
         return val === null ? true : val === 'true';
     });
     React.useEffect(() => {
-        localStorage.setItem('showDescriptionsExpanded', showDescriptionsExpanded);
+        localStorage.setItem('showDescriptionsExpanded', String(showDescriptionsExpanded));
     }, [showDescriptionsExpanded]);
 
     const [showGlobalConfig, setShowGlobalConfig] = React.useState(false);
@@ -647,7 +649,7 @@ function Flow({ isExpanded = false }) {
 
             if (!domainParam) {
                 // Fallback: Check if it's in the hash or pathname like /domain=Domain_03 or #domain=Domain_03
-                const match = window.location.href.match(/[\/#?&]domain=([^&]+)/);
+                const match = window.location.href.match(/[/#?&]domain=([^&]+)/);
                 if (match) {
                     domainParam = decodeURIComponent(match[1]);
                 }
@@ -708,7 +710,7 @@ function Flow({ isExpanded = false }) {
                 const colNum = tierConfig.columnNumber !== undefined ? tierConfig.columnNumber : 1;
                 columnCounts[colNum] = (columnCounts[colNum] || 0) + 1;
             });
-            const maxNodes = Math.max(0, ...Object.values(columnCounts));
+            const maxNodes = Math.max(0, ...(Object.values(columnCounts) as number[]));
             if (maxNodes > 10) {
                 setCompactMode(true);
             } else {
@@ -1145,8 +1147,8 @@ function Flow({ isExpanded = false }) {
 
                     const neighbors = Array.from(adj[currentName] || []);
                     neighbors.sort().forEach(neighbor => {
-                        inDegree[neighbor]--;
-                        if (inDegree[neighbor] === 0) {
+                        inDegree[neighbor as string]--;
+                        if (inDegree[neighbor as string] === 0) {
                             queue.push(neighbor);
                         }
                     });
@@ -1630,7 +1632,7 @@ function Flow({ isExpanded = false }) {
 
             if (type === 'examples' || type === 'observability') {
                 // For examples and observability, default to auto/fit-content
-                setSidePanelWidth('auto');
+                setSidePanelWidth('auto' as any);
             } else if (e.detail.width && e.detail.width !== 'auto') {
                 // Allow up to 1400px or 90% of screen width if I could, but simple max:
                 setSidePanelWidth(Math.min(1400, Math.max(300, e.detail.width)));
@@ -2670,7 +2672,7 @@ function Flow({ isExpanded = false }) {
                 top: 0,
                 right: 0,
                 bottom: 0,
-                width: sidePanelWidth === 'auto' ? 'fit-content' : `${sidePanelWidth}px`,
+                width: (sidePanelWidth as any) === 'auto' ? 'fit-content' : `${sidePanelWidth}px`,
                 minWidth: '300px', // Minimum width
                 borderRadius: '24px 0 0 24px', // M3 Large Corner
                 background: 'var(--m3-surface)',

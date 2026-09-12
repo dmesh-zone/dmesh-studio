@@ -1,19 +1,19 @@
 import React from 'react';
 
-const baseComponents = import.meta.glob('./base/*.jsx', { eager: true });
-const customComponents = import.meta.glob('./custom/*.jsx', { eager: true });
+const baseComponents = import.meta.glob<{ default: any }>('./base/*.tsx', { eager: true });
+const customComponents = import.meta.glob<{ default: any }>('./custom/*.tsx', { eager: true });
 
-const components = {};
+const components: Record<string, any> = {};
 
 // Load base components
 for (const path in baseComponents) {
-    const name = path.match(/\.\/base\/(.+)\.jsx$/)[1];
+    const name = path.match(/\.\/base\/(.+)\.tsx$/)[1];
     components[name] = baseComponents[path].default;
 }
 
 // Load custom components (overrides base if same name)
 for (const path in customComponents) {
-    const name = path.match(/\.\/custom\/(.+)\.jsx$/)[1];
+    const name = path.match(/\.\/custom\/(.+)\.tsx$/)[1];
     components[name] = customComponents[path].default;
 }
 

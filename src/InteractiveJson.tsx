@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 
-const JsonItem = ({ label, value, level = 0, isLast = true }) => {
+const JsonItem = ({ label, value, level = 0, isLast = true }: any) => {
     const [expanded, setExpanded] = useState(true);
     const gutter = 40; // Gutter for line numbers
     const indent = gutter + (level * 20);
@@ -16,7 +16,7 @@ const JsonItem = ({ label, value, level = 0, isLast = true }) => {
     const numberColor = '#d97706'; // Amber-600
     const booleanColor = '#9333ea'; // Purple-600
     const nullColor = '#94a3b8'; // Slate-400
-    const wrapperStyle = { paddingLeft: `${indent}px`, fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.6', position: 'relative' };
+    const wrapperStyle: React.CSSProperties = { paddingLeft: `${indent}px`, fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: '1.6', position: 'relative' as any };
 
     // Helper for primitives
     const renderPrimitive = (val) => {
@@ -165,7 +165,7 @@ const JsonItem = ({ label, value, level = 0, isLast = true }) => {
     );
 };
 
-const InteractiveJson = ({ data, filterText }) => {
+const InteractiveJson = ({ data, filterText }: any) => {
     // Convert to JSON Lines if filter is present
     const filteredContent = useMemo(() => {
         if (!filterText) return null;

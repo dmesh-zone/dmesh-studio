@@ -35,7 +35,7 @@ export const resolveOdpsPath = (product, path) => {
         if (current === undefined || current === null) return undefined;
         
         // Check for array index e.g. "outputPorts[0]"
-        const arrayMatch = part.match(/([^\[]+)\[(\d+)\]/);
+        const arrayMatch = part.match(/([^[]+)\[(\d+)\]/);
         if (arrayMatch) {
             const key = arrayMatch[1];
             const index = parseInt(arrayMatch[2], 10);

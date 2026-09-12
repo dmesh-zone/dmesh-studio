@@ -28,7 +28,7 @@ const normalizePath = (path) => {
     return path;
 };
 
-export default function DataContractVisual({ data, anchor, filterByAnchor = false, onViewFull, config }) {
+export default function DataContractVisual({ data, anchor, filterByAnchor = false, _onViewFull, config }: any) {
     // data is the full YAML object for the Data Contract
     const containerRef = useRef(null);
     const [copied, setCopied] = React.useState(false);

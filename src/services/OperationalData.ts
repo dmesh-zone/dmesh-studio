@@ -7,6 +7,10 @@ const normalizePath = (path) => {
 };
 
 class OperationalData {
+    static _configCache: any = null;
+    static _dataMeshOpsCache: any = null;
+    static _mockOpsState: any = null;
+
     static async getConfig() {
         if (this._configCache) return this._configCache;
 

@@ -6,8 +6,8 @@ A React-based visualization tool for Data Mesh dataMeshOperationsList, utilizing
 ## 2. Coding Conventions
 
 ### File Headers
-All source files (`.js`, `.jsx`, `.css`) must begin with the Apache 2.0 license header:
-```javascript
+All source files (`.ts`, `.tsx`, `.css`) must begin with the Apache 2.0 license header:
+```typescript
 /*
  * Copyright 2026 Joao Vicente
  *
@@ -29,7 +29,7 @@ All source files (`.js`, `.jsx`, `.css`) must begin with the Apache 2.0 license 
 - **Functional Components**: Use arrow function components.
 - **Performance**: Wrap React Flow nodes and expensive visuals in `memo`.
 - **Props**: Destructure props directly in the component signature.
-- **Naming**: Use `PascalCase` for component files and names (e.g., `DataProductNode.jsx`).
+- **Naming**: Use `PascalCase` for component files and names (e.g., `DataProductNode.tsx`).
 - **Styles**: Prefer a mix of M3 CSS variables for theme and inline styles for dynamic node properties.
 
 ### Styling Strategy
@@ -41,12 +41,12 @@ All source files (`.js`, `.jsx`, `.css`) must begin with the Apache 2.0 license 
 ## 3. Communication Patterns
 
 ### Event-Driven Logic
-Avoid tight coupling between nodes and the main `Flow.jsx`. Use `CustomEvent` via the `window` object for cross-component communication:
+Avoid tight coupling between nodes and the main `Flow.tsx`. Use `CustomEvent` via the `window` object for cross-component communication:
 - `open-side-panel`: Triggers the side panel with YAML or tabular data.
 - `navigate-to-node`: Handled by Flow to center/zoom on a specific node.
 
 Example:
-```javascript
+```typescript
 const event = new CustomEvent('open-side-panel', {
     detail: { 
         id: data.id, 
@@ -62,7 +62,7 @@ window.dispatchEvent(event);
 ### Schema Standards
 - **ODCS**: Open Data Contract Standard (stored in `src/schemas/odcs-...`).
 - **ODPS**: Open Data Product Specification (stored in `src/schemas/odps-...`).
-- **Validation**: All dataMeshOperations items should be validated via `src/ValidationService.js`.
+- **Validation**: All dataMeshOperations items should be validated via `src/ValidationService.ts`.
 
 ### Validation Service Logic
 When adding new validation rules:

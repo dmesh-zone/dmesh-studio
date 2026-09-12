@@ -1,11 +1,11 @@
 import * as MuiIcons from '@mui/icons-material';
 
-// Automatically load all .jsx files in the custom folder
-const customIcons = import.meta.glob('./custom/*.jsx', { eager: true });
-const customRegistry = {};
+// Automatically load all .tsx files in the custom folder
+const customIcons = import.meta.glob<{ default: any }>('./custom/*.tsx', { eager: true });
+const customRegistry: Record<string, any> = {};
 
 for (const path in customIcons) {
-    const name = path.match(/\.\/custom\/(.+)\.jsx$/)[1];
+    const name = path.match(/\.\/custom\/(.+)\.tsx$/)[1];
     customRegistry[name] = customIcons[path].default;
 }
 

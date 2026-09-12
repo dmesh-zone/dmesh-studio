@@ -30,7 +30,7 @@ const KeyIcon = () => (
     </svg>
 );
 
-export default memo(({ data, isConnectable }) => {
+const DataContractNode = memo(({ data, _isConnectable }: any) => {
     if (!data) return <div>No data</div>;
     // Ensure description is a string or handle object safely
     const description = typeof data.description === 'object' ? (data.description.purpose || JSON.stringify(data.description)) : data.description;
@@ -290,3 +290,5 @@ export default memo(({ data, isConnectable }) => {
         </div>
     );
 });
+
+export default DataContractNode;

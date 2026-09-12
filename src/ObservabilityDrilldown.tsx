@@ -1,7 +1,7 @@
 import React from 'react';
 import InteractiveYaml from './InteractiveYaml';
 
-const MetricCard = ({ title, status, value, unit, nameText, expectedText, messageText, detail, icon }) => {
+const MetricCard = ({ title, status, value, unit, nameText, expectedText, messageText, detail, icon }: any) => {
     const getStatusColor = (s) => {
         switch (s) {
             case 'healthy': return 'var(--health-healthy)';
@@ -110,7 +110,7 @@ const formatTimeAgo = (isoStr) => {
     return new Date(isoStr).toLocaleString();
 };
 
-const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimensions = [], config }) => {
+const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimensions = [], _showEventsTab, config }: any) => {
     const [activeTooltipDim, setActiveTooltipDim] = React.useState(null);
     const [activeDC, setActiveDC] = React.useState(null);
 
@@ -225,7 +225,7 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                             }
 
                             // Extract schema name easily if available
-                            let idStr = dc.target.resourceIdentifier || 'Contract';
+                            const idStr = dc.target.resourceIdentifier || 'Contract';
                             const idParts = idStr.split('/');
                             const schemaName = idParts[idParts.length - 1];
 
@@ -474,7 +474,7 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto', paddingRight: '4px' }}>
                         {dcChecks.map((dc, index) => {
-                            let idStr = dc.target.resourceIdentifier || 'Contract';
+                            const idStr = dc.target.resourceIdentifier || 'Contract';
                             const idParts = idStr.split('/');
                             const schemaName = idParts[idParts.length - 1];
 
@@ -485,7 +485,7 @@ const ObservabilityDrilldown = ({ metrics, filterText, activeTab, availableDimen
                                 else color = 'var(--health-degraded)';
                             }
 
-                            let expectedStr = dc.threshold ? formatThreshold(dc.threshold) : '';
+                            const expectedStr = dc.threshold ? formatThreshold(dc.threshold) : '';
                             const isSelected = activeDC === dc.target.resourceIdentifier;
                             
                             return (

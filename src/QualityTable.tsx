@@ -52,10 +52,6 @@ const QualityTable = ({ schema }) => {
         return allRules;
     }, [schema]);
 
-    if (rules.length === 0) {
-        return <div style={{ padding: '20px', color: '#64748b' }}>No data quality rules defined.</div>;
-    }
-
     const renderSeverity = (severity) => {
         const styles = {
             critical: { bg: '#fee2e2', color: '#991b1b', border: '#f87171' },
@@ -113,7 +109,9 @@ const QualityTable = ({ schema }) => {
         if (typeof content === 'object') {
             try {
                 displayContent = JSON.stringify(content, null, 2);
-            } catch (e) { }
+            } catch {
+                // Ignore error if JSON stringify fails
+            }
         }
         return (
             <pre style={{
@@ -183,7 +181,7 @@ const QualityTable = ({ schema }) => {
                         </React.Fragment>
                     ));
                 } else {
-                    let strVal = typeof value === 'string' ? value : JSON.stringify(value);
+                    const strVal = typeof value === 'string' ? value : JSON.stringify(value);
                     displayValue = <span style={codeStyle}>{strVal}</span>;
                 }
 
@@ -197,7 +195,7 @@ const QualityTable = ({ schema }) => {
                 let displayValue;
                 try {
                     displayValue = JSON.stringify(value);
-                } catch (e) {
+                } catch {
                     displayValue = String(value);
                 }
 
@@ -229,7 +227,7 @@ const QualityTable = ({ schema }) => {
         );
     };
 
-    const columns = [
+    const columns = useMemo(() => [
         { label: 'Field', accessor: '_field', sticky: true },
         { label: 'Data quality ID', accessor: 'id' },
         { label: 'Description', accessor: 'description' },
@@ -251,7 +249,7 @@ const QualityTable = ({ schema }) => {
         { label: 'Custom Properties', accessor: 'customProperties', render: renderCode },
         { label: 'Tags', accessor: 'tags', render: renderTags },
         { label: 'Auth Definitions', accessor: 'authoritativeDefinitions', render: renderCode },
-    ];
+    ], []);
 
     const visibleColumns = useMemo(() => {
         return columns.filter(col => {
@@ -261,11 +259,14 @@ const QualityTable = ({ schema }) => {
             return rules.some(rule => {
                 if (col.accessor === 'operator') return renderOperator(rule) !== null;
                 const value = rule[col.accessor];
-                if (Array.isArray(value)) return value.length > 0;
                 return value !== undefined && value !== null && value !== '';
             });
         });
-    }, [rules]);
+    }, [columns, rules]);
+
+    if (rules.length === 0) {
+        return <div style={{ padding: '20px', color: '#64748b' }}>No data quality rules defined.</div>;
+    }
 
     return (
         <div className="custom-table-container" style={{ overflow: 'auto', height: '100%', width: '100%' }}>

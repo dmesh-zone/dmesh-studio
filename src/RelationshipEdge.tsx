@@ -13,7 +13,7 @@ export default function RelationshipEdge({
     style = {},
     markerEnd,
     data,
-}) {
+}: any) {
     // Use global hover state from Flow.jsx
     const isHovered = data?.isHovered;
 

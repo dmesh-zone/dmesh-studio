@@ -75,6 +75,7 @@ function App() {
         window.removeEventListener('set-breadcrumbs', handleSetBreadcrumbs);
         window.removeEventListener('navigate-to-view', handleNavigateToView);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -94,12 +95,12 @@ function App() {
       return next;
     });
   };
-  const { mode, setPrimaryColor } = useThemeContext();
+  const { mode, setPrimaryColor } = useThemeContext() as any;
   React.useEffect(() => {
     const applyTheme = async () => {
-      let themeLink = document.getElementById('theme-link');
+      let themeLink = document.getElementById('theme-link') as HTMLLinkElement;
       if (!themeLink) {
-          themeLink = document.createElement('link');
+          themeLink = document.createElement('link') as HTMLLinkElement;
           themeLink.id = 'theme-link';
           themeLink.rel = 'stylesheet';
       }
@@ -153,10 +154,10 @@ function App() {
     ]).then(([configText, customConfigText]) => {
         let baseConfig = {};
         let customConfig = {};
-        try { if (configText) baseConfig = YAML.parse(configText) || {}; } catch (e) {}
-        try { if (customConfigText) customConfig = YAML.parse(customConfigText) || {}; } catch (e) {}
+        try { if (configText) baseConfig = YAML.parse(configText) || {}; } catch { /* ignore */ }
+        try { if (customConfigText) customConfig = YAML.parse(customConfigText) || {}; } catch { /* ignore */ }
         
-        const mergedNav = customConfig.navigation || baseConfig.navigation;
+        const mergedNav = (customConfig as any).navigation || (baseConfig as any).navigation;
         setNavConfig(mergedNav);
     });
   }, []);

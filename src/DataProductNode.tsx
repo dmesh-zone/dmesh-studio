@@ -18,7 +18,7 @@ import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import InfoIcon from '@mui/icons-material/InfoOutlined';
 
-export default memo(({ data, isConnectable }) => {
+const DataProductNode = memo(({ data, isConnectable }: any) => {
     const [isHovered, setIsHovered] = React.useState(false);
     const [isInfoHovered, setIsInfoHovered] = React.useState(false);
     const [isFlipped, setIsFlipped] = React.useState(false);
@@ -479,3 +479,5 @@ export default memo(({ data, isConnectable }) => {
         </div>
     );
 });
+
+export default DataProductNode;

@@ -280,7 +280,7 @@ export default function DataProductVisual({ data, dataMeshOperations = [] }) {
                                 {properties
                                     .filter(p => p.property.toLowerCase().includes('datausageagreement'))
                                     .flatMap(p => Array.isArray(p.value) ? p.value : [p.value])
-                                    .map((agreement, idx, arr) => {
+                                    .map((agreement, idx) => {
                                         const rawConsumerId = agreement?.consumer?.dataProductId || agreement?.consumer?.id || agreement?.id || agreement?.consumerId || agreement?.consumerDataProductId || '-';
                                         
                                         let consumerDomain = '-';
@@ -336,7 +336,7 @@ export default function DataProductVisual({ data, dataMeshOperations = [] }) {
                                     <th>Name</th>
                                     <th>Version</th>
                                     <th>Contract</th>
-                                    {allPortCustomKeys.map(key => (
+                                    {allPortCustomKeys.map((key: any) => (
                                         <th key={key}>
                                             {formatLabel(key)}
                                         </th>
@@ -356,9 +356,9 @@ export default function DataProductVisual({ data, dataMeshOperations = [] }) {
                                                 `port-${idx}-contract`
                                             ) : '-'}
                                         </td>
-                                        {allPortCustomKeys.map(key => {
+                                        {allPortCustomKeys.map((key: any) => {
                                             const values = (port.customProperties || [])
-                                                .filter(p => p.property === key)
+                                                .filter((p: any) => p.property === key)
                                                 .map(p => p.value);
                                             return (
                                                 <td key={key}>

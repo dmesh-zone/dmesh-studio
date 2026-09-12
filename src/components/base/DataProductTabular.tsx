@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useState, useEffect, useMemo } from 'react';
 import {
     Box,
@@ -116,7 +117,7 @@ const TypeSelector = ({ types, selectedTypes, onChange }) => {
     );
 };
 
-export default function DataProductTabular({ title, tierFilter = null, customControls, renderAboveTable, renderTable, tableDescriptor, sidePanelDescriptor }) {
+export default function DataProductTabular({ title, tierFilter = null, customControls, renderAboveTable, renderTable, tableDescriptor, sidePanelDescriptor }: any) {
     const { mode } = useThemeContext();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
@@ -131,6 +132,13 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     const [domainNameCustomisation, setDomainNameCustomisation] = useState({});
     const [iconMap, setIconMap] = useState({});
     const [technologyNameMap, setTechnologyNameMap] = useState({});
+
+    const formatDomain = React.useCallback((d) => domainNameCustomisation[d] || d, [domainNameCustomisation]);
+    const formatTechnology = React.useCallback((val) => {
+        if (!val) return val;
+        const normalized = String(val).toLowerCase().replace(/\s+/g, '');
+        return technologyNameMap?.[normalized] || val;
+    }, [technologyNameMap]);
 
     // Filter states
     const [envFilter, setEnvFilter] = useState('');
@@ -217,13 +225,14 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
             try {
                 const parsed = JSON.parse(savedDomains);
                 if (Array.isArray(parsed) && parsed.every(d => allDomains.includes(d))) {
+                    // eslint-disable-next-line react-hooks/set-state-in-effect
                     setSelectedDomains(parsed);
                 }
             } catch (e) {
                 console.error("Failed to parse saved domains", e);
             }
         }
-    }, [allDomains]);
+    }, [allDomains, selectedDomains.length]);
 
     useEffect(() => {
         if (selectedDomains.length > 0) {
@@ -259,12 +268,15 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     }, [productsList, envFilter, selectedDomains, selectedTypes, searchText]);
 
     // Reset page to 0 when filters change
-    useEffect(() => {
+    const filterKey = `${envFilter}-${selectedDomains.join(',')}-${selectedTypes.join(',')}-${searchText}`;
+    const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+    if (filterKey !== prevFilterKey) {
+        setPrevFilterKey(filterKey);
         setPage(0);
-    }, [envFilter, selectedDomains, selectedTypes, searchText]);
+    }
 
     const sortedProducts = useMemo(() => {
-        let sortableItems = [...filteredProducts];
+        const sortableItems = [...filteredProducts];
         if (sortConfig.key !== null) {
             sortableItems.sort((a, b) => {
                 let aVal = resolveOdpsPath(a, sortConfig.key);
@@ -283,7 +295,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
             });
         }
         return sortableItems;
-    }, [filteredProducts, sortConfig, tableDescriptor, domainNameCustomisation, technologyNameMap]);
+    }, [filteredProducts, sortConfig, tableDescriptor, formatDomain, formatTechnology, iconMap, technologyNameMap]);
 
     // Export Logic
     const [exportAnchorEl, setExportAnchorEl] = useState(null);
@@ -377,7 +389,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                 })
             );
 
-            const exportFn = writeXlsxFile.default || writeXlsxFile;
+            const exportFn = (writeXlsxFile as any).default || writeXlsxFile;
             
             // The library returns an object with toBlob() and toFile() methods
             const result = exportFn(mappedData);
@@ -428,13 +440,6 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         setSortConfig({ key, direction });
     };
 
-    const formatDomain = (d) => domainNameCustomisation[d] || d;
-    const formatTechnology = (val) => {
-        if (!val) return val;
-        const normalized = String(val).toLowerCase().replace(/\s+/g, '');
-        return technologyNameMap?.[normalized] || val;
-    };
-
     if (isLoading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -462,8 +467,9 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         ];
         
         return (
-            <TableContainer component={Paper} sx={{ bgcolor: 'var(--m3-surface, #ffffff)', border: '1px solid var(--m3-outline-variant, #e2e8f0)', backgroundImage: 'none', color: 'inherit', boxShadow: 'none', borderRadius: '8px', overflow: 'auto' }}>
-                <table className="custom-table">
+            <TableContainer component={Paper} sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', bgcolor: 'var(--m3-surface, #ffffff)', border: '1px solid var(--m3-outline-variant, #e2e8f0)', backgroundImage: 'none', color: 'inherit', boxShadow: 'none', borderRadius: '8px' }}>
+                <div style={{ flex: 1, overflow: 'auto' }}>
+                    <table className="custom-table">
                     <thead>
                         <tr>
                             {columns.map((col, i) => (
@@ -501,7 +507,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                                         }
                                         content = (
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                {imgSrc && <img src={imgSrc} alt="" style={{ width: '16px', height: '16px' }} onError={(e) => { e.target.style.display = 'none'; }} />}
+                                                {imgSrc && <img src={imgSrc} alt="" style={{ width: '16px', height: '16px' }} onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />}
                                                 <span>{content}</span>
                                             </div>
                                         );
@@ -513,7 +519,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                                         }
                                         content = (
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                {imgSrc && <img src={imgSrc} alt="" style={{ width: '16px', height: '16px' }} onError={(e) => { e.target.style.display = 'none'; }} />}
+                                                {imgSrc && <img src={imgSrc} alt="" style={{ width: '16px', height: '16px' }} onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />}
                                                 <span>{content}</span>
                                             </div>
                                         );
@@ -567,6 +573,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                         )}
                     </tbody>
                 </table>
+            </div>
             
             {/* Pagination Footer */}
             {sortedProducts.length > 0 && (
@@ -580,7 +587,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                             <select 
                                 value={rowsPerPage} 
                                 onChange={(e) => { setRowsPerPage(Number(e.target.value)); setPage(0); }}
-                                style={{ padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--m3-outline-variant, #e2e8f0)', fontSize: '13px', backgroundColor: 'transparent', color: 'inherit' }}
+                                style={{ padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--m3-outline-variant, #e2e8f0)', fontSize: '13px', backgroundColor: 'var(--m3-surface, #ffffff)', color: 'var(--m3-on-surface, #334155)' }}
                             >
                                 {[10, 25, 50, 100].map(val => (
                                     <option key={val} value={val}>{val}</option>
@@ -609,8 +616,8 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     };
 
     return (
-        <Box sx={{ pt: 1.5, pb: 4, px: 4, height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 3, bgcolor: 'var(--m3-surface, #ffffff)', color: 'var(--m3-on-surface, #334155)' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Box sx={{ pt: 1.5, pb: 4, px: 4, height: '100%', display: 'flex', flexDirection: 'column', gap: 3, bgcolor: 'var(--m3-surface, #ffffff)', color: 'var(--m3-on-surface, #334155)' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
                 <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'inherit' }}>
                     {title}
                 </Typography>
@@ -694,6 +701,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                 anchor="right" 
                 open={Boolean(selectedProduct)} 
                 onClose={() => setSelectedProduct(null)}
+                // @ts-ignore
                 PaperProps={{ 
                     sx: { 
                         width: `${sidePanelWidth}px`, 

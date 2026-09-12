@@ -31,9 +31,7 @@ const DomainSelector = ({ domains, selectedDomains, onChange, formatDomain = (d)
         return () => document.removeEventListener('mousedown', handleClickOutside, true);
     }, []);
 
-    const handleChange = (e) => {
-        // ... (unused legacy handler)
-    };
+
 
     const toggleDomain = (domain) => {
         if (selectedDomains.includes(domain)) {
