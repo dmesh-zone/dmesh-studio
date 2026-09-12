@@ -9,6 +9,7 @@ All notable changes to **DMesh Studio** will be documented in this file.
 ### ✨ Highlights
 - **TypeScript Migration:** The entire core application, as well as the `dmesh-studio-custom-sample` repository, has been fully migrated from JavaScript (`.jsx`) to TypeScript (`.tsx`). This introduces robust type safety, better developer tooling, and easier long-term maintenance.
 - **Modern ESLint:** Fully updated the linting infrastructure to use the modern `eslint.config.js` (flat config) tailored for TypeScript and React.
+- **Monorepo Restructuring:** Reorganized the project layout by splitting the application into distinct `frontend/` (React/Vite) and `backend/` (FastAPI) directories to improve organization and maintainability, while fully preserving compatibility with automated Databricks App deployments.
 
 ### 🎨 UI & Dashboard Improvements
 - **Component Abstraction:** Introduced highly reusable generic widgets for common UI elements: `DataProductSearchWidget`, `EnvironmentSelectorWidget`, `DomainSelectorWidget`, and `DataProductTypeSelectorWidget`.
