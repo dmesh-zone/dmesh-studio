@@ -17,7 +17,7 @@ import {
     Menu,
     MenuItem
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import writeXlsxFile from 'write-excel-file/browser';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -38,6 +38,7 @@ import { resolveOdpsPath } from '../../utils/odpsPath';
 export default function DataProductTabular({ title, tierFilter = null, customControls, renderAboveTable, renderTable, tableDescriptor, sidePanelDescriptor }: any) {
     const { mode } = useThemeContext();
     const navigate = useNavigate();
+    const location = useLocation();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [productsList, setProductsList] = useState([]);
@@ -134,8 +135,17 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     useEffect(() => {
         if (envFilter && envFilter !== 'All') {
             localStorage.setItem('dmesh-selected-env', envFilter);
+            
+            const parts = location.pathname.split('/').filter(Boolean);
+            if (parts[0] === 'env' && parts.length >= 2) {
+                const urlEnv = parts[1];
+                if (urlEnv !== envFilter) {
+                    const newPath = `/${parts[0]}/${envFilter}/${parts.slice(2).join('/')}`;
+                    navigate(newPath, { replace: true });
+                }
+            }
         }
-    }, [envFilter]);
+    }, [envFilter, location.pathname, navigate]);
 
     useEffect(() => {
         const savedDomains = localStorage.getItem('dmesh-selected-domains');
