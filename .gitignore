@@ -30,7 +30,7 @@ sandbox/*
 
 # Project specific
 scratch*
-app.yaml
+backend/app.yaml
 lint-results.json
 frontend/public/themes/custom*
 frontend/src/pages/custom*

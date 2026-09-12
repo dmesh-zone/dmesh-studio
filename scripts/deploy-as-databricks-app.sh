@@ -32,10 +32,10 @@ echo "=========================================="
 echo " 0. Parameterizing app.yaml"
 echo "=========================================="
 # Backup the original app.yaml and set up a trap to restore it on exit
-cp app.yaml app.yaml.bak
-trap 'mv app.yaml.bak app.yaml 2>/dev/null || true' EXIT
+cp backend/app.yaml backend/app.yaml.bak
+trap 'mv backend/app.yaml.bak backend/app.yaml 2>/dev/null || true' EXIT
 
-sed "s|\${API_APP_URL}|${API_APP_URL}|g" app.yaml.bak > app.yaml
+sed "s|\${API_APP_URL}|${API_APP_URL}|g" backend/app.yaml.bak > backend/app.yaml
 
 
 echo "=========================================="
@@ -57,10 +57,10 @@ fi
 
 # Create a clean deployment folder to avoid syncing unnecessary files
 DEPLOY_DIR=$(mktemp -d)
-trap 'rm -rf "$DEPLOY_DIR"; mv app.yaml.bak app.yaml 2>/dev/null || true' EXIT
+trap 'rm -rf "$DEPLOY_DIR"; mv backend/app.yaml.bak backend/app.yaml 2>/dev/null || true' EXIT
 
 cp -R frontend/dist "$DEPLOY_DIR/"
-cp app.yaml "$DEPLOY_DIR/"
+cp backend/app.yaml "$DEPLOY_DIR/app.yaml"
 cp backend/app.py "$DEPLOY_DIR/"
 cp backend/requirements.txt "$DEPLOY_DIR/"
 
