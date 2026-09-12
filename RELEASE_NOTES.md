@@ -20,7 +20,7 @@ All notable changes to **DMesh Studio** will be documented in this file.
 - **Environment State Syncing:** Fixed a bug where changing the environment on secondary pages (like Data Products or Cost Management) updated local storage but failed to update the URL. Cross-page environment choices now correctly persist and "stick" across the entire navigation sidebar.
 - **Business Name Search Resolution:** Repaired the search filter logic on both the Tabular views and the Dashboard so that queries properly evaluate against the friendly `dataProductBusinessName` instead of just raw internal technical IDs.
 - **Observe Mode Toggle:** The 'Observe Mode' observability feature is now securely hidden when the application is not operating in `isTestMode`.
-- **Data Integrity:** Resolved mismatched environment string mappings (e.g., "data store" vs "data source") across `MultiEnvSampleOperationalData.yaml` and the sample Cost CSV files, fixing an issue where dashboard costs were rendering as $0.
+- **Custom Components:** Added support for custom components, demonstrated in the sample project's Cost Management page.
 
 ---
 
