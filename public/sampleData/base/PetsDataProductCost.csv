@@ -1,0 +1,37 @@
+Environment,Data Product Name,Cost
+Dev,Food Production Analytics Dashboard Data,25841.00
+Dev,Food Production Analytics Data,14425.00
+Dev,Food Production Operations Analytics,27687.00
+Dev,Food Production data source,19826.00
+Dev,Food Production,12451.00
+Dev,Petstore Analytics Dashboard Data,12364.00
+Dev,Petstore Business Analytics,11708.00
+Dev,Petstore X data source,26243.00
+Dev,Petstore X,18438.00
+Dev,Petstore Y data source,3677.00
+Dev,Petstore Y,13926.00
+Dev,Petstore Z data source,18633.00
+Dev,Petstore Z,9190.00
+Dev,Unified Petstore Retail Data,6086.00
+Prod,Food Production Analytics Dashboard Data,10659.00
+Prod,Food Production Analytics Data,29432.00
+Prod,Food Production Operations Analytics,21609.00
+Prod,Food Production data source,26307.00
+Prod,Food Production,26572.00
+Prod,Petstore Analytics Dashboard Data,5775.00
+Prod,Petstore Business Analytics,29519.00
+Prod,Petstore X data source,22228.00
+Prod,Petstore X,16640.00
+Prod,Unified Petstore Retail Data,27465.00
+QA,Food Production Analytics Dashboard Data,28553.00
+QA,Food Production Analytics Data,13751.00
+QA,Food Production Operations Analytics,22531.00
+QA,Food Production data source,24077.00
+QA,Food Production,20698.00
+QA,Petstore Analytics Dashboard Data,23429.00
+QA,Petstore Business Analytics,15835.00
+QA,Petstore X data source,23062.00
+QA,Petstore X,7435.00
+QA,Petstore Y data store,23971.00
+QA,Petstore Y,27371.00
+QA,Unified Petstore Retail Data,21981.00
