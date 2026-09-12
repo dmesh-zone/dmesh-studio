@@ -370,7 +370,10 @@ function Flow({ isExpanded = false }) {
 
     // Observability State
     const [observeMode, setObserveMode] = React.useState(false);
-    const [compactMode, setCompactMode] = React.useState(false);
+    const [compactMode, setCompactMode] = React.useState(() => localStorage.getItem('compactMode') === 'true');
+    React.useEffect(() => {
+        localStorage.setItem('compactMode', String(compactMode));
+    }, [compactMode]);
     const [activeDimension, setActiveDimension] = React.useState(null); // null = 'any'
     const [metricsMap, setMetricsMap] = React.useState(new Map());
     const [drillNodeId, setDrillNodeId] = React.useState(null);
@@ -711,10 +714,15 @@ function Flow({ isExpanded = false }) {
                 columnCounts[colNum] = (columnCounts[colNum] || 0) + 1;
             });
             const maxNodes = Math.max(0, ...(Object.values(columnCounts) as number[]));
-            if (maxNodes > 10) {
-                setCompactMode(true);
+            const savedCompactMode = localStorage.getItem('compactMode');
+            if (savedCompactMode !== null) {
+                setCompactMode(savedCompactMode === 'true');
             } else {
-                setCompactMode(false);
+                if (maxNodes > 10) {
+                    setCompactMode(true);
+                } else {
+                    setCompactMode(false);
+                }
             }
         }
     }, [dataMeshOperations, config]);

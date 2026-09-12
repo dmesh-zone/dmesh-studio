@@ -83,8 +83,8 @@ export const CustomThemeProvider = ({ children }: { children: ReactNode }) => {
                     },
                     styleOverrides: {
                         tooltip: {
-                            backgroundColor: '#121212',
-                            color: '#ffffff',
+                            backgroundColor: 'var(--tooltip-bg, #121212)',
+                            color: 'var(--tooltip-text, #ffffff)',
                             padding: '12px 16px',
                             borderRadius: '4px',
                             fontSize: '13px',
@@ -92,7 +92,7 @@ export const CustomThemeProvider = ({ children }: { children: ReactNode }) => {
                             boxShadow: '0px 4px 12px rgba(0,0,0,0.2)',
                         },
                         arrow: {
-                            color: '#121212',
+                            color: 'var(--tooltip-bg, #121212)',
                         }
                     }
                 }

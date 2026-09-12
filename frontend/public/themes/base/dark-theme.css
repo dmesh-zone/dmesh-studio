@@ -6,6 +6,8 @@
   --primary-main: #90caf9;
   --link-color: #90caf9;
   --link-hover-color: #64b5f6;
+  --tooltip-bg: #ffffff;
+  --tooltip-text: #000000;
 
   /* React Flow Overrides */
   --xy-background-color: #141414;

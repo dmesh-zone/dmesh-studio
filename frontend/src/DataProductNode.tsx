@@ -222,8 +222,8 @@ const DataProductNode = memo(({ data, isConnectable }: any) => {
                             marginLeft: '12px',
                         }),
                         transform: 'translateY(-50%)',
-                        background: '#121212',
-                        color: '#ffffff',
+                        background: 'var(--tooltip-bg, #121212)',
+                        color: 'var(--tooltip-text, #ffffff)',
                         padding: '12px 16px',
                         borderRadius: '4px',
                         fontSize: '13px',
@@ -247,11 +247,11 @@ const DataProductNode = memo(({ data, isConnectable }: any) => {
                             transform: 'translateY(-50%) rotate(45deg)',
                             width: '12px',
                             height: '12px',
-                            background: '#121212',
+                            background: 'var(--tooltip-bg, #121212)',
                             zIndex: -1
                         }} />
                         <div style={{ fontWeight: '500', marginBottom: data.description ? '4px' : '0' }}>{data.label}</div>
-                        {data.description && <div style={{ color: 'rgba(255, 255, 255, 0.85)' }}>{data.description}</div>}
+                        {data.description && <div style={{ opacity: 0.85 }}>{data.description}</div>}
                     </div>
                 )}
             </div>
