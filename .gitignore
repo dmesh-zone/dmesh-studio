@@ -29,7 +29,7 @@ sandbox/*
 .env*
 
 # Project specific
-scratch/*
+scratch*
 app.yaml
 lint-results.json
 public/themes/custom/*
