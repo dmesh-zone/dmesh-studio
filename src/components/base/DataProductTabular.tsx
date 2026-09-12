@@ -184,10 +184,12 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
             // Search Filter
             if (searchText) {
                 const query = searchText.toLowerCase();
-                const matchesName = prod.name.toLowerCase().includes(query);
-                const matchesId = prod.id.toLowerCase().includes(query);
-                const matchesPurpose = prod.purpose.toLowerCase().includes(query);
-                const matchesDomain = prod.domain.toLowerCase().includes(query);
+                const businessName = resolveOdpsPath(prod, '_customProperty("dataProductBusinessName")');
+                const nameToSearch = businessName || prod.name;
+                const matchesName = nameToSearch && String(nameToSearch).toLowerCase().includes(query);
+                const matchesId = prod.id && prod.id.toLowerCase().includes(query);
+                const matchesPurpose = prod.purpose && prod.purpose.toLowerCase().includes(query);
+                const matchesDomain = prod.domain && prod.domain.toLowerCase().includes(query);
                 if (!matchesName && !matchesId && !matchesPurpose && !matchesDomain) return false;
             }
             return true;
