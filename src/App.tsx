@@ -19,7 +19,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Flow from './Flow';
 
 import './App.css';
-import { Box, Tooltip, Typography, IconButton, Divider, Breadcrumbs } from '@mui/material';
+import { Box, Tooltip, Typography, IconButton, Divider, Breadcrumbs, Alert } from '@mui/material';
 import HubIcon from '@mui/icons-material/Hub';
 import LayersIcon from '@mui/icons-material/Layers';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
@@ -356,6 +356,9 @@ function App() {
                       '& p': { mb: 2 },
                       '& pre': { p: 2, bgcolor: 'rgba(0,0,0,0.05)', borderRadius: 1, overflowX: 'auto' }
                     }}>
+                      <Alert severity="warning" sx={{ mb: 3 }}>
+                        This page has not been implemented. Read on for how to add a custom page:
+                      </Alert>
                       <ReactMarkdown>{pageCustomisationMarkdown}</ReactMarkdown>
                     </Box>
                   </Box>
