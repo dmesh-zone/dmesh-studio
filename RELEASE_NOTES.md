@@ -4,6 +4,25 @@ All notable changes to **DMesh Studio** will be documented in this file.
 
 ---
 
+## 🚀 [v0.3.0] - 2026-09-12
+
+### ✨ Highlights
+- **TypeScript Migration:** The entire core application, as well as the `dmesh-studio-custom-sample` repository, has been fully migrated from JavaScript (`.jsx`) to TypeScript (`.tsx`). This introduces robust type safety, better developer tooling, and easier long-term maintenance.
+- **Modern ESLint:** Fully updated the linting infrastructure to use the modern `eslint.config.js` (flat config) tailored for TypeScript and React.
+
+### 🎨 UI & Dashboard Improvements
+- **Component Abstraction:** Introduced highly reusable generic widgets for common UI elements: `DataProductSearchWidget`, `EnvironmentSelectorWidget`, `DomainSelectorWidget`, and `DataProductTypeSelectorWidget`.
+- **Layout Consistency:** Unified the layout width and typography (e.g., `<Typography variant="h5">`) of the custom Cost Management Dashboard to perfectly match the core Data Products view.
+- **KPI Styling:** Refined the Cost Management Dashboard's KPI cards to dynamically utilize Material UI's primary theme color while respecting the standard background paper color in both light and dark modes.
+
+### 🐛 Bug Fixes & Refinements
+- **Environment State Syncing:** Fixed a bug where changing the environment on secondary pages (like Data Products or Cost Management) updated local storage but failed to update the URL. Cross-page environment choices now correctly persist and "stick" across the entire navigation sidebar.
+- **Business Name Search Resolution:** Repaired the search filter logic on both the Tabular views and the Dashboard so that queries properly evaluate against the friendly `dataProductBusinessName` instead of just raw internal technical IDs.
+- **Observe Mode Toggle:** The 'Observe Mode' observability feature is now securely hidden when the application is not operating in `isTestMode`.
+- **Data Integrity:** Resolved mismatched environment string mappings (e.g., "data store" vs "data source") across `MultiEnvSampleOperationalData.yaml` and the sample Cost CSV files, fixing an issue where dashboard costs were rendering as $0.
+
+---
+
 ## 🚀 [v0.2.0] - 2026-09-11
 
 ### 🎨 Customization & Extensibility

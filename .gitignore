@@ -29,6 +29,9 @@ sandbox/*
 .env*
 
 # Project specific
+scratch/*
+app.yaml
+lint-results.json
 public/themes/custom/*
 src/pages/custom/*
 src/banner/custom/*
@@ -37,6 +40,3 @@ src/icons/custom/*
 public/fonts/custom/*
 public/config/custom/*
 public/sampleData/custom/*
-scratch/*
-app.yaml
-app.yaml.bak
