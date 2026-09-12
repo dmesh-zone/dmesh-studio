@@ -2281,24 +2281,26 @@ function Flow({ isExpanded = false }) {
                                 )}
                                 {!isMobile && (compactMode ? 'EXPAND' : 'COMPACT')}
                             </button>
-                            <button
-                                className="btn btn-secondary"
-                                onClick={() => {
-                                    setObserveMode(!observeMode);
-                                    if (observeMode) {
-                                        setActiveDimension(null);
-                                        setDrillNodeId(null);
-                                        setSidePanelContent(null);
-                                    }
-                                }}
-                                title={observeMode ? 'OBSERVING' : 'OBSERVE'}
-                            >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                                {!isMobile && (observeMode ? 'OBSERVING' : 'OBSERVE')}
-                            </button>
+                            {isTestMode && (
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={() => {
+                                        setObserveMode(!observeMode);
+                                        if (observeMode) {
+                                            setActiveDimension(null);
+                                            setDrillNodeId(null);
+                                            setSidePanelContent(null);
+                                        }
+                                    }}
+                                    title={observeMode ? 'OBSERVING' : 'OBSERVE'}
+                                >
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    {!isMobile && (observeMode ? 'OBSERVING' : 'OBSERVE')}
+                                </button>
+                            )}
                             <div ref={globalConfigMenuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                                 <button
                                     onClick={() => setShowGlobalConfig(!showGlobalConfig)}
