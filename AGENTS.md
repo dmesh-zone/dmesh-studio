@@ -26,6 +26,7 @@ All source files (`.ts`, `.tsx`, `.css`) must begin with the Apache 2.0 license 
 ```
 
 ### React Components
+- **TypeScript**: The codebase is strictly typed. Avoid using `any` types; prefer strict interfaces and types for React components, props, and ODPS/ODCS operational data objects.
 - **Functional Components**: Use arrow function components.
 - **Performance**: Wrap React Flow nodes and expensive visuals in `memo`.
 - **Props**: Destructure props directly in the component signature.
@@ -57,12 +58,18 @@ const event = new CustomEvent('open-side-panel', {
 window.dispatchEvent(event);
 ```
 
+### Environment State
+**Environment State**: The selected environment must "stick" when navigating between custom pages and the main Data Mesh. Always use the URL path (e.g., `/env/:env/`) as the single source of truth for the active environment, and sync it with `localStorage('dmesh-selected-env')` for persistence.
+
 ## 4. Data & Validation
 
 ### Schema Standards
 - **ODCS**: Open Data Contract Standard (stored in `src/schemas/odcs-...`).
 - **ODPS**: Open Data Product Specification (stored in `src/schemas/odps-...`).
 - **Validation**: All dataMeshOperations items should be validated via `src/ValidationService.ts`.
+
+### Resolving Data Product Names
+**Display Names**: When filtering, searching, or displaying a Data Product's name in the UI, do not rely solely on `prod.name`. Always resolve the friendly business name first using `resolveOdpsPath(prod, '_customProperty("dataProductBusinessName")')`, falling back to `prod.name` if it is undefined.
 
 ### Validation Service Logic
 When adding new validation rules:
@@ -95,7 +102,6 @@ Data Mesh level: /dmesh-studio/env/{env}/mesh/
 Data Product level: /dmesh-studio/env/{env}/mesh/domain/{domainId}/dataproduct/{dataproductId}
 Data Product contract level: /dmesh-studio/env/{env}/mesh/domain/{domainId}/dataproduct/{dataproductId}/contracts
 
-
-
-
+## 8. Customization Engine
+When making changes to files inside the `dmesh-studio-custom-sample` repository, you MUST run `python3 customization.py sample` in the `dmesh-studio` root directory to sync the assets before testing or verifying the changes in the browser.
 
