@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useState, useEffect, useRef } from 'react';
 
 // Lifted generic formatter from DataProductTabular
