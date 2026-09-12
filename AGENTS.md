@@ -34,10 +34,10 @@ All source files (`.ts`, `.tsx`, `.css`) must begin with the Apache 2.0 license 
 - **Styles**: Prefer a mix of M3 CSS variables for theme and inline styles for dynamic node properties.
 
 ### Styling Strategy
-- **Global Tokens & Theming**: The application relies on MUI dynamic theming and CSS variables. Configuration is separated into base and custom environments (`public/config/base/config.yaml` vs `public/config/custom/config/base/config.yaml`). Theming uses a base and custom architecture (`public/themes/base/` vs `public/themes/custom/`).
+- **Global Tokens & Theming**: The application relies on MUI dynamic theming and CSS variables. Configuration is separated into base and custom environments (`frontend/public/config/base/config.yaml` vs `frontend/public/config/custom/config/base/config.yaml`). Theming uses a base and custom architecture (`frontend/public/themes/base/` vs `frontend/public/themes/custom/`).
 - **Inline Styles**: Use for node-specific layout (width, height, dynamic background colors).
 - **Interactive Elements**: Use CSS classes for hover effects and shared UI components (e.g., `.yaml-pill`, `.output-ports-pill`).
-- **Component Overrides**: Features like the top banner (`src/banner`) and navigation pages (`src/pages`) utilize a dynamic `import.meta.glob` loading strategy, automatically prioritizing custom components placed in their respective `custom/` subdirectories over the `base/` defaults.
+- **Component Overrides**: Features like the top banner (`frontend/src/banner`) and navigation pages (`frontend/src/pages`) utilize a dynamic `import.meta.glob` loading strategy, automatically prioritizing custom components placed in their respective `custom/` subdirectories over the `base/` defaults.
 
 ## 3. Communication Patterns
 
@@ -64,9 +64,9 @@ window.dispatchEvent(event);
 ## 4. Data & Validation
 
 ### Schema Standards
-- **ODCS**: Open Data Contract Standard (stored in `src/schemas/odcs-...`).
-- **ODPS**: Open Data Product Specification (stored in `src/schemas/odps-...`).
-- **Validation**: All dataMeshOperations items should be validated via `src/ValidationService.ts`.
+- **ODCS**: Open Data Contract Standard (stored in `frontend/src/schemas/odcs-...`).
+- **ODPS**: Open Data Product Specification (stored in `frontend/src/schemas/odps-...`).
+- **Validation**: All dataMeshOperations items should be validated via `frontend/src/ValidationService.ts`.
 
 ### Resolving Data Product Names
 **Display Names**: When filtering, searching, or displaying a Data Product's name in the UI, do not rely solely on `prod.name`. Always resolve the friendly business name first using `resolveOdpsPath(prod, '_customProperty("dataProductBusinessName")')`, falling back to `prod.name` if it is undefined.
@@ -79,7 +79,7 @@ When adding new validation rules:
 ## 5. UI/UX Principles
 - **Pill Badges**: Use rounded badges for counts, statuses, and navigation shortcuts.
 - **Banners**: Nodes must include a colored banner displaying the object type or domain name.
-- **Typography**: Typography is customizable via CSS themes. Custom fonts can be placed in the `public/fonts/custom/` directory and defined using `@font-face` inside the active custom theme CSS. `Roboto` serves as the primary base fallback.
+- **Typography**: Typography is customizable via CSS themes. Custom fonts can be placed in the `frontend/public/fonts/custom/` directory and defined using `@font-face` inside the active custom theme CSS. `Roboto` serves as the primary base fallback.
 - **Elevation**: Follow M3 elevation levels (`--m3-elevation-1` through `3`) for cards and modals.
 
 ## 6. Security and CI/CD
@@ -103,5 +103,5 @@ Data Product level: /dmesh-studio/env/{env}/mesh/domain/{domainId}/dataproduct/{
 Data Product contract level: /dmesh-studio/env/{env}/mesh/domain/{domainId}/dataproduct/{dataproductId}/contracts
 
 ## 8. Customization Engine
-When making changes to files inside the `dmesh-studio-custom-sample` repository, you MUST run `python3 customization.py sample` in the `dmesh-studio` root directory to sync the assets before testing or verifying the changes in the browser.
+When making changes to files inside the `dmesh-studio-custom-sample` repository, you MUST run `python3 scripts/customization.py sample` in the `dmesh-studio` root directory to sync the assets before testing or verifying the changes in the browser.
 

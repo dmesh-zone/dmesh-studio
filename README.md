@@ -14,7 +14,7 @@ Live demo: https://dmesh-zone.github.io/dmesh-studio
 - **Interactive Visualization**: Browse Data Products, their relationships, and contracts
 - **Domain Filtering**: Filter by domain and search by name
 - **Data Quality Rules**: View quality rules and validation criteria
-- **Configurable**: Customize icons, colors, and tiers via `config/base/config.yaml`
+- **Configurable**: Customize icons, colors, and tiers via `frontend/public/config/base/config.yaml`
 
 ## Views and Drilldowns
 - **DataMesh View**: Default layout displaying all Data Products, Data Contracts, and Data Usage Agreements across domains.
@@ -27,8 +27,8 @@ Live demo: https://dmesh-zone.github.io/dmesh-studio
 
 ## Configuration
 
-The application is configured through `./public/config/base/config.yaml`. This file controls the default dataMeshOperations URL, visual appearance, and data product tiers.
-Additionally, you can create a `./public/config/custom/config/custom/config.yaml` file to override any settings in `config/base/config.yaml` without modifying the default configuration file.
+The application is configured through `frontend/public/config/base/config.yaml`. This file controls the default dataMeshOperations URL, visual appearance, and data product tiers.
+Additionally, you can create a `frontend/public/config/custom/config/custom/config.yaml` file to override any settings in `config/base/config.yaml` without modifying the default configuration file.
 
 ## Customization
 
@@ -52,13 +52,13 @@ To apply customizations using this approach:
    ```
 2. Navigate into your `dmesh-studio` directory and run the `customization.py` script, passing the suffix of your custom repository (e.g., `sample`):
    ```bash
-   python3 customization.py sample
+   python3 scripts/customization.py sample
    ```
    This script will automatically locate the sibling `dmesh-studio-custom-sample` directory, parse and install any required npm dependencies from `dependencies.json`, and seamlessly copy its `config`, `themes`, `fonts`, `banner`, `icons`, and `pages` assets into the active `custom/` directories within `dmesh-studio`.
 
 3. To remove all custom assets and revert to the base `dmesh-studio` experience, run:
    ```bash
-   python3 customization.py off
+   python3 scripts/customization.py off
    ```
 
 
@@ -94,7 +94,7 @@ defaultDataMeshOperationalDataUrl: https://dmesh-zone.com/dmesh/discover
 
 #### `iconMap` (optional)
 
-Maps technology names to icon file paths. Icons should be placed in `public/icons/`.
+Maps technology names to icon file paths. Icons should be placed in `frontend/public/icons/`.
 
 **Example:**
 ```yaml
@@ -108,7 +108,7 @@ iconMap:
 
 #### `theme` (optional)
 
-Specifies which CSS theme file to load for styling. The value corresponds to a CSS file in the `public/themes/` directory.
+Specifies which CSS theme file to load for styling. The value corresponds to a CSS file in the `frontend/public/themes/` directory.
 
 **Example:**
 ```yaml
@@ -149,9 +149,10 @@ For instructions on deploying the application to Databricks Apps, see [Databrick
 - **npm**: Version 9 or higher
 
 ### Installation
-Clone or download the repository and then install dependencies
+Clone or download the repository, then navigate to the frontend directory and install dependencies
 
 ```bash
+cd frontend
 npm install
 ```
 
@@ -197,13 +198,13 @@ You can use the simulation module to generate metrics for a data mesh operations
 
 ```bash
 # Generate simulated metrics for all dimensions
-node src/ObsSimulation.js public/MyData Mesh Operations.yaml
+node frontend/src/ObsSimulation.js frontend/public/MyData\ Mesh\ Operations.yaml
 
 # Generate specific dimensions
-node src/ObsSimulation.js public/MyData Mesh Operations.yaml Pipeline,SLOs
+node frontend/src/ObsSimulation.js frontend/public/MyData\ Mesh\ Operations.yaml Pipeline,SLOs
 ```
 
-This will create a new file `public/MyData Mesh Operations-with-sim-metrics.yaml` containing the original data plus the simulated observability metrics.
+This will create a new file `frontend/public/MyData Mesh Operations-with-sim-metrics.yaml` containing the original data plus the simulated observability metrics.
 
 ## Troubleshooting
 
@@ -212,7 +213,7 @@ This will create a new file `public/MyData Mesh Operations-with-sim-metrics.yaml
 If you see a red "Configuration Error" banner:
 
 **"Failed to load config/base/config.yaml"**
-- Ensure `public/config/base/config.yaml` exists
+- Ensure `frontend/public/config/base/config.yaml` exists
 - Check that the file is valid YAML (proper indentation, no tabs)
 - Verify file permissions
 
@@ -254,7 +255,7 @@ If you see a red "Configuration Error" banner:
 
 ### Icons Not Displaying
 
-- Ensure icon files exist in `public/icons/`
+- Ensure icon files exist in `frontend/public/icons/`
 - Verify paths in `iconMap` start with `/icons/`
 - Check that icon file names match exactly (case-sensitive)
 
@@ -270,7 +271,7 @@ The application expects a YAML file containing an array of Data Mesh entries tha
 - `DataContract`: Schema definitions with columns, types, and relationships
 - `DataUsageAgreement`: Agreements between providers and consumers
 
-See the included `public/DataMeshPetsData Mesh Operations.yaml` for a complete example.
+See the included `frontend/public/DataMeshPetsData Mesh Operations.yaml` for a complete example.
 
 ## Browser Compatibility
 

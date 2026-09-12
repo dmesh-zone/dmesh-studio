@@ -39,13 +39,14 @@ def main():
     
     # Define destination directories relative to this script
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    public_dir = os.path.join(script_dir, "public")
+    frontend_dir = os.path.join(script_dir, "..", "frontend")
+    public_dir = os.path.join(frontend_dir, "public")
     custom_themes_dir = os.path.join(public_dir, "themes", "custom")
     custom_fonts_dir = os.path.join(public_dir, "fonts", "custom")
-    custom_banner_dir = os.path.join(script_dir, "src", "banner", "custom")
-    custom_pages_dir = os.path.join(script_dir, "src", "pages", "custom")
-    custom_icons_dir = os.path.join(script_dir, "src", "icons", "custom")
-    custom_components_dir = os.path.join(script_dir, "src", "components", "custom")
+    custom_banner_dir = os.path.join(frontend_dir, "src", "banner", "custom")
+    custom_pages_dir = os.path.join(frontend_dir, "src", "pages", "custom")
+    custom_icons_dir = os.path.join(frontend_dir, "src", "icons", "custom")
+    custom_components_dir = os.path.join(frontend_dir, "src", "components", "custom")
     custom_sample_data_dir = os.path.join(public_dir, "sampleData", "custom")
     
     if action.lower() == "off":
@@ -62,7 +63,7 @@ def main():
                     deps = json.load(f)
                 if deps:
                     print(f"Uninstalling custom dependencies: {', '.join(deps)}")
-                    subprocess.run(["npm", "uninstall"] + deps, cwd=script_dir, check=True)
+                    subprocess.run(["npm", "uninstall"] + deps, cwd=frontend_dir, check=True)
             except Exception as e:
                 print(f"Warning: Failed to uninstall custom dependencies: {e}")
             os.remove(custom_deps_path)
@@ -78,7 +79,7 @@ def main():
         print("Custom config, themes, fonts, banner, pages, components, icons, and sampleData have been successfully removed (switched OFF)!")
     else:
         # Action is an input name, find dmesh-studio-custom-<input>
-        source_base = os.path.join(script_dir, "..", f"dmesh-studio-custom-{action}")
+        source_base = os.path.join(script_dir, "..", "..", f"dmesh-studio-custom-{action}")
         source_base = os.path.abspath(source_base)
         
         if not os.path.exists(source_base):
@@ -128,7 +129,7 @@ def main():
                 if deps:
                     install_args = [f"{pkg}@{ver}" for pkg, ver in deps.items()]
                     print(f"Installing custom dependencies: {', '.join(install_args)}")
-                    subprocess.run(["npm", "install"] + install_args, cwd=script_dir, check=True)
+                    subprocess.run(["npm", "install"] + install_args, cwd=frontend_dir, check=True)
                     
                     # Save tracker file
                     custom_deps_path = os.path.join(custom_pages_dir, "custom_dependencies.json")

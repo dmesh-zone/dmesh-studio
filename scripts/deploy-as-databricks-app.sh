@@ -8,8 +8,8 @@ fi
 
 set -e
 
-# Navigate to the directory of this script (dmesh-studio)
-cd "$(dirname "$0")"
+# Navigate to the root directory of this project
+cd "$(dirname "$0")/.."
 
 if [ ! -f .env ]; then
   echo "Error: .env file not found in dmesh-studio directory!"
@@ -41,8 +41,10 @@ sed "s|\${API_APP_URL}|${API_APP_URL}|g" app.yaml.bak > app.yaml
 echo "=========================================="
 echo " 1. Building Vite React App"
 echo "=========================================="
+cd frontend
 npm install
 npm run build
+cd ..
 
 echo "=========================================="
 echo " 2. Syncing to Databricks Workspace"
@@ -57,10 +59,10 @@ fi
 DEPLOY_DIR=$(mktemp -d)
 trap 'rm -rf "$DEPLOY_DIR"; mv app.yaml.bak app.yaml 2>/dev/null || true' EXIT
 
-cp -R dist "$DEPLOY_DIR/"
+cp -R frontend/dist "$DEPLOY_DIR/"
 cp app.yaml "$DEPLOY_DIR/"
-cp app.py "$DEPLOY_DIR/"
-cp requirements.txt "$DEPLOY_DIR/"
+cp backend/app.py "$DEPLOY_DIR/"
+cp backend/requirements.txt "$DEPLOY_DIR/"
 
 echo "Cleaning up remote workspace directory to ensure no unnecessary files remain..."
 databricks workspace delete "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-studio" --recursive --profile "$DB_PROFILE" 2>/dev/null || true

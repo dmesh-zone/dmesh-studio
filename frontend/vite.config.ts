@@ -10,6 +10,9 @@ export default defineConfig({
     react(),
     yaml()
   ],
+  resolve: {
+    dedupe: ['react', 'react-dom']
+  },
   server: {
     proxy: {
       '/dmesh-studio/dmesh': {
