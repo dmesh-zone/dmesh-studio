@@ -28,22 +28,22 @@ databricks auth login --host $DATABRICKS_WORKSPACE_URL
 
 The repository includes the following files to enable Databricks deployment:
 
-- **`backend/app.yaml`**: Informs Databricks how to start the FastAPI server. The port is hardcoded to 8000 in the command.
-- **`backend/requirements.txt`**: Specifies the Python dependencies (`fastapi` and `uvicorn`) needed to serve the application.
-- **`backend/app.py`**: A lightweight FastAPI application that serves the `dist/` directory. It mounts the assets and provides a fallback to `index.html` to support the Single Page Application (SPA) routing.
+- **`backend/base/app.yaml`**: Informs Databricks how to start the FastAPI server. The port is hardcoded to 8000 in the command.
+- **`backend/base/requirements.txt`**: Specifies the Python dependencies (`fastapi` and `uvicorn`) needed to serve the application.
+- **`backend/base/app.py`**: A lightweight FastAPI application that serves the `dist/` directory. It mounts the assets and provides a fallback to `index.html` to support the Single Page Application (SPA) routing.
 
 ## 3. Deploying
 
-To streamline the deployment process, we have provided an automated deployment script `scripts/deploy-as-databricks-app.sh`.
+To streamline the deployment process, we have provided an automated deployment script `scripts/base/deploy-as-databricks-app.sh`.
 
 When you execute this script, it will:
 1. Run `npm install` and `npm run build` locally within the `frontend/` directory to generate the static `dist/` folder.
 2. Ensure the `dmesh-studio` Databricks App exists in your workspace.
-3. Sync the necessary files (`frontend/dist/`, `backend/app.yaml`, `backend/app.py`, `backend/requirements.txt`) to your workspace directory.
+3. Sync the necessary files (`frontend/dist/`, `backend/base/app.yaml`, `backend/base/app.py`, `backend/base/requirements.txt`, and optionally any custom overrides in `backend/custom/`) to your workspace directory.
 4. Trigger the app deployment.
 
 ```bash
-./scripts/deploy-as-databricks-app.sh
+./scripts/base/deploy-as-databricks-app.sh
 ```
 
 ## Troubleshooting

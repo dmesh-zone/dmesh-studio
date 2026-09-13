@@ -103,5 +103,5 @@ Data Product level: /dmesh-studio/env/{env}/mesh/domain/{domainId}/dataproduct/{
 Data Product contract level: /dmesh-studio/env/{env}/mesh/domain/{domainId}/dataproduct/{dataproductId}/contracts
 
 ## 8. Customization Engine
-When making changes to files inside the `dmesh-studio-custom-sample` repository, you MUST run `python3 scripts/customization.py sample` in the `dmesh-studio` root directory to sync the assets before testing or verifying the changes in the browser.
+When making changes to files inside the `dmesh-studio-custom-sample` repository, you MUST run `python3 scripts/base/customization.py sample` in the `dmesh-studio` root directory to sync the assets before testing or verifying the changes in the browser.
 

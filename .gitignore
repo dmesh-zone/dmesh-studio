@@ -40,3 +40,5 @@ frontend/src/icons/custom*
 frontend/public/fonts/custom*
 frontend/public/config/custom*
 frontend/public/sampleData/custom*
+backend/custom*
+scripts/custom*

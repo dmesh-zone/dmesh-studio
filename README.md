@@ -32,7 +32,7 @@ Additionally, you can create a `frontend/public/config/custom/config/custom/conf
 
 ## Customization
 
-DMesh Studio is designed to be easily customized to fit your organization's branding and needs. You can fully customize themes, fonts, banners, components, and configurations without permanently altering the core codebase by maintaining a separate, peer repository.
+DMesh Studio is designed to be easily customized to fit your organization's branding and needs. You can fully customize themes, fonts, banners, components, backend, scripts, and configurations without permanently altering the core codebase by maintaining a separate, peer repository.
 
 A sample customization repository is available at [dmesh-studio-custom-sample](https://github.com/dmesh-zone/dmesh-studio-custom-sample).
 
@@ -44,6 +44,8 @@ This sample illustrates how to customise:
 - Icons, allowing definition of completely custom React SVG icons for the navigation drawer and custom pages.
 - Pages (see [CUSTOM_PAGES.md](docs/CUSTOM_PAGES.md)), allowing adding or overriding navigational drawer target pages (e.g., leveraging the `DataProductTabular` component to build custom data product tabular pages in a data-driven, declarative manner)
 - Dependencies (see [CUSTOM_DEPENDENCIES.md](docs/CUSTOM_DEPENDENCIES.md)), allowing custom React pages to dynamically inject their required third-party npm libraries into the main build.
+- Backend, allowing adding custom Python scripts or overriding Databricks App deployments.
+- Scripts, allowing custom utility bash or python scripts.
 
 To apply customizations using this approach:
 1. Clone the customization repository into the same parent directory as your `dmesh-studio` project:
@@ -52,13 +54,13 @@ To apply customizations using this approach:
    ```
 2. Navigate into your `dmesh-studio` directory and run the `customization.py` script, passing the suffix of your custom repository (e.g., `sample`):
    ```bash
-   python3 scripts/customization.py sample
+   python3 scripts/base/customization.py sample
    ```
-   This script will automatically locate the sibling `dmesh-studio-custom-sample` directory, parse and install any required npm dependencies from `dependencies.json`, and seamlessly copy its `config`, `themes`, `fonts`, `banner`, `icons`, and `pages` assets into the active `custom/` directories within `dmesh-studio`.
+   This script will automatically locate the sibling `dmesh-studio-custom-sample` directory, parse and install any required npm dependencies from `dependencies.json`, and seamlessly copy its `config`, `themes`, `fonts`, `banner`, `icons`, `pages`, `backend`, and `scripts` assets into the active `custom/` directories within `dmesh-studio`.
 
 3. To remove all custom assets and revert to the base `dmesh-studio` experience, run:
    ```bash
-   python3 scripts/customization.py off
+   python3 scripts/base/customization.py off
    ```
 
 

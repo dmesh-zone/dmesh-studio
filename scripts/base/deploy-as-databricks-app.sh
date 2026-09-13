@@ -9,7 +9,7 @@ fi
 set -e
 
 # Navigate to the root directory of this project
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
 if [ ! -f .env ]; then
   echo "Error: .env file not found in dmesh-studio directory!"
@@ -28,14 +28,26 @@ if [ -z "$API_APP_URL" ]; then
   exit 1
 fi
 
-echo "=========================================="
-echo " 0. Parameterizing app.yaml"
-echo "=========================================="
-# Backup the original app.yaml and set up a trap to restore it on exit
-cp backend/app.yaml backend/app.yaml.bak
-trap 'mv backend/app.yaml.bak backend/app.yaml 2>/dev/null || true' EXIT
+# Create a clean deployment folder to avoid syncing unnecessary files
+DEPLOY_DIR=$(mktemp -d)
+trap 'rm -rf "$DEPLOY_DIR"' EXIT
 
-sed "s|\${API_APP_URL}|${API_APP_URL}|g" backend/app.yaml.bak > backend/app.yaml
+echo "=========================================="
+echo " 0. Preparing Backend Files"
+echo "=========================================="
+# Copy base backend files
+cp -R backend/base/* "$DEPLOY_DIR/"
+
+# Overlay custom backend files if they exist
+if [ -d "backend/custom" ] && [ "$(ls -A backend/custom 2>/dev/null)" ]; then
+  cp -R backend/custom/* "$DEPLOY_DIR/"
+fi
+
+# Parameterize app.yaml
+if [ -f "$DEPLOY_DIR/app.yaml" ]; then
+  sed "s|\${API_APP_URL}|${API_APP_URL}|g" "$DEPLOY_DIR/app.yaml" > "$DEPLOY_DIR/app.yaml.tmp"
+  mv "$DEPLOY_DIR/app.yaml.tmp" "$DEPLOY_DIR/app.yaml"
+fi
 
 
 echo "=========================================="
@@ -55,14 +67,7 @@ if ! databricks apps get dmesh-studio --profile "$DB_PROFILE" >/dev/null 2>&1; t
   databricks apps create dmesh-studio --profile "$DB_PROFILE"
 fi
 
-# Create a clean deployment folder to avoid syncing unnecessary files
-DEPLOY_DIR=$(mktemp -d)
-trap 'rm -rf "$DEPLOY_DIR"; mv backend/app.yaml.bak backend/app.yaml 2>/dev/null || true' EXIT
-
 cp -R frontend/dist "$DEPLOY_DIR/"
-cp backend/app.yaml "$DEPLOY_DIR/app.yaml"
-cp backend/app.py "$DEPLOY_DIR/"
-cp backend/requirements.txt "$DEPLOY_DIR/"
 
 echo "Cleaning up remote workspace directory to ensure no unnecessary files remain..."
 databricks workspace delete "/Workspace/Users/$DATABRICKS_EMAIL/dmesh-studio" --recursive --profile "$DB_PROFILE" 2>/dev/null || true

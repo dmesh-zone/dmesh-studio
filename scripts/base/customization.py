@@ -39,7 +39,7 @@ def main():
     
     # Define destination directories relative to this script
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    frontend_dir = os.path.join(script_dir, "..", "frontend")
+    frontend_dir = os.path.join(script_dir, "..", "..", "frontend")
     public_dir = os.path.join(frontend_dir, "public")
     custom_themes_dir = os.path.join(public_dir, "themes", "custom")
     custom_fonts_dir = os.path.join(public_dir, "fonts", "custom")
@@ -48,6 +48,8 @@ def main():
     custom_icons_dir = os.path.join(frontend_dir, "src", "icons", "custom")
     custom_components_dir = os.path.join(frontend_dir, "src", "components", "custom")
     custom_sample_data_dir = os.path.join(public_dir, "sampleData", "custom")
+    custom_backend_dir = os.path.join(script_dir, "..", "..", "backend", "custom")
+    custom_scripts_dir = os.path.join(script_dir, "..", "custom")
     
     if action.lower() == "off":
         # Remove custom config file specifically
@@ -76,10 +78,12 @@ def main():
         clear_directory(custom_components_dir)
         clear_directory(custom_icons_dir)
         clear_directory(custom_sample_data_dir)
-        print("Custom config, themes, fonts, banner, pages, components, icons, and sampleData have been successfully removed (switched OFF)!")
+        clear_directory(custom_backend_dir)
+        clear_directory(custom_scripts_dir)
+        print("Custom config, themes, fonts, banner, pages, components, icons, sampleData, backend, and scripts have been successfully removed (switched OFF)!")
     else:
         # Action is an input name, find dmesh-studio-custom-<input>
-        source_base = os.path.join(script_dir, "..", "..", f"dmesh-studio-custom-{action}")
+        source_base = os.path.join(script_dir, "..", "..", "..", f"dmesh-studio-custom-{action}")
         source_base = os.path.abspath(source_base)
         
         if not os.path.exists(source_base):
@@ -118,6 +122,14 @@ def main():
         # Copy sampleData
         src_sample_data = os.path.join(source_base, "sampleData")
         copy_directory_contents(src_sample_data, custom_sample_data_dir)
+
+        # Copy backend
+        src_backend = os.path.join(source_base, "backend")
+        copy_directory_contents(src_backend, custom_backend_dir)
+
+        # Copy scripts
+        src_scripts = os.path.join(source_base, "scripts")
+        copy_directory_contents(src_scripts, custom_scripts_dir)
         
         # Handle dependencies
         deps_path = os.path.join(source_base, "dependencies.json")
