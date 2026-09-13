@@ -1,0 +1,42 @@
+/*
+ * Copyright 2026 Joao Vicente
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import React, { createContext, useState, ReactNode } from 'react';
+import { AppConfig } from '../types';
+
+export type ConfigContextType = {
+  config: AppConfig;
+  updateConfig: (config: Partial<AppConfig>) => void;
+};
+
+export const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
+
+export const AppConfigProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [config, setConfigState] = useState<AppConfig>({
+    services: {},
+    features: {},
+  });
+
+  const updateConfig = (newConfig: Partial<AppConfig>) => {
+    setConfigState((prev) => ({ ...prev, ...newConfig }));
+  };
+
+  return (
+    <ConfigContext.Provider value={{ config, updateConfig }}>
+      {children}
+    </ConfigContext.Provider>
+  );
+};

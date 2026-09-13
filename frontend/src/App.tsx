@@ -24,6 +24,7 @@ import HubIcon from '@mui/icons-material/Hub';
 import LayersIcon from '@mui/icons-material/Layers';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import { useConfigContext } from './hooks';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useThemeContext } from './ThemeContext';
 import pages from './pages';
@@ -41,6 +42,7 @@ const normalizePath = (path) => {
 
 function App() {
   const [navConfig, setNavConfig] = useState(null);
+  const { updateConfig } = useConfigContext();
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -159,7 +161,14 @@ function App() {
         
         const mergedNav = (customConfig as any).navigation || (baseConfig as any).navigation;
         setNavConfig(mergedNav);
+
+        const mergedAppConfig = {
+            ...(baseConfig as any).app,
+            ...(customConfig as any).app,
+        };
+        updateConfig(mergedAppConfig);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -342,7 +351,7 @@ function App() {
                   </Breadcrumbs>
                 </Box>
               )}
-              <Box sx={{ flexGrow: 1, overflow: 'hidden', position: 'relative' }}>
+              <Box sx={{ flexGrow: 1, overflow: 'auto', position: 'relative', height: '100%', width: '100%' }}>
                 {ActiveComponent ? (
                   <ActiveComponent isExpanded={isExpanded} />
                 ) : (

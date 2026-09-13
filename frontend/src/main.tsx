@@ -20,15 +20,22 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 import { CustomThemeProvider } from './ThemeContext.jsx'
+import { AppConfigProvider, AuthProvider, AppContextProvider } from './contexts';
 
 // Theme is dynamically loaded in Flow.jsx based on config/base/config.yaml
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter basename="/dmesh-studio">
-      <CustomThemeProvider>
-        <App />
-      </CustomThemeProvider>
+      <AppConfigProvider>
+        <AuthProvider>
+          <CustomThemeProvider>
+            <AppContextProvider>
+              <App />
+            </AppContextProvider>
+          </CustomThemeProvider>
+        </AuthProvider>
+      </AppConfigProvider>
     </BrowserRouter>
   </StrictMode>,
 )

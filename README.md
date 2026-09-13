@@ -139,6 +139,12 @@ tiers:
 
 
 
+## State Management
+
+DMesh Studio utilizes a centralized `AppContext` to manage global state such as the active user session, feature flags, and custom configuration properties loaded from `config.yaml`. 
+
+For detailed information on how to manipulate state and access user profiles within custom React components, see the [State Management Guide](docs/STATE_MANAGEMENT.md).
+
 ## Deployment
 
 For instructions on deploying the application to Databricks Apps, see [Databricks App Deployment Guide](docs/DATABRICKS_APP_DEPLOYMENT.md).
