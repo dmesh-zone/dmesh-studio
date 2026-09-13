@@ -9,7 +9,9 @@ All notable changes to **DMesh Studio** will be documented in this file.
 ### ✨ Highlights
 - **TypeScript Migration:** The entire core application, as well as the `dmesh-studio-custom-sample` repository, has been fully migrated from JavaScript (`.jsx`) to TypeScript (`.tsx`). This introduces robust type safety, better developer tooling, and easier long-term maintenance.
 - **Modern ESLint:** Fully updated the linting infrastructure to use the modern `eslint.config.js` (flat config) tailored for TypeScript and React.
-- **Monorepo Restructuring:** Reorganized the project layout by splitting the application into distinct `frontend/` (React/Vite) and `backend/` (FastAPI) directories to improve organization and maintainability, while fully preserving compatibility with automated Databricks App deployments. Also introduced customization support for `backend/` and `scripts/`, allowing custom overrides via the peer custom repository mechanism.
+- **Frontend & Backend Separation:** Reorganized the project layout by splitting the application into distinct `frontend/` (React/Vite) and `backend/` (FastAPI) directories to improve organization and maintainability. Added robust support for overriding and injecting custom backend logic via the peer custom repository mechanism.
+- **Frontend State Management:** Unified state, configuration, and authentication under a robust `AppContext`, providing a predictable, centralized store. Added feature flags and custom attributes to user profiles, unlocking dynamically customizable UI flows.
+- **Custom Scripts & Plugins:** Introduced a robust headless plugin architecture for lifecycle hooks, as well as support for injecting custom utility scripts.
 
 ### 🎨 UI & Dashboard Improvements
 - **Component Abstraction:** Introduced highly reusable generic widgets for common UI elements: `DataProductSearchWidget`, `EnvironmentSelectorWidget`, `DomainSelectorWidget`, and `DataProductTypeSelectorWidget`.
@@ -21,6 +23,21 @@ All notable changes to **DMesh Studio** will be documented in this file.
 - **Business Name Search Resolution:** Repaired the search filter logic on both the Tabular views and the Dashboard so that queries properly evaluate against the friendly `dataProductBusinessName` instead of just raw internal technical IDs.
 - **Observe Mode Toggle:** The 'Observe Mode' observability feature is now securely hidden when the application is not operating in `isTestMode`.
 - **Custom Components:** Added support for custom components, demonstrated in the sample project's [Cost Management page](https://github.com/dmesh-zone/dmesh-studio-custom-sample/blob/main/pages/CostManagement/index.tsx).
+
+### 🗃️ State Management & User Profiles
+- **Custom Attributes:** Refactored `UserProfile.preferences` to `UserProfile.customAttributes` for broader applicability.
+- **Feature Flags:** Introduced `customUserFeatureFlag` functionality in `config.yaml` to dynamically toggle custom UI fields during the login flow.
+- **State Demo Revamp:** Cleaned up the State Demo page by removing redundant configuration state panels and demonstrating dynamic user profile mutations using the new feature flags.
+- **Documentation:** Added `docs/STATE_MANAGEMENT.md` detailing how `AppContext` unifies user state, config, and authentication.
+
+### 🔌 Headless Lifecycle Plugins
+- **Plugin Architecture:** Introduced a new headless plugin system (`AppPlugin`) allowing background logic to hook into application lifecycle events (`onReload` and `onTimer`) completely independently of the React UI tree.
+- **Global Notifications:** Added a global event listener system (`show-notification`) tied to a new, persistent Material UI `Snackbar` in the core layout, allowing plugins to dispatch UI toast messages natively.
+- **Customization Sync:** Updated the `customization.py` script to automatically synchronize custom plugins into the build process.
+- **Documentation:** Created a comprehensive guide for plugins in `docs/PLUGINS.md`.
+
+### 🚀 CI/CD & Deployments
+- **Custom Sample Deployments:** Added a dedicated GitHub Actions workflow to the `dmesh-studio-custom-sample` repository, enabling seamless, automated static deployments of customized application builds directly to GitHub Pages.
 
 ---
 

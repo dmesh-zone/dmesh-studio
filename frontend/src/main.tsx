@@ -26,7 +26,7 @@ import { AppConfigProvider, AuthProvider, AppContextProvider } from './contexts'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename="/dmesh-studio">
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AppConfigProvider>
         <AuthProvider>
           <CustomThemeProvider>
