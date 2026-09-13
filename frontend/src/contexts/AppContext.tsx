@@ -54,6 +54,22 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
     logout,
   };
 
+  const latestContext = React.useRef(contextValue);
+  latestContext.current = contextValue;
+
+  React.useEffect(() => {
+    // We import here to avoid circular dependencies and ensure plugins load lazily if needed
+    import('../plugins/PluginManager').then(({ initializePlugins }) => {
+      const proxyContext = new Proxy({} as AppContextType, {
+        get(target, prop) {
+          return (latestContext.current as any)[prop];
+        }
+      });
+      const cleanup = initializePlugins(proxyContext);
+      return cleanup;
+    });
+  }, []);
+
   return (
     <AppContext.Provider value={contextValue}>
       {children}

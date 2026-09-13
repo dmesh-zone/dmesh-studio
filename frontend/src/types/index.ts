@@ -16,3 +16,4 @@
 
 export * from './AppConfig';
 export * from './UserProfile';
+export * from './AppPlugin';

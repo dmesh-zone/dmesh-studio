@@ -46,6 +46,7 @@ This sample illustrates how to customise:
 - Dependencies (see [CUSTOM_DEPENDENCIES.md](docs/CUSTOM_DEPENDENCIES.md)), allowing custom React pages to dynamically inject their required third-party npm libraries into the main build.
 - Backend, allowing adding custom Python scripts or overriding Databricks App deployments.
 - Scripts, allowing custom utility bash or python scripts.
+- Plugins (see [PLUGINS.md](docs/PLUGINS.md)), allowing you to inject headless lifecycle hooks (like `onReload` or `onTimer`) directly into the global application context.
 
 To apply customizations using this approach:
 1. Clone the customization repository into the same parent directory as your `dmesh-studio` project:

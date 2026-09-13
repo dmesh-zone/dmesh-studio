@@ -37,6 +37,7 @@ frontend/src/pages/custom*
 frontend/src/banner/custom*
 frontend/src/components/custom*
 frontend/src/icons/custom*
+frontend/src/plugins/custom*
 frontend/public/fonts/custom*
 frontend/public/config/custom*
 frontend/public/sampleData/custom*

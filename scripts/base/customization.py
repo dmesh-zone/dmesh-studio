@@ -47,6 +47,7 @@ def main():
     custom_pages_dir = os.path.join(frontend_dir, "src", "pages", "custom")
     custom_icons_dir = os.path.join(frontend_dir, "src", "icons", "custom")
     custom_components_dir = os.path.join(frontend_dir, "src", "components", "custom")
+    custom_plugins_dir = os.path.join(frontend_dir, "src", "plugins", "custom")
     custom_sample_data_dir = os.path.join(public_dir, "sampleData", "custom")
     custom_backend_dir = os.path.join(script_dir, "..", "..", "backend", "custom")
     custom_scripts_dir = os.path.join(script_dir, "..", "custom")
@@ -76,11 +77,12 @@ def main():
         clear_directory(custom_banner_dir)
         clear_directory(custom_pages_dir)
         clear_directory(custom_components_dir)
+        clear_directory(custom_plugins_dir)
         clear_directory(custom_icons_dir)
         clear_directory(custom_sample_data_dir)
         clear_directory(custom_backend_dir)
         clear_directory(custom_scripts_dir)
-        print("Custom config, themes, fonts, banner, pages, components, icons, sampleData, backend, and scripts have been successfully removed (switched OFF)!")
+        print("Custom config, themes, fonts, banner, pages, components, plugins, icons, sampleData, backend, and scripts have been successfully removed (switched OFF)!")
     else:
         # Action is an input name, find dmesh-studio-custom-<input>
         source_base = os.path.join(script_dir, "..", "..", "..", f"dmesh-studio-custom-{action}")
@@ -114,6 +116,10 @@ def main():
         # Copy icons
         src_icons = os.path.join(source_base, "icons")
         copy_directory_contents(src_icons, custom_icons_dir)
+        
+        # Copy plugins
+        src_plugins = os.path.join(source_base, "plugins")
+        copy_directory_contents(src_plugins, custom_plugins_dir)
         
         # Copy components
         src_components = os.path.join(source_base, "components")

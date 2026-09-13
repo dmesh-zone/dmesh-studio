@@ -19,9 +19,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Flow from './Flow';
 
 import './App.css';
-import { Box, Tooltip, Typography, IconButton, Divider, Breadcrumbs, Alert } from '@mui/material';
+import { Box, Tooltip, Typography, IconButton, Divider, Breadcrumbs, Alert, Snackbar } from '@mui/material';
 import HubIcon from '@mui/icons-material/Hub';
-import LayersIcon from '@mui/icons-material/Layers';
+import MenuIcon from '@mui/icons-material/Menu';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import { useConfigContext } from './hooks';
@@ -170,6 +170,106 @@ function App() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const [snackbar, setSnackbar] = React.useState({ open: false, message: '', duration: 3000 });
+  React.useEffect(() => {
+    const handleNotification = (e: any) => {
+      setSnackbar({ open: true, message: e.detail.message, duration: e.detail.duration || 3000 });
+    };
+    window.addEventListener('show-notification', handleNotification);
+    return () => window.removeEventListener('show-notification', handleNotification);
+  }, []);
+
+  const renderContent = () => {
+    let ActiveComponent = null;
+    let activeSection = null;
+    let activePage = null;
+    
+    if (navConfig) {
+      for (const section of navConfig.sections) {
+        const page = section.pages.find(p => p.id === currentView);
+        if (page) {
+          activeSection = section;
+          activePage = page;
+          if (pages[page.component]) {
+            ActiveComponent = pages[page.component];
+          }
+          break;
+        }
+      }
+    }
+
+    return (
+      <>
+        {activeSection && activePage && (
+          <Box sx={{ px: 4, pt: 1.5, pb: 0, flexShrink: 0 }}>
+            <Breadcrumbs separator={<MuiIcons.NavigateNext fontSize="small" />} aria-label="breadcrumb">
+              <Typography 
+                variant="body2" 
+                color="text.secondary"
+                onClick={() => {
+                  if (navConfig?.sections?.[0]?.pages?.[0]?.id) {
+                    navigate(`/env/${currentEnv}/${navConfig.sections[0].pages[0].id}`);
+                  }
+                }}
+                sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+              >
+                Home
+              </Typography>
+              
+              {/* Add active section if available */}
+              {activeSection?.name && (
+                  <Typography variant="body2" color="text.secondary">
+                      {activeSection.name}
+                  </Typography>
+              )}
+              
+              <Typography 
+                  variant="body2" 
+                  color={dynamicBreadcrumbs.length > 0 ? "text.secondary" : "text.primary"} 
+                  sx={{ fontWeight: dynamicBreadcrumbs.length > 0 ? 'normal' : 'bold' }}
+              >
+                {activePage.title}
+              </Typography>
+              
+              {dynamicBreadcrumbs.map((crumb, idx) => (
+                  <Typography 
+                      key={idx} 
+                      variant="body2" 
+                      color={idx === dynamicBreadcrumbs.length - 1 ? "text.primary" : "text.secondary"} 
+                      sx={{ fontWeight: idx === dynamicBreadcrumbs.length - 1 ? 'bold' : 'normal' }}
+                  >
+                      {crumb}
+                  </Typography>
+              ))}
+            </Breadcrumbs>
+          </Box>
+        )}
+        <Box sx={{ flexGrow: 1, overflow: 'auto', position: 'relative', height: '100%', width: '100%' }}>
+          {ActiveComponent ? (
+            <ActiveComponent isExpanded={isExpanded} />
+          ) : (
+            <Box sx={{ p: 4, height: '100%', overflow: 'auto' }}>
+              <Box sx={{ 
+                p: 4, 
+                borderRadius: 2, 
+                boxShadow: '0 4px 6px rgba(0,0,0,0.05)', 
+                bgcolor: 'background.paper',
+                '& h1, & h2, & h3': { mt: 0, mb: 2 },
+                '& p': { mb: 2 },
+                '& pre': { p: 2, bgcolor: 'rgba(0,0,0,0.05)', borderRadius: 1, overflowX: 'auto' }
+              }}>
+                <Alert severity="warning" sx={{ mb: 3 }}>
+                  This page has not been implemented. Read on for how to add a custom page:
+                </Alert>
+                <ReactMarkdown>{pageCustomisationMarkdown}</ReactMarkdown>
+              </Box>
+            </Box>
+          )}
+        </Box>
+      </>
+    );
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', width: '100vw', height: '100vh', overflow: 'hidden', bgcolor: 'var(--m3-surface, #f5f5f5)' }}>
@@ -378,6 +478,17 @@ function App() {
         })()}
       </Box>
       </Box>
+
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={snackbar.duration} 
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="info" onClose={() => setSnackbar({ ...snackbar, open: false })}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
