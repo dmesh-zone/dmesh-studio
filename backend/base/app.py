@@ -4,6 +4,17 @@ from databricks.sdk import WorkspaceClient
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+class SPAStaticFiles(StaticFiles):
+    async def get_response(self, path: str, scope):
+        try:
+            return await super().get_response(path, scope)
+        except StarletteHTTPException as ex:
+            if ex.status_code == 404:
+                return await super().get_response("index.html", scope)
+            else:
+                raise ex
 
 app = FastAPI()
 API_APP_URL = os.environ.get("API_APP_URL", "http://localhost:8001")
@@ -36,4 +47,4 @@ async def proxy(path: str, request: Request):
         media_type=resp.headers.get("content-type"),
     )
 
-app.mount("/dmesh-studio", StaticFiles(directory="dist", html=True), name="static")
+app.mount("/dmesh-studio", SPAStaticFiles(directory="dist", html=True), name="static")
