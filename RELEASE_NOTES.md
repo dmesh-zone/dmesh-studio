@@ -4,6 +4,19 @@ All notable changes to **DMesh Studio** will be documented in this file.
 
 ---
 
+## 🚀 [v0.3.1] - 2026-09-16
+
+### ✨ Highlights
+- **Dynamic Multi-Environment Discovery:** The `multi-environment` configuration array in `config.yaml` is now fully optional. The application dynamically infers available environments—and their correct order—directly from the DMesh API payload. UI components like the environment selector will automatically populate, and the default environment natively falls back to the last environment returned by the API.
+
+### 🐛 Bug Fixes & Improvements
+- **SPA Client-Side Routing:** Resolved a 404 error when reloading deep-linked URLs (like `/env/Prod/products`) on GitHub Pages deployments by injecting a `postbuild` step to generate a `404.html` fallback.
+- **Absolute URL Normalization:** Fixed a bug in `OperationalData.ts` where absolute API URLs were incorrectly prefixed with the `BASE_URL`, which caused the Data Products page to silently fail and appear empty while the Data Mesh page succeeded.
+- **Sorting Crash Fix:** Fixed an `Uncaught TypeError` crash on the Data Products tabular view when sorting columns while relying on default column definitions.
+- **TypeScript Configuration:** Removed the deprecated `baseUrl` property from the custom sample repository's `tsconfig.json` to eliminate IDE warnings and adhere to modern `bundler` module resolution in TypeScript 5.0+.
+
+---
+
 ## 🚀 [v0.3.0] - 2026-09-12
 
 ### ✨ Highlights

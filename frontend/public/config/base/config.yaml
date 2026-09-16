@@ -1,6 +1,4 @@
-# default config/base/config.yaml can be overridden by config/custom/config.yaml
-
-# see customisation.md to learn how to add new pages or override existing ones
+# see README.md to learn how to add new pages or override existing ones
 navigation:
   sections:
     - name: ""
@@ -19,9 +17,7 @@ navigation:
           component: "Settings"
 
 defaultDataMeshOperationalDataUrl: /sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
-multi-environment: ["Dev", "QA", "Prod"]
-# multi-environment: ["Dev", "QA", "Prod"]
-# default-environment: "Prod" # By default last environment in the list is selected as the default environment
+# defaultDataMeshOperationalDataUrl: http://localhost:8000/dmesh/discover-multi-environment
 
 single-domain-default-filter: False # Default is False
 zoom-to-fit-columns: True # Default is True
@@ -40,6 +36,7 @@ domainNameCustomisation:
   "petstore": "Petstore"
 
 sampleDataMeshOperationalDataUrls:
+  - http://localhost:8000/dmesh/discover-multi-environment
   - http://localhost:8000/dmesh/discover
   - /sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
   - /sampleData/base/DataMeshOperationalDataPetsExample.yaml

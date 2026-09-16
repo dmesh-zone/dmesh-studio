@@ -2,8 +2,26 @@ import YAML from 'yaml';
 
 // Helper to normalize path
 const normalizePath = (path) => {
+    if (!path) return path;
     const base = import.meta.env.BASE_URL || '/';
-    return (base + path).replace(/\/\//g, '/');
+
+    // If it's the absolute localhost backend, normalize it to the proxy path
+    // ONLY in development mode where the Vite proxy is active.
+    if (import.meta.env.DEV && path.startsWith('http://localhost:8000/dmesh')) {
+        const relativePath = path.replace('http://localhost:8000/', '');
+        return `${base}${relativePath}`.replace(/\/\//g, '/');
+    }
+
+    if (path.startsWith('http')) return path;
+
+    // If it already starts with base, don't normalize again
+    if (path.startsWith(base)) return path;
+
+    // Prefix relative paths starting with / with base
+    if (path.startsWith('/')) {
+        return `${base}${path.slice(1)}`.replace(/\/\//g, '/');
+    }
+    return path;
 };
 
 class OperationalData {
@@ -59,7 +77,17 @@ class OperationalData {
         const configData = await this.getConfig();
         const envsData = await this.getDataMeshOperations();
         
-        const envList = configData['multi-environment'] || ['Dev', 'QA', 'Prod'];
+        const isMultiEnv = envsData.some(item => item.env !== undefined);
+        let envList = configData['multi-environment'];
+
+        if (!envList || !Array.isArray(envList)) {
+            if (isMultiEnv) {
+                // Infer environments in the order they appear in the data
+                envList = Array.from(new Set(envsData.map(e => e.env).filter(Boolean)));
+            } else {
+                envList = ['Dev', 'QA', 'Prod'];
+            }
+        }
 
         const productsMap = new Map();
         const domainsSet = new Set();

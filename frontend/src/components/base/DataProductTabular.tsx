@@ -204,6 +204,16 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         setPage(0);
     }
 
+    const effectiveTable = useMemo(() => {
+        return tableDescriptor || [
+            { columnName: "Domain", odpsDescriptor: "domain", textMapper: (val, ctx) => ctx.formatDomain(val) },
+            { columnName: "Type", odpsDescriptor: "_customProperty(\"dataProductTier\")", textMapper: (val, ctx) => ctx.formatType(val) },
+            { columnName: "Data Product Name", odpsDescriptor: "name", sidePanelLink: true },
+            { columnName: "Purpose", odpsDescriptor: "description.purpose" },
+            { columnName: "Stage", odpsDescriptor: "_highestEnv", displayFormat: "chip" }
+        ];
+    }, [tableDescriptor]);
+
     const sortedProducts = useMemo(() => {
         const sortableItems = [...filteredProducts];
         if (sortConfig.key !== null) {
@@ -211,7 +221,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                 let aVal = resolveOdpsPath(a, sortConfig.key);
                 let bVal = resolveOdpsPath(b, sortConfig.key);
                 
-                const colDef = tableDescriptor.find(c => c.odpsDescriptor === sortConfig.key);
+                const colDef = effectiveTable?.find(c => c.odpsDescriptor === sortConfig.key);
                 if (colDef && colDef.textMapper) {
                     const ctx = { formatDomain, formatTechnology, formatType, iconMap, technologyNameMap };
                     aVal = colDef.textMapper(aVal, ctx);

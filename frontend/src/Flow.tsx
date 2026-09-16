@@ -518,7 +518,18 @@ function Flow({ isExpanded = false }) {
             setAllEnvsData([]);
         } else {
             const items = Array.isArray(parsed) ? parsed : [parsed];
-            if (config?.['multi-environment'] && Array.isArray(config['multi-environment'])) {
+            const isMultiEnv = items.some(item => item.env !== undefined);
+
+            let envList = config?.['multi-environment'];
+            if (!envList || !Array.isArray(envList)) {
+                if (isMultiEnv) {
+                    envList = Array.from(new Set(items.map(e => e.env).filter(Boolean)));
+                    // Dynamically update config so dropdowns and environment logic work
+                    setConfig(prev => ({ ...prev, 'multi-environment': envList }));
+                }
+            }
+
+            if (isMultiEnv || (envList && Array.isArray(envList))) {
                 setAllEnvsData(items);
             } else {
                 setDataMeshOperationalData(items);
