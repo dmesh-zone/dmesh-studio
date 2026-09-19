@@ -60,9 +60,29 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
 
     // Filter states
     const [envFilter, setEnvFilter] = useState('');
-    const [selectedDomains, setSelectedDomains] = useState([]);
-    const [selectedTypes, setSelectedTypes] = useState([]);
-    const [searchText, setSearchText] = useState('');
+    const [selectedDomains, setSelectedDomains] = useState(() => {
+        try {
+            const urlDomains = new URLSearchParams(location.search).get('domains');
+            if (urlDomains !== null) {
+                return (urlDomains && urlDomains !== '*') ? urlDomains.split(',') : [];
+            }
+            const stored = localStorage.getItem('dmesh-selected-domains');
+            return stored ? JSON.parse(stored) : [];
+        } catch { return []; }
+    });
+    const [selectedTypes, setSelectedTypes] = useState(() => {
+        try {
+            const urlTypes = new URLSearchParams(location.search).get('types');
+            if (urlTypes !== null) {
+                return (urlTypes && urlTypes !== '*') ? urlTypes.split(',') : [];
+            }
+            const stored = localStorage.getItem('dmesh-selected-types');
+            return stored ? JSON.parse(stored) : [];
+        } catch { return []; }
+    });
+    const [searchText, setSearchText] = useState(() => {
+        return new URLSearchParams(location.search).get('search') || '';
+    });
 
     // Pagination & Sorting
     const [page, setPage] = useState(0);
@@ -130,44 +150,74 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         load();
     }, [tierFilter]);
 
-    // Local Storage for Environment & Domains
+    // Local Storage for Environment & Domains & Types & URL Sync
     useEffect(() => {
         if (envFilter && envFilter !== 'All') {
             localStorage.setItem('dmesh-selected-env', envFilter);
-            
-            const parts = location.pathname.split('/').filter(Boolean);
-            if (parts[0] === 'env' && parts.length >= 2) {
-                const urlEnv = parts[1];
-                if (urlEnv !== envFilter) {
-                    const newPath = `/${parts[0]}/${envFilter}/${parts.slice(2).join('/')}`;
-                    navigate(newPath, { replace: true });
-                }
-            }
         }
-    }, [envFilter, location.pathname, navigate]);
-
-    useEffect(() => {
-        const savedDomains = localStorage.getItem('dmesh-selected-domains');
-        if (savedDomains && allDomains.length > 0 && selectedDomains.length === 0) {
-            try {
-                const parsed = JSON.parse(savedDomains);
-                if (Array.isArray(parsed) && parsed.every(d => allDomains.includes(d))) {
-                    // eslint-disable-next-line react-hooks/set-state-in-effect
-                    setSelectedDomains(parsed);
-                }
-            } catch (e) {
-                console.error("Failed to parse saved domains", e);
-            }
-        }
-    }, [allDomains, selectedDomains.length]);
-
-    useEffect(() => {
         if (selectedDomains.length > 0) {
             localStorage.setItem('dmesh-selected-domains', JSON.stringify(selectedDomains));
         } else if (allDomains.length > 0) {
             localStorage.removeItem('dmesh-selected-domains');
         }
-    }, [selectedDomains, allDomains]);
+        if (selectedTypes.length > 0) {
+            localStorage.setItem('dmesh-selected-types', JSON.stringify(selectedTypes));
+        } else if (allTypes.length > 0) {
+            localStorage.removeItem('dmesh-selected-types');
+        }
+            
+        const searchParams = new URLSearchParams(location.search);
+        let paramsChanged = false;
+
+        const currentEnv = searchParams.get('env');
+        if (envFilter && envFilter !== 'All' && currentEnv !== envFilter) {
+            searchParams.set('env', envFilter);
+            paramsChanged = true;
+        }
+
+        const currentDomains = searchParams.get('domains') || '';
+        const expectedDomains = (selectedDomains.length === 0 || (allDomains.length > 0 && selectedDomains.length === allDomains.length)) 
+            ? '*' 
+            : selectedDomains.join(',');
+
+        if (currentDomains !== expectedDomains) {
+            if (expectedDomains && expectedDomains !== '*') searchParams.set('domains', expectedDomains);
+            else if (expectedDomains === '*') searchParams.set('domains', '*');
+            else searchParams.delete('domains');
+            paramsChanged = true;
+        }
+
+        const currentTypes = searchParams.get('types') || '';
+        const expectedTypes = (selectedTypes.length === 0 || (allTypes.length > 0 && selectedTypes.length === allTypes.length)) 
+            ? '*' 
+            : selectedTypes.join(',');
+
+        if (currentTypes !== expectedTypes) {
+            if (expectedTypes && expectedTypes !== '*') searchParams.set('types', expectedTypes);
+            else if (expectedTypes === '*') searchParams.set('types', '*');
+            else searchParams.delete('types');
+            paramsChanged = true;
+        }
+
+        const currentSearch = searchParams.get('search') || '';
+        if (currentSearch !== searchText) {
+            if (searchText) searchParams.set('search', searchText);
+            else searchParams.delete('search');
+            paramsChanged = true;
+        }
+
+        let searchStr = searchParams.toString();
+        if (paramsChanged && searchStr) {
+            const order: Record<string, number> = { env: 1, domains: 2, types: 3, search: 4 };
+            const entries = Array.from(searchParams.entries());
+            entries.sort((a, b) => (order[a[0]] || 99) - (order[b[0]] || 99));
+            searchStr = new URLSearchParams(entries).toString();
+        }
+
+        if (paramsChanged) {
+            navigate(`${location.pathname}?${searchStr}`, { replace: true });
+        }
+    }, [envFilter, selectedDomains, selectedTypes, searchText, allDomains, allTypes, location.pathname, location.search, navigate]);
 
     // Filter Logic
     const filteredProducts = useMemo(() => {
@@ -488,7 +538,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                                                         size="small"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            navigate(`/env/${envFilter}/mesh/domain/${prod.domain}/dataproduct/${prod.id}`);
+                                                            navigate(`/mesh/domain/${prod.domain}/dataproduct/${prod.id}${location.search}`);
                                                         }}
                                                         sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' }, p: 0.5 }}
                                                     >

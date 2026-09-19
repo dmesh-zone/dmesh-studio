@@ -46,19 +46,11 @@ function App() {
   
   const location = useLocation();
   const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
   
   const parts = location.pathname.split('/').filter(Boolean);
-  let currentEnv = 'Prod';
-  let currentView = 'mesh';
-  
-  if (parts.length > 0) {
-      if (parts[0] === 'env' && parts.length >= 2) {
-          currentEnv = parts[1];
-          currentView = parts[2] || 'mesh';
-      } else {
-          currentView = parts[0];
-      }
-  }
+  let currentEnv = searchParams.get('env') || localStorage.getItem('dmesh-selected-env') || 'Prod';
+  let currentView = parts[0] || 'mesh';
 
   const [dynamicBreadcrumbs, setDynamicBreadcrumbs] = useState([]);
 
@@ -68,7 +60,7 @@ function App() {
     };
     const handleNavigateToView = (e) => {
         if (e.detail?.viewId) {
-            navigate(`/env/${currentEnv}/${e.detail.viewId}`);
+            navigate(`/${e.detail.viewId}`);
         }
     };
     window.addEventListener('set-breadcrumbs', handleSetBreadcrumbs);
@@ -209,7 +201,7 @@ function App() {
                 color="text.secondary"
                 onClick={() => {
                   if (navConfig?.sections?.[0]?.pages?.[0]?.id) {
-                    navigate(`/env/${currentEnv}/${navConfig.sections[0].pages[0].id}`);
+                    navigate(`/${navConfig.sections[0].pages[0].id}`);
                   }
                 }}
                 sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
@@ -334,7 +326,7 @@ function App() {
                 return (
                   <Tooltip key={page.id} title={!isExpanded ? page.title : ""} placement="right">
                     <Box
-                      onClick={() => navigate(`/env/${currentEnv}/${page.id}`)}
+                      onClick={() => navigate(`/${page.id}`)}
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -415,7 +407,7 @@ function App() {
                       color="text.secondary"
                       onClick={() => {
                         if (navConfig?.sections?.[0]?.pages?.[0]?.id) {
-                          navigate(`/env/${currentEnv}/${navConfig.sections[0].pages[0].id}`);
+                          navigate(`/${navConfig.sections[0].pages[0].id}`);
                         }
                       }}
                       sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}

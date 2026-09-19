@@ -218,17 +218,17 @@ function Flow({ isExpanded = false }) {
     React.useEffect(() => {
         if (!dataMeshOperations || dataMeshOperations.length === 0) return;
 
-        const parts = location.pathname.split('/').filter(Boolean); // e.g. ['env', 'Prod', 'mesh', 'domain', 'food_production', 'dataproduct', '1234']
-        if (parts[0] !== 'env' || parts[2] !== 'mesh') return;
+        const parts = location.pathname.split('/').filter(Boolean); // e.g. ['mesh', 'domain', 'food_production', 'dataproduct', '1234']
+        if (parts[0] !== 'mesh') return;
 
-        const urlEnv = parts[1];
-        if (selectedEnv !== urlEnv) {
+        const urlEnv = new URLSearchParams(location.search).get('env');
+        if (urlEnv && selectedEnv !== urlEnv) {
             setSelectedEnv(urlEnv);
         }
 
-        if (parts.length >= 7 && parts[3] === 'domain' && parts[5] === 'dataproduct') {
-            const dataproductId = parts[6];
-            const isContracts = parts[7] === 'contracts';
+        if (parts.length >= 5 && parts[1] === 'domain' && parts[3] === 'dataproduct') {
+            const dataproductId = parts[4];
+            const isContracts = parts[5] === 'contracts';
 
             if (isContracts) {
                 // User wants the contracts for this data product. 
@@ -251,7 +251,31 @@ function Flow({ isExpanded = false }) {
                 setSelection({ id: null, kind: null });
             }
         }
-    }, [location.pathname, dataMeshOperations]);
+    }, [location.pathname, location.search, dataMeshOperations]);
+
+    // Filter State
+    const [selectedDomains, setSelectedDomains] = React.useState(() => {
+        try {
+            const urlDomains = new URLSearchParams(location.search).get('domains');
+            if (urlDomains !== null) {
+                return urlDomains ? urlDomains.split(',') : [];
+            }
+            const stored = localStorage.getItem('dmesh-selected-domains');
+            return stored ? JSON.parse(stored) : [];
+        } catch { return []; }
+    });
+    React.useEffect(() => {
+        localStorage.setItem('dmesh-selected-domains', JSON.stringify(selectedDomains));
+    }, [selectedDomains]);
+    const [globalFilterText, setGlobalFilterText] = React.useState(() => {
+        return new URLSearchParams(location.search).get('search') || '';
+    });
+
+    // Available Domains
+    const availableDomains = React.useMemo(() => {
+        const dps = dataMeshOperations.filter(item => item.kind === 'DataProduct' && item.domain);
+        return Array.from(new Set(dps.map(n => n.domain))).sort();
+    }, [dataMeshOperations]);
 
     // Sync Selection -> URL
     const isFirstRun = React.useRef(true);
@@ -263,35 +287,71 @@ function Flow({ isExpanded = false }) {
             return;
         }
 
+        const params = new URLSearchParams(location.search);
+        let paramsChanged = false;
+
+        if (params.get('env') !== selectedEnv) {
+            params.set('env', selectedEnv);
+            paramsChanged = true;
+        }
+
+        const currentDomains = params.get('domains') || '';
+        const expectedDomains = (selectedDomains.length === 0 || (availableDomains.length > 0 && selectedDomains.length === availableDomains.length)) 
+            ? '*' 
+            : selectedDomains.join(',');
+
+        if (currentDomains !== expectedDomains) {
+            if (expectedDomains && expectedDomains !== '*') params.set('domains', expectedDomains);
+            else if (expectedDomains === '*') params.set('domains', '*');
+            else params.delete('domains');
+            paramsChanged = true;
+        }
+
+        const currentSearch = params.get('search') || '';
+        if (currentSearch !== globalFilterText) {
+            if (globalFilterText) params.set('search', globalFilterText);
+            else params.delete('search');
+            paramsChanged = true;
+        }
+
+        let searchStr = params.toString();
+        if (paramsChanged && searchStr) {
+            const order: Record<string, number> = { env: 1, domains: 2, search: 3 };
+            const entries = Array.from(params.entries());
+            entries.sort((a, b) => (order[a[0]] || 99) - (order[b[0]] || 99));
+            searchStr = new URLSearchParams(entries).toString();
+        }
+        const searchPart = searchStr ? `?${searchStr}` : '';
+
         if (selection.id) {
             if (selection.kind === 'DataProduct') {
                 const item = dataMeshOperations.find(d => String(d.id) === String(selection.id));
                 if (item) {
-                    const expectedPath = `/env/${selectedEnv}/mesh/domain/${item.domain}/dataproduct/${item.id}`;
-                    if (location.pathname !== expectedPath) {
-                        navigate(expectedPath, { replace: true });
+                    const expectedPath = `/mesh/domain/${item.domain}/dataproduct/${item.id}`;
+                    if (location.pathname !== expectedPath || paramsChanged) {
+                        navigate(`${expectedPath}${searchPart}`, { replace: true });
                     }
                 } else {
-                    navigate(`/env/${selectedEnv}/mesh`, { replace: true });
+                    navigate(`/mesh${searchPart}`, { replace: true });
                 }
             } else if (selection.kind === 'DataContract') {
                 const producerNode = dataMeshOperations.find(n => n.kind === 'DataProduct' && n.outputPorts?.some(p => String(p.contractId) === String(selection.id)));
                 if (producerNode) {
-                    const expectedPath = `/env/${selectedEnv}/mesh/domain/${producerNode.domain}/dataproduct/${producerNode.id}/contracts`;
-                    if (location.pathname !== expectedPath) {
-                        navigate(expectedPath, { replace: true });
+                    const expectedPath = `/mesh/domain/${producerNode.domain}/dataproduct/${producerNode.id}/contracts`;
+                    if (location.pathname !== expectedPath || paramsChanged) {
+                        navigate(`${expectedPath}${searchPart}`, { replace: true });
                     }
                 } else {
-                    navigate(`/env/${selectedEnv}/mesh`, { replace: true });
+                    navigate(`/mesh${searchPart}`, { replace: true });
                 }
             }
         } else {
             const parts = location.pathname.split('/').filter(Boolean);
-            if (parts.length !== 3 || parts[0] !== 'env' || parts[2] !== 'mesh' || parts[1] !== selectedEnv) {
-                navigate(`/env/${selectedEnv}/mesh`, { replace: true });
+            if (parts.length !== 1 || parts[0] !== 'mesh' || paramsChanged) {
+                navigate(`/mesh${searchPart}`, { replace: true });
             }
         }
-    }, [selection, dataMeshOperations, selectedEnv]);
+    }, [selection, dataMeshOperations, selectedEnv, selectedDomains, globalFilterText, availableDomains]);
 
 
     // Dispatch breadcrumbs based on selection
@@ -336,18 +396,6 @@ function Flow({ isExpanded = false }) {
     const [hoveredEdgeId, setHoveredEdgeId] = React.useState(null);
     const [hoveredNodeId, setHoveredNodeId] = React.useState(null);
     const [rfInstance, setRfInstance] = React.useState(null);
-
-    // Filter State
-    const [selectedDomains, setSelectedDomains] = React.useState(() => {
-        try {
-            const stored = localStorage.getItem('dmesh-selected-domains');
-            return stored ? JSON.parse(stored) : [];
-        } catch { return []; }
-    });
-    React.useEffect(() => {
-        localStorage.setItem('dmesh-selected-domains', JSON.stringify(selectedDomains));
-    }, [selectedDomains]);
-    const [globalFilterText, setGlobalFilterText] = React.useState('');
 
     // Side Panel State
     const [sidePanelContent, setSidePanelContent] = React.useState(null);
@@ -642,11 +690,7 @@ function Flow({ isExpanded = false }) {
         fetchDataMeshOperations();
     }, [dataMeshOperationsUrl]);
 
-    // Available Domains
-    const availableDomains = React.useMemo(() => {
-        const dps = dataMeshOperations.filter(item => item.kind === 'DataProduct' && item.domain);
-        return Array.from(new Set(dps.map(n => n.domain))).sort();
-    }, [dataMeshOperations]);
+
 
     // Initial default: Select all domains if unselected? Or starts empty (showing all)?
     // Usually "no selection" = "show all". The DomainSelector has "All" button.
