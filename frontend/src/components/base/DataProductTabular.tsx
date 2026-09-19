@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
     Box,
     Typography,
@@ -604,14 +605,13 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
         );
     };
 
+    const headerPortal = document.getElementById('header-actions-portal');
+
     return (
         <Box sx={{ pt: 1.5, pb: 4, px: 4, height: '100%', display: 'flex', flexDirection: 'column', gap: 3, bgcolor: 'var(--m3-surface, #ffffff)', color: 'var(--m3-on-surface, #334155)' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'inherit' }}>
-                    {title}
-                </Typography>
-                
-                <Box>
+            
+            {headerPortal && createPortal(
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Link
                         component="button"
                         variant="body2"
@@ -631,23 +631,24 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                         <MenuItem onClick={handleExportCSV}>Export CSV</MenuItem>
                         <MenuItem onClick={handleExportXLSX}>Export XLSX</MenuItem>
                     </Menu>
+                </Box>,
+                headerPortal
+            )}
+
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'inherit' }}>
+                    {title}
+                </Typography>
+                
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
+                    <EnvironmentSelectorWidget environments={environments} envFilter={envFilter} setEnvFilter={setEnvFilter} mode={mode} />
+                    <DomainSelectorWidget domains={allDomains} selectedDomains={selectedDomains} onChange={setSelectedDomains} formatDomain={formatDomain} />
+                    {allTypes.length > 1 && (
+                        <DataProductTypeSelectorWidget types={allTypes} selectedTypes={selectedTypes} onChange={setSelectedTypes} />
+                    )}
+                    <DataProductSearchWidget filterText={searchText} onFilterChange={setSearchText} />
+                    {customControls && customControls}
                 </Box>
-            </Box>
-
-            {/* Filter Panel */}
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', mb: 1 }}>
-                <EnvironmentSelectorWidget environments={environments} envFilter={envFilter} setEnvFilter={setEnvFilter} mode={mode} />
-
-                <DomainSelectorWidget domains={allDomains} selectedDomains={selectedDomains} onChange={setSelectedDomains} formatDomain={formatDomain} />
-                
-                {/* Only show type selector if there are multiple types (some specific tiers may only have 1 type) */}
-                {allTypes.length > 1 && (
-                    <DataProductTypeSelectorWidget types={allTypes} selectedTypes={selectedTypes} onChange={setSelectedTypes} />
-                )}
-
-                <DataProductSearchWidget filterText={searchText} onFilterChange={setSearchText} />
-                
-                {customControls && customControls}
             </Box>
 
             {renderAboveTable && renderAboveTable({ sortedProducts })}

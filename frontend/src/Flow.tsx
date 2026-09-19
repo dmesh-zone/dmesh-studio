@@ -34,8 +34,9 @@ import YAML from 'yaml';
 import * as ObsSim from './ObsSimulation';
 
 import { Box, Typography, Radio, RadioGroup, FormControlLabel } from '@mui/material';
-import DomainSelector from './DomainSelector';
-import GlobalFilter from './GlobalFilter';
+import DomainSelectorWidget from './components/base/DomainSelectorWidget';
+import EnvironmentSelectorWidget from './components/base/EnvironmentSelectorWidget';
+import DataProductSearchWidget from './components/base/DataProductSearchWidget';
 import DataProductVisual from './DataProductVisual';
 import DataContractVisual from './DataContractVisual';
 import DataUsageAgreementVisual from './DataUsageAgreementVisual';
@@ -2138,7 +2139,6 @@ function Flow({ isExpanded = false }) {
             )}
 
             {/* Top Bar for Controls */}
-            {/* Top Bar for Controls */}
             <div style={{
                 position: 'absolute',
                 top: 0,
@@ -2146,6 +2146,7 @@ function Flow({ isExpanded = false }) {
                 right: 0,
                 zIndex: 10,
                 display: 'flex',
+                flexWrap: 'wrap',
                 gap: '12px',
                 alignItems: 'flex-start',
                 padding: '12px 32px',
@@ -2158,123 +2159,6 @@ function Flow({ isExpanded = false }) {
                     <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
                         Data Mesh
                     </Typography>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        {/* Environment Selector */}
-                        {config?.['multi-environment'] && Array.isArray(config['multi-environment']) && !selection.id && (
-                            <Box sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                bgcolor: mode === 'dark' ? '#1e293b' : '#ffffff',
-                                px: 2,
-                                py: '2px',
-                                borderRadius: '8px',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                                boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-                                height: '32px'
-                            }}>
-                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold', mr: 0.5 }}>
-                                    Environment:
-                                </Typography>
-                                <RadioGroup
-                                    row
-                                    value={selectedEnv}
-                                    onChange={(e) => setSelectedEnv(e.target.value)}
-                                    sx={{ gap: 0.5, flexWrap: 'nowrap' }}
-                                >
-                                    {config['multi-environment'].map((env) => (
-                                        <FormControlLabel
-                                            key={env}
-                                            value={env}
-                                            control={
-                                                <Radio
-                                                    size="small"
-                                                    icon={
-                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <circle cx="12" cy="12" r="8" stroke="var(--radio-border, #64748b)" strokeWidth="2" />
-                                                        </svg>
-                                                    }
-                                                    checkedIcon={
-                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <circle cx="12" cy="12" r="8" stroke="var(--radio-selected-border, #111111)" strokeWidth="2.5" />
-                                                            <circle cx="12" cy="12" r="4" fill="var(--radio-selected-dot, #111111)" />
-                                                        </svg>
-                                                    }
-                                                    sx={{
-                                                        padding: '2px',
-                                                        '&.Mui-focusVisible': {
-                                                            outline: '2px solid #ff5500',
-                                                            outlineOffset: '2px'
-                                                        }
-                                                    }}
-                                                />
-                                            }
-                                            label={env}
-                                            sx={{
-                                                margin: 0,
-                                                '& .MuiFormControlLabel-label': {
-                                                    fontSize: '0.75rem',
-                                                    color: 'text.primary',
-                                                    pr: 0.5
-                                                }
-                                            }}
-                                        />
-                                    ))}
-                                </RadioGroup>
-                            </Box>
-                        )}
-
-                        {/* Domain Selector */}
-                        {!selection.id && (
-                            <DomainSelector
-                                domains={availableDomains}
-                                selectedDomains={selectedDomains}
-                                onChange={setSelectedDomains}
-                                formatDomain={(d) => config?.domainNameCustomisation?.[d] || d}
-                            />
-                        )}
-
-                        {/* Global Filter */}
-                        {!selection.id && (
-                            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                <GlobalFilter
-                                    filterText={globalFilterText}
-                                    onFilterChange={setGlobalFilterText}
-                                />
-                            </div>
-                        )}
-
-                        {/* Validate Button */}
-                        {!selection.id && validationResults?.length > 0 && (
-                            <button
-                                className="btn btn-danger"
-                                onClick={handleValidateDataMeshOperations}
-                                disabled={isLoading || error}
-                                style={{
-                                    padding: '8px 16px',
-                                    height: '32px' // Match input height roughly
-                                }}
-                            >
-                                Found {validationResults.length} Data Mesh Operations Error(s)
-                            </button>
-                        )}
-
-                        {/* Back Button */}
-                        {selection.id && (
-                            <button
-                                className="btn btn-primary"
-                                onClick={handleBack}
-                                style={{
-                                    padding: '8px 16px',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                                }}
-                            >
-                                {backButtonLabel}
-                            </button>
-                        )}
-                    </div>
-
                     {/* Mobile KPIs */}
                     {isMobile && !selection.id && !hideKpis && kpiStats && (
                         <div style={{
@@ -2317,265 +2201,204 @@ function Flow({ isExpanded = false }) {
                 <div style={{ flex: 1 }}></div>
 
                 {/* Right Controls Group - Observability */}
-                <div style={{ display: 'flex', gap: '16px', pointerEvents: 'auto', alignItems: 'flex-start', flexShrink: 1, minWidth: 0, marginTop: '48px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', pointerEvents: 'auto', alignItems: 'center', flexShrink: 1, minWidth: 0, marginTop: '0' }}>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end', flexShrink: 1, minWidth: 0, maxWidth: '100%' }}>
-                        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                            <ThemeToggle isTestMode={isTestMode} />
-                            <button
-                                className="btn btn-secondary"
-                                onClick={() => setCompactMode(!compactMode)}
-                                title={compactMode ? 'EXPAND' : 'COMPACT'}
-                            >
-                                {compactMode ? (
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <polyline points="9 21 3 21 3 15"></polyline>
-                                        <line x1="21" y1="3" x2="14" y2="10"></line>
-                                        <line x1="3" y1="21" x2="10" y2="14"></line>
-                                    </svg>
-                                ) : (
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <polyline points="4 14 10 14 10 20"></polyline>
-                                        <polyline points="20 10 14 10 14 4"></polyline>
-                                        <line x1="14" y1="10" x2="21" y2="3"></line>
-                                        <line x1="3" y1="21" x2="10" y2="14"></line>
-                                    </svg>
-                                )}
-                                {!isMobile && (compactMode ? 'EXPAND' : 'COMPACT')}
-                            </button>
-                            {isTestMode && (
-                                <button
-                                    className="btn btn-secondary"
-                                    onClick={() => {
-                                        setObserveMode(!observeMode);
-                                        if (observeMode) {
-                                            setActiveDimension(null);
-                                            setDrillNodeId(null);
-                                            setSidePanelContent(null);
-                                        }
+                    {/* Environment Selector */}
+                    {config?.['multi-environment'] && Array.isArray(config['multi-environment']) && !selection.id && (
+                        <EnvironmentSelectorWidget
+                            environments={config['multi-environment']}
+                            envFilter={selectedEnv}
+                            setEnvFilter={setSelectedEnv}
+                            mode={mode}
+                        />
+                    )}
+
+                    {/* Domain Selector */}
+                    {!selection.id && (
+                        <DomainSelectorWidget
+                            domains={availableDomains}
+                            selectedDomains={selectedDomains}
+                            onChange={setSelectedDomains}
+                            formatDomain={(d) => config?.domainNameCustomisation?.[d] || d}
+                        />
+                    )}
+
+                    {/* Global Filter */}
+                    {!selection.id && (
+                        <DataProductSearchWidget
+                            filterText={globalFilterText}
+                            onFilterChange={setGlobalFilterText}
+                        />
+                    )}
+
+                    {/* Validate Button */}
+                    {!selection.id && validationResults?.length > 0 && (
+                        <button
+                            className="btn btn-danger"
+                            onClick={handleValidateDataMeshOperations}
+                            disabled={isLoading || error}
+                            style={{
+                                padding: '8px 16px',
+                                height: '32px' // Match input height roughly
+                            }}
+                        >
+                            Found {validationResults.length} Data Mesh Operations Error(s)
+                        </button>
+                    )}
+
+                    {/* Back Button */}
+                    {selection.id && (
+                        <button
+                            className="btn btn-primary"
+                            onClick={handleBack}
+                            style={{
+                                padding: '8px 16px',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                            }}
+                        >
+                            {backButtonLabel}
+                        </button>
+                    )}
+
+                    <ThemeToggle isTestMode={isTestMode} />
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => setCompactMode(!compactMode)}
+                        title={compactMode ? 'EXPAND' : 'COMPACT'}
+                    >
+                        {compactMode ? (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <polyline points="9 21 3 21 3 15"></polyline>
+                                <line x1="21" y1="3" x2="14" y2="10"></line>
+                                <line x1="3" y1="21" x2="10" y2="14"></line>
+                            </svg>
+                        ) : (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="4 14 10 14 10 20"></polyline>
+                                <polyline points="20 10 14 10 14 4"></polyline>
+                                <line x1="14" y1="10" x2="21" y2="3"></line>
+                                <line x1="3" y1="21" x2="10" y2="14"></line>
+                            </svg>
+                        )}
+                        {!isMobile && (compactMode ? 'EXPAND' : 'COMPACT')}
+                    </button>
+                    {isTestMode && (
+                        <button
+                            className="btn btn-secondary"
+                            onClick={() => {
+                                setObserveMode(!observeMode);
+                                if (observeMode) {
+                                    setActiveDimension(null);
+                                    setDrillNodeId(null);
+                                    setSidePanelContent(null);
+                                }
+                            }}
+                            title={observeMode ? 'OBSERVING' : 'OBSERVE'}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            {!isMobile && (observeMode ? 'OBSERVING' : 'OBSERVE')}
+                        </button>
+                    )}
+                    <div ref={globalConfigMenuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <button
+                            onClick={() => setShowGlobalConfig(!showGlobalConfig)}
+                            className={`btn btn-secondary ${showGlobalConfig ? 'custom-chip-selected' : ''}`}
+                            title="Options"
+                            style={{ padding: '8px' }}
+                        >
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </button>
+                        {showGlobalConfig && (
+                            <div style={{
+                                position: 'absolute',
+                                top: '100%',
+                                right: 0,
+                                marginTop: '8px',
+                                background: 'var(--input-bg, #ffffff)',
+                                borderRadius: '8px',
+                                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                                border: '1px solid var(--m3-outline-variant, #e2e8f0)',
+                                padding: '12px',
+                                minWidth: '180px',
+                                zIndex: 1000
+                            }}>
+                                <div
+                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowDomainLabels(!showDomainLabels);
                                     }}
-                                    title={observeMode ? 'OBSERVING' : 'OBSERVE'}
                                 >
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg>
-                                    {!isMobile && (observeMode ? 'OBSERVING' : 'OBSERVE')}
-                                </button>
-                            )}
-                            <div ref={globalConfigMenuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                                <button
-                                    onClick={() => setShowGlobalConfig(!showGlobalConfig)}
-                                    className={`btn btn-secondary ${showGlobalConfig ? 'custom-chip-selected' : ''}`}
-                                    title="Options"
-                                    style={{ padding: '8px' }}
+                                    <input
+                                        type="checkbox"
+                                        checked={showDomainLabels}
+                                        readOnly
+                                    />
+                                    <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show domain labels in compact view</span>
+                                </div>
+                                <div
+                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowDescriptionsExpanded(!showDescriptionsExpanded);
+                                    }}
                                 >
-                                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </button>
-                                {showGlobalConfig && (
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: '100%',
-                                        right: 0,
-                                        marginTop: '8px',
-                                        background: 'var(--input-bg, #ffffff)',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                                        border: '1px solid var(--m3-outline-variant, #e2e8f0)',
-                                        padding: '12px',
-                                        minWidth: '180px',
-                                        zIndex: 1000
-                                    }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={showDescriptionsExpanded}
+                                        readOnly
+                                    />
+                                    <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show descriptions</span>
+                                </div>
+                                {isTestMode && config?.dimensions && (
+                                    <div style={{ borderTop: '1px solid var(--m3-outline-variant, #e2e8f0)', marginTop: '12px', paddingTop: '12px' }}>
+                                        <div style={{ fontSize: '12px', fontWeight: '600', color: 'var(--m3-outline, #64748b)', marginBottom: '8px' }}>Simulate Failure</div>
+                                        {Object.keys(config.dimensions).length > 0 ? Object.keys(config.dimensions).map(dim => {
+                                            const isSimulated = simulatedDims.has(dim);
+                                            return (
+                                                <div
+                                                    key={dim}
+                                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const newSims = new Set(simulatedDims);
+                                                        if (isSimulated) newSims.delete(dim);
+                                                        else newSims.add(dim);
+                                                        setSimulatedDims(newSims);
+                                                    }}
+                                                >
+                                                    <input type="checkbox" checked={isSimulated} readOnly />
+                                                    <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Simulate {dim}</span>
+                                                </div>
+                                            );
+                                        }) : <div style={{ fontSize: '12px', color: 'var(--m3-on-surface-variant, #64748b)' }}>No dimensions configured</div>}
+                                    </div>
+                                )}
+                                {isTestMode && (
+                                    <div style={{ borderTop: '1px solid var(--m3-outline-variant, #e2e8f0)', marginTop: '12px', paddingTop: '12px' }}>
                                         <div
                                             style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                setShowDomainLabels(!showDomainLabels);
+                                                setShowEventsTab(!showEventsTab);
                                             }}
                                         >
                                             <input
                                                 type="checkbox"
-                                                checked={showDomainLabels}
+                                                checked={showEventsTab}
                                                 readOnly
                                             />
-                                            <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show domain labels in compact view</span>
-                                        </div>
-                                        <div
-                                            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setShowDescriptionsExpanded(!showDescriptionsExpanded);
-                                            }}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={showDescriptionsExpanded}
-                                                readOnly
-                                            />
-                                            <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show descriptions in expanded view</span>
+                                            <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show Events tab</span>
                                         </div>
                                     </div>
                                 )}
-                            </div>
-                        </div>
-
-                        {observeMode && (
-                            <div style={{
-                                display: 'flex',
-                                background: 'var(--m3-surface, #ffffff)',
-                                padding: '4px',
-                                borderRadius: '20px',
-                                boxShadow: 'var(--m3-elevation-2, 0 4px 12px rgba(0,0,0,0.1))',
-                                border: '1px solid var(--m3-outline-variant, #e2e8f0)',
-                                animation: 'slideDown 0.3s ease-out',
-                                maxWidth: '100%'
-                            }}>
-                                <div style={{
-                                    display: 'flex',
-                                    overflowX: 'auto',
-                                    scrollbarWidth: 'none',
-                                    msOverflowStyle: 'none'
-                                }}>
-                                    {availableDimensions.map(dim => {
-                                        const dimKey = dim === 'Any' ? null : dim;
-                                        const isActive = activeDimension === dimKey;
-                                        return (
-                                            <button
-                                                key={dim}
-                                                onClick={() => setActiveDimension(dimKey)}
-                                                className={`custom-chip custom-chip-interactive ${isActive ? 'custom-chip-selected' : ''}`}
-                                                style={{
-                                                    border: 'none',
-                                                    margin: '0 2px',
-                                                }}
-                                            >
-                                                {dim}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                {/* US-05: Configuration Cog */}
-                                <div ref={configMenuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '4px', paddingLeft: '4px', borderLeft: '1px solid var(--m3-outline-variant, #e2e8f0)', flexShrink: 0 }}>
-                                    <button
-                                        onClick={() => setShowConfig(!showConfig)}
-                                        className={`custom-chip-icon custom-chip-interactive ${showConfig ? 'custom-chip-selected' : ''}`}
-                                        style={{ border: 'none' }}
-                                        title="Observability Settings"
-                                    >
-                                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                    </button>
-
-                                    {showConfig && (
-                                        <div style={{
-                                            position: 'absolute',
-                                            top: '100%',
-                                            right: 0,
-                                            marginTop: '8px',
-                                            background: 'var(--input-bg, #ffffff)',
-                                            borderRadius: '8px',
-                                            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                                            border: '1px solid var(--m3-outline-variant, #e2e8f0)',
-                                            padding: '12px',
-                                            minWidth: '180px',
-                                            zIndex: 1000
-                                        }}>
-                                            <div
-                                                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setHideHealthy(!hideHealthy);
-                                                }}
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={hideHealthy}
-                                                    readOnly
-                                                />
-                                                <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Hide Healthy Nodes</span>
-                                            </div>
-                                            <div
-                                                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setHideKpis(!hideKpis);
-                                                }}
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={hideKpis}
-                                                    readOnly
-                                                />
-                                                <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Hide KPIs</span>
-                                            </div>
-                                            {isTestMode && (
-                                                <div
-                                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap', marginTop: '8px' }}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setAdjustMetricsTime(!adjustMetricsTime);
-                                                    }}
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={adjustMetricsTime}
-                                                        readOnly
-                                                    />
-                                                    <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Adjust metrics time</span>
-                                                </div>
-                                            )}
-                                            {isTestMode && (
-                                                <div style={{ borderTop: '1px solid var(--m3-outline-variant, #e2e8f0)', marginTop: '12px', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                                    <div style={{ fontSize: '10px', fontWeight: '700', color: 'var(--m3-on-surface-variant, #64748b)', textTransform: 'uppercase' }}>Simulation</div>
-                                                    {Object.keys(config?.observability?.dimensions || {}).length > 0 ? Object.keys(config.observability.dimensions).map(dim => {
-                                                        const isSimulated = simulatedDims.has(dim);
-                                                        return (
-                                                            <div
-                                                                key={dim}
-                                                                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    const newSims = new Set(simulatedDims);
-                                                                    if (isSimulated) newSims.delete(dim);
-                                                                    else newSims.add(dim);
-                                                                    setSimulatedDims(newSims);
-                                                                }}
-                                                            >
-                                                                <input type="checkbox" checked={isSimulated} readOnly />
-                                                                <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Simulate {dim}</span>
-                                                            </div>
-                                                        );
-                                                    }) : <div style={{ fontSize: '12px', color: 'var(--m3-on-surface-variant, #64748b)' }}>No dimensions configured</div>}
-                                                </div>
-                                            )}
-                                            {isTestMode && (
-                                                <div style={{ borderTop: '1px solid var(--m3-outline-variant, #e2e8f0)', marginTop: '12px', paddingTop: '12px' }}>
-                                                    <div
-                                                        style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setShowEventsTab(!showEventsTab);
-                                                        }}
-                                                    >
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={showEventsTab}
-                                                            readOnly
-                                                        />
-                                                        <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--m3-on-surface, #1e293b)' }}>Show Events tab</span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
                             </div>
                         )}
                     </div>
@@ -2672,7 +2495,7 @@ function Flow({ isExpanded = false }) {
 
             <div style={{
                 position: 'absolute',
-                top: (!isMobile && !selection.id && !hideKpis && kpiStats) ? '230px' : '110px',
+                top: (!isMobile && !selection.id && !hideKpis && kpiStats) ? '184px' : '68px',
                 bottom: 0,
                 left: 0,
                 right: 0,

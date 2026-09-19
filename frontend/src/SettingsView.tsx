@@ -6,8 +6,8 @@ export default function SettingsView() {
     const { mode, setMode } = useThemeContext();
 
     return (
-        <Box sx={{ p: 4, height: '100%', overflow: 'auto', bgcolor: 'var(--m3-surface, #f5f5f5)' }}>
-            <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
+        <Box sx={{ pt: 1.5, pb: 4, px: 4, height: '100%', overflow: 'auto', bgcolor: 'var(--m3-surface, #f5f5f5)' }}>
+            <Typography variant="h5" sx={{ mb: 4, fontWeight: 'bold' }}>
                 Settings
             </Typography>
 

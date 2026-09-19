@@ -400,7 +400,7 @@ function App() {
           return (
             <>
               {activeSection && activePage && (
-                <Box sx={{ px: 4, pt: 1.5, pb: 0, flexShrink: 0 }}>
+                <Box sx={{ px: 4, pt: 1.5, pb: 0, flexShrink: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Breadcrumbs separator={<MuiIcons.NavigateNext fontSize="small" />} aria-label="breadcrumb">
                     <Typography 
                       variant="body2" 
@@ -441,6 +441,7 @@ function App() {
                         </Typography>
                     ))}
                   </Breadcrumbs>
+                  <Box id="header-actions-portal" />
                 </Box>
               )}
               <Box sx={{ flexGrow: 1, overflow: 'auto', position: 'relative', height: '100%', width: '100%' }}>
