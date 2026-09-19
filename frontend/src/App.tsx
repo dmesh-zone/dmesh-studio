@@ -452,7 +452,9 @@ function App() {
                 </Box>
               )}
               <Box sx={{ flexGrow: 1, overflow: 'auto', position: 'relative', height: '100%', width: '100%' }}>
-                {ActiveComponent ? (
+                {!navConfig ? (
+                  null
+                ) : ActiveComponent ? (
                   <ActiveComponent isExpanded={isExpanded} />
                 ) : (
                   <Box sx={{ p: 4, height: '100%', overflow: 'auto' }}>
