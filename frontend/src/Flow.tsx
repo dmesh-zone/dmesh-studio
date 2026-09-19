@@ -129,7 +129,9 @@ function Flow({ isExpanded = false }) {
                 setSelectedEnv(currentEnv);
             }
             const envObj = allEnvsData.find(e => String(e.env).toLowerCase() === String(currentEnv).toLowerCase());
-            setDataMeshOperationalData(envObj ? (envObj.data || []) : []);
+            React.startTransition(() => {
+                setDataMeshOperationalData(envObj ? (envObj.data || []) : []);
+            });
         }
     }, [selectedEnv, allEnvsData, config]);
 
@@ -786,8 +788,10 @@ function Flow({ isExpanded = false }) {
     // Process Data Mesh Operations into Nodes/Edges
     React.useEffect(() => {
         if (!dataMeshOperations || dataMeshOperations.length === 0) {
-            setNodes([]);
-            setEdges([]);
+            React.startTransition(() => {
+                setNodes([]);
+                setEdges([]);
+            });
             return;
         }
 
@@ -1035,8 +1039,10 @@ function Flow({ isExpanded = false }) {
             });
         }
 
-        setNodes([...initialNodes, ...headerNodes]);
-        setEdges(initialEdges);
+        React.startTransition(() => {
+            setNodes([...initialNodes, ...headerNodes]);
+            setEdges(initialEdges);
+        });
 
     }, [dataMeshOperations, setNodes, setEdges, observeMode, compactMode, activeDimension, metricsMap, drillNodeId, config, hideHealthy, showDomainLabels, showDescriptionsExpanded]);
 
@@ -2208,7 +2214,7 @@ function Flow({ isExpanded = false }) {
                         <EnvironmentSelectorWidget
                             environments={config['multi-environment']}
                             envFilter={selectedEnv}
-                            setEnvFilter={setSelectedEnv}
+                            setEnvFilter={(env) => React.startTransition(() => setSelectedEnv(env))}
                             mode={mode}
                         />
                     )}
@@ -2218,7 +2224,7 @@ function Flow({ isExpanded = false }) {
                         <DomainSelectorWidget
                             domains={availableDomains}
                             selectedDomains={selectedDomains}
-                            onChange={setSelectedDomains}
+                            onChange={(domains) => React.startTransition(() => setSelectedDomains(domains))}
                             formatDomain={(d) => config?.domainNameCustomisation?.[d] || d}
                         />
                     )}
@@ -2227,7 +2233,7 @@ function Flow({ isExpanded = false }) {
                     {!selection.id && (
                         <DataProductSearchWidget
                             filterText={globalFilterText}
-                            onFilterChange={setGlobalFilterText}
+                            onFilterChange={(text) => React.startTransition(() => setGlobalFilterText(text))}
                         />
                     )}
 
