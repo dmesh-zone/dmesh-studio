@@ -4,6 +4,21 @@ All notable changes to **DMesh Studio** will be documented in this file.
 
 ---
 
+## 🚀 [v0.4.0] - 2026-09-19
+
+### ✨ Highlights
+- **Responsive Layout Engine Upgrade:** The Data Mesh top-bar layout has been entirely refactored to implement a fully fluid, flexbox-based wrapping system. Selectors, search widgets, and observability controls now elegantly and intelligently wrap to a new line on smaller screens without abruptly breaking the layout structure. 
+- **Typography Engine Enhancements:** Added robust support for fully isolated font configurations. Administrators can now map completely distinct font-families (or specific custom `.otf`/`.woff` weights) exclusively for headings via the `--font-family-heading` CSS variable, entirely decoupled from the application's base text font.
+- **Stateful URL Navigation:** Selectors and filters (like domain, environment, and search queries) are now intelligently tracked as URL query/option parameters (`?env=X&search=Y`) rather than rigid path parameters. These parameters are dynamically scoped and will only appear on pages where those specific selectors actually apply.
+- **Component Standardization:** Formally migrated hardcoded filtering logic inside the Data Mesh view to reuse the standardized `EnvironmentSelectorWidget`, `DomainSelectorWidget`, and `DataProductSearchWidget` components, ensuring absolute visual and behavioral parity across the whole application.
+
+### 🐛 Bug Fixes & Improvements
+- **Customization FOUC Prevention:** Resolved a UI glitch where default base styling and layout artifacts would momentarily flash on the screen for a split second upon page refresh before the active custom configuration initialized.
+- **UI Spacing Polishes:** Remedied excessive vertical "dead space" padding around the top controls in the Data Mesh canvas for a tighter viewport, aligning the visual density strictly with the Data Products dashboard page. 
+- **Settings Layout Homogenization:** Polished the typography sizing (h5) and breadcrumb margins inside the Settings page to conform perfectly with identical headers found across other platform views.
+
+---
+
 ## 🚀 [v0.3.1] - 2026-09-16
 
 ### ✨ Highlights
