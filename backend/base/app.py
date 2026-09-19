@@ -26,11 +26,7 @@ def get_ws():
         _ws = WorkspaceClient()
     return _ws
 
-@app.get("/")
-async def root():
-    return RedirectResponse(url="/dmesh-studio/")
-
-@app.api_route("/dmesh-studio/api/{path: path}", methods=["GET", "POST"])
+@app.api_route("/api/{path: path}", methods=["GET", "POST"])
 async def proxy(path: str, request: Request):
     auth_headers = get_ws().config.authenticate()
     async with httpx.AsyncClient() as client:
@@ -47,4 +43,4 @@ async def proxy(path: str, request: Request):
         media_type=resp.headers.get("content-type"),
     )
 
-app.mount("/dmesh-studio", SPAStaticFiles(directory="dist", html=True), name="static")
+app.mount("/", SPAStaticFiles(directory="dist", html=True), name="static")

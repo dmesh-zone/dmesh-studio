@@ -42,6 +42,8 @@ jobs:
         run: npm ci
       - name: Build
         working-directory: ./frontend
+        env:
+          VITE_BASE_PATH: /dmesh-studio/
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v5

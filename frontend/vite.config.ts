@@ -5,7 +5,7 @@ import yaml from '@rollup/plugin-yaml';
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/dmesh-studio/',
+  base: process.env.VITE_BASE_PATH || '/',
   plugins: [
     react(),
     yaml()
@@ -15,10 +15,9 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/dmesh-studio/dmesh': {
+      '/dmesh': {
         target: 'http://localhost:8000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/dmesh-studio\/dmesh/, '/dmesh')
+        changeOrigin: true
       }
     }
   }
