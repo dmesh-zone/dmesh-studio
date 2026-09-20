@@ -105,3 +105,10 @@ Data Product contract level: /dmesh-studio/env/{env}/mesh/domain/{domainId}/data
 ## 8. Customization Engine
 When making changes to files inside the `dmesh-studio-custom-sample` repository, you MUST run `python3 scripts/base/customization.py sample` in the `dmesh-studio` root directory to sync the assets before testing or verifying the changes in the browser.
 
+## 9. Performance Optimization Best Practices
+To maintain optimal performance and prevent UI freezing when handling large datasets (e.g., 130+ data products), adhere to the following practices:
+- **Debounced State Management**: Input and selector widgets must maintain local state for immediate UI updates, passing debounced values to parent components.
+- **Pre-computed Data Structures**: Use `React.useMemo` and `Map` or `Set` objects for O(1) lookups and deduplication, instead of repeatedly iterating over large arrays.
+- **Component Memoization**: Wrap expensive UI components and selector widgets in `React.memo` to prevent unnecessary re-renders.
+- **React.startTransition**: Wrap expensive state updates (like triggering massive layout recalculations or filtering the main dataset) in `React.startTransition` to de-prioritize them and keep the main UI thread responsive.
+

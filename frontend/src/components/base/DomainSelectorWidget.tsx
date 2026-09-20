@@ -14,16 +14,53 @@
  * limitations under the License.
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
-const DomainSelectorWidget = ({ domains, selectedDomains, onChange, formatDomain = (d) => d }) => {
+interface DomainSelectorWidgetProps {
+    domains: string[];
+    selectedDomains: string[];
+    onChange: (domains: string[]) => void;
+    formatDomain?: (domain: string) => string;
+}
+
+const DomainSelectorWidget: React.FC<DomainSelectorWidgetProps> = React.memo(({ domains, selectedDomains, onChange, formatDomain = (d: string) => d }) => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef(null);
 
+    // Local state for immediate UI updates (no debounce)
+    const [localSelectedDomains, setLocalSelectedDomains] = useState(selectedDomains);
+
+    // Sync local state when external selectedDomains changes
+    useEffect(() => {
+        setLocalSelectedDomains(selectedDomains);
+    }, [selectedDomains]);
+
+    // Use useRef to store timeout for proper cleanup
+    const timeoutRef = useRef<NodeJS.Timeout>();
+
+    // Cleanup timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
+
+    // Debounced callback to parent for filtering logic
+    const debouncedOnChange = useCallback((newDomains: string[]) => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+            onChange(newDomains);
+        }, 100); // Shorter debounce for selections
+    }, [onChange]);
+
     // Close on click outside
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (containerRef.current && !containerRef.current.contains(event.target)) {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
             }
         };
@@ -31,21 +68,30 @@ const DomainSelectorWidget = ({ domains, selectedDomains, onChange, formatDomain
         return () => document.removeEventListener('mousedown', handleClickOutside, true);
     }, []);
 
+    const toggleDomain = (domain: string) => {
+        const newSelection = localSelectedDomains.includes(domain)
+            ? localSelectedDomains.filter(d => d !== domain)
+            : [...localSelectedDomains, domain];
 
-
-    const toggleDomain = (domain) => {
-        if (selectedDomains.includes(domain)) {
-            onChange(selectedDomains.filter(d => d !== domain));
-        } else {
-            onChange([...selectedDomains, domain]);
-        }
+        setLocalSelectedDomains(newSelection); // Immediate UI update
+        debouncedOnChange(newSelection); // Debounced parent update
     };
 
-    const labelText = selectedDomains.length === 0
+    const selectAll = () => {
+        setLocalSelectedDomains(domains); // Immediate UI update
+        onChange(domains); // Immediate update for select all (no debounce needed)
+    };
+
+    const clearAll = () => {
+        setLocalSelectedDomains([]); // Immediate UI update
+        onChange([]); // Immediate update for clear all (no debounce needed)
+    };
+
+    const labelText = localSelectedDomains.length === 0
         ? 'All Domains'
-        : selectedDomains.length === domains.length
+        : localSelectedDomains.length === domains.length
             ? 'All Domains'
-            : `${selectedDomains.length} Domain${selectedDomains.length > 1 ? 's' : ''}`;
+            : `${localSelectedDomains.length} Domain${localSelectedDomains.length > 1 ? 's' : ''}`;
 
     return (
         <div ref={containerRef} style={{ position: 'relative' }}>
@@ -100,11 +146,11 @@ const DomainSelectorWidget = ({ domains, selectedDomains, onChange, formatDomain
                 }}>
                     <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--m3-outline, #64748b)', marginBottom: '4px' }}>Select Domains</label>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        {domains.map(domain => (
+                        {domains.map((domain: string) => (
                             <label key={domain} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap', padding: '2px 0', color: 'var(--m3-on-surface, #334155)' }}>
                                 <input
                                     type="checkbox"
-                                    checked={selectedDomains.includes(domain)}
+                                    checked={localSelectedDomains.includes(domain)}
                                     onChange={() => toggleDomain(domain)}
                                     style={{ cursor: 'pointer' }}
                                 />
@@ -115,14 +161,14 @@ const DomainSelectorWidget = ({ domains, selectedDomains, onChange, formatDomain
                     <div style={{ display: 'flex', gap: '5px', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--m3-surface-variant, #f1f5f9)' }}>
                         <button
                             className="btn btn-secondary"
-                            onClick={() => onChange(domains)}
+                            onClick={selectAll}
                             style={{ flex: 1, fontSize: '11px', padding: '4px 8px' }}
                         >
                             Select All
                         </button>
                         <button
                             className="btn btn-secondary"
-                            onClick={() => onChange([])}
+                            onClick={clearAll}
                             style={{ flex: 1, fontSize: '11px', padding: '4px 8px' }}
                         >
                             Clear
@@ -132,6 +178,6 @@ const DomainSelectorWidget = ({ domains, selectedDomains, onChange, formatDomain
             )}
         </div>
     );
-};
+});
 
 export default DomainSelectorWidget;

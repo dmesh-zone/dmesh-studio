@@ -10,7 +10,7 @@ interface EnvironmentSelectorWidgetProps {
     mode?: 'light' | 'dark';
 }
 
-const EnvironmentSelectorWidget: React.FC<EnvironmentSelectorWidgetProps> = ({
+const EnvironmentSelectorWidget: React.FC<EnvironmentSelectorWidgetProps> = React.memo(({
     environments,
     envFilter,
     setEnvFilter,
@@ -52,6 +52,6 @@ const EnvironmentSelectorWidget: React.FC<EnvironmentSelectorWidgetProps> = ({
             </RadioGroup>
         </Box>
     );
-};
+});
 
 export default EnvironmentSelectorWidget;

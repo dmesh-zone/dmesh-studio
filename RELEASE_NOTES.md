@@ -11,6 +11,8 @@ All notable changes to **DMesh Studio** will be documented in this file.
 - **Typography Engine Enhancements:** Added robust support for fully isolated font configurations. Administrators can now map completely distinct font-families (or specific custom `.otf`/`.woff` weights) exclusively for headings via the `--font-family-heading` CSS variable, entirely decoupled from the application's base text font.
 - **Stateful URL Navigation:** Selectors and filters (like domain, environment, and search queries) are now intelligently tracked as URL query/option parameters (`?env=X&search=Y`) rather than rigid path parameters. These parameters are dynamically scoped and will only appear on pages where those specific selectors actually apply.
 - **Component Standardization:** Formally migrated hardcoded filtering logic inside the Data Mesh view to reuse the standardized `EnvironmentSelectorWidget`, `DomainSelectorWidget`, and `DataProductSearchWidget` components, ensuring absolute visual and behavioral parity across the whole application.
+- **Performance Optimizations:** Overhauled graph processing and layout updates using `React.startTransition` and debounced state management to ensure buttery-smooth UI performance and zero browser freezes when loading and filtering hundreds of data products.
+
 
 ### 🐛 Bug Fixes & Improvements
 - **Customization FOUC Prevention:** Resolved a UI glitch where default base styling and layout artifacts would momentarily flash on the screen for a split second upon page refresh before the active custom configuration initialized.

@@ -5,7 +5,48 @@ interface DataProductSearchWidgetProps {
     onFilterChange: (text: string) => void;
 }
 
-const DataProductSearchWidget: React.FC<DataProductSearchWidgetProps> = ({ filterText, onFilterChange }) => {
+const DataProductSearchWidget: React.FC<DataProductSearchWidgetProps> = React.memo(({ filterText, onFilterChange }) => {
+    // Local state for immediate UI updates (no debounce)
+    const [localValue, setLocalValue] = React.useState(filterText);
+
+    // Sync local state when external filterText changes (e.g., from URL or clear)
+    React.useEffect(() => {
+        setLocalValue(filterText);
+    }, [filterText]);
+
+    // Use useRef to store timeout for proper cleanup
+    const timeoutRef = React.useRef<NodeJS.Timeout>();
+
+    // Cleanup timeout on unmount
+    React.useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
+
+    // Debounced callback to parent for search logic
+    const debouncedOnChange = React.useCallback((value: string) => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+            onFilterChange(value);
+        }, 150);
+    }, [onFilterChange]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setLocalValue(value); // Immediate UI update
+        debouncedOnChange(value); // Debounced search logic
+    };
+
+    const handleClear = () => {
+        setLocalValue(''); // Immediate UI update
+        onFilterChange(''); // Immediate clear (no debounce needed)
+    };
+
     return (
         <div className="input-container-style" style={{
             display: 'flex',
@@ -21,8 +62,8 @@ const DataProductSearchWidget: React.FC<DataProductSearchWidgetProps> = ({ filte
             <input
                 type="text"
                 placeholder="Search ..."
-                value={filterText}
-                onChange={(e) => onFilterChange(e.target.value)}
+                value={localValue}
+                onChange={handleInputChange}
                 style={{
                     border: 'none',
                     outline: 'none',
@@ -32,10 +73,10 @@ const DataProductSearchWidget: React.FC<DataProductSearchWidgetProps> = ({ filte
                     background: 'transparent'
                 }}
             />
-            {filterText && (
+            {localValue && (
                 <button
                     className="btn btn-ghost"
-                    onClick={() => onFilterChange('')}
+                    onClick={handleClear}
                     style={{
                         padding: 0,
                         border: 'none',
@@ -51,6 +92,6 @@ const DataProductSearchWidget: React.FC<DataProductSearchWidgetProps> = ({ filte
             )}
         </div>
     );
-};
+});
 
 export default DataProductSearchWidget;

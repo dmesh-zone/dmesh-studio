@@ -785,7 +785,7 @@ function Flow({ isExpanded = false }) {
         }
     }, [dataMeshOperations, config]);
 
-    // Process Data Mesh Operations into Nodes/Edges
+    // Process Data Mesh Operations into Nodes/Edges with performance optimization
     React.useEffect(() => {
         if (!dataMeshOperations || dataMeshOperations.length === 0) {
             React.startTransition(() => {
@@ -795,21 +795,35 @@ function Flow({ isExpanded = false }) {
             return;
         }
 
-        const dataMeshNodes = dataMeshOperations.filter(item => item.kind === 'DataProduct' || item.kind === 'DataContract');
-        const dataMeshEdges = dataMeshOperations.filter(item => item.dataUsageAgreementSpecification);
+        React.startTransition(() => {
+            // Pre-filter for better performance
+            const dataMeshNodes = [];
+            const dataMeshEdges = [];
 
-        // Domain Coloring Logic
-        const uniqueDomains = Array.from(new Set(dataMeshNodes
-            .filter(n => n.kind === 'DataProduct' && n.domain)
-            .map(n => n.domain)))
-            .sort();
+            dataMeshOperations.forEach(item => {
+                if (item.kind === 'DataProduct' || item.kind === 'DataContract') {
+                    dataMeshNodes.push(item);
+                } else if (item.dataUsageAgreementSpecification) {
+                    dataMeshEdges.push(item);
+                }
+            });
 
-        const domainColorMap = {};
-        if (uniqueDomains.length > 0) {
+            // Optimized domain coloring logic
+            const uniqueDomains = [];
+            const seenDomains = new Set();
+
+            dataMeshNodes.forEach(n => {
+                if (n.kind === 'DataProduct' && n.domain && !seenDomains.has(n.domain)) {
+                    seenDomains.add(n.domain);
+                    uniqueDomains.push(n.domain);
+                }
+            });
+            uniqueDomains.sort();
+
+            const domainColorMap = {};
             uniqueDomains.forEach((domain, index) => {
                 domainColorMap[domain] = `var(--domain-palette-${String((index % 12) + 1).padStart(2, '0')})`;
             });
-        }
 
         // Reset counters for layout - track Y position by columnNumber instead of tier
         // This ensures that if multiple tiers share the same columnNumber, they don't overlap
@@ -1039,7 +1053,6 @@ function Flow({ isExpanded = false }) {
             });
         }
 
-        React.startTransition(() => {
             setNodes([...initialNodes, ...headerNodes]);
             setEdges(initialEdges);
         });
@@ -1516,69 +1529,96 @@ function Flow({ isExpanded = false }) {
     }, [selection, nodes, dataMeshNodes, dataMeshOperations, compactMode]);
 
     // Mesh filtering visibility logic
+    // Pre-compute contract lookup for performance optimization
+    const contractLookup = React.useMemo(() => {
+        const lookup = new Map();
+        dataMeshOperations.forEach(item => {
+            if (item.kind === 'DataContract') {
+                lookup.set(String(item.id), item);
+            }
+        });
+        return lookup;
+    }, [dataMeshOperations]);
+
+    // Pre-compute edge lookup for performance optimization
+    const edgeLookup = React.useMemo(() => {
+        return dataMeshOperations
+            .filter(item => item.dataUsageAgreementSpecification)
+            .map(edge => ({
+                source: edge.provider.dataProductId,
+                target: edge.consumer.dataProductId
+            }));
+    }, [dataMeshOperations]);
+
     const meshFilterNodes = React.useMemo(() => {
         // If we have a selected node, we don't use this logic (we show Drill Down view)
         if (selection.id) return null;
 
-        // 1. Identify "Primary Matches" based on filters
+        // Early return for no filters
+        if (selectedDomains.length === 0 && globalFilterText === '') {
+            return nodes; // No filters, show all (original positions)
+        }
+
+        const searchText = globalFilterText.toLowerCase();
+
+        // 1. Identify "Primary Matches" based on filters - optimized version
         const primaryMatches = nodes.filter(node => {
-            const matchesDomain = selectedDomains.length === 0 || selectedDomains.includes(node.data?.originalData?.domain); // Use originalData to avoid ReactFlow stripping custom top-level props
-            let matchesSearch = globalFilterText === '';
-            if (!matchesSearch) {
-                const searchText = globalFilterText.toLowerCase();
-                const matchesLabel = node.data.label.toLowerCase().includes(searchText) || String(node.id).toLowerCase().includes(searchText);
+            // Domain filter check
+            const matchesDomain = selectedDomains.length === 0 || selectedDomains.includes(node.data?.originalData?.domain);
+            if (!matchesDomain) return false;
 
-                let matchesCustomProps = false;
-                const customProps = node.data?.originalData?.customProperties || [];
-                matchesCustomProps = customProps.some(prop => String(prop.value).toLowerCase().includes(searchText));
+            // Early return if no search text
+            if (globalFilterText === '') return true;
 
-                let matchesContractProps = false;
-                const outputPorts = node.data?.originalData?.outputPorts || [];
+            // Search optimization: check most likely matches first
+            const nodeData = node.data?.originalData;
+            if (!nodeData) return false;
 
-                let matchesRoles = false;
-                const nodeRoles = node.data?.originalData?.roles || [];
-                matchesRoles = nodeRoles.some(r => String(r.role).toLowerCase().includes(searchText) || String(r.access).toLowerCase().includes(searchText));
+            // Quick label/ID check first (most common searches)
+            if (node.data.label.toLowerCase().includes(searchText) || String(node.id).toLowerCase().includes(searchText)) {
+                return true;
+            }
 
-                for (const port of outputPorts) {
-                    if (port.contractId) {
-                        const contract = dataMeshOperations.find(item => String(item.id) === String(port.contractId) && item.kind === 'DataContract');
-                        if (contract) {
-                            if (contract.customProperties && contract.customProperties.some(prop => String(prop.value).toLowerCase().includes(searchText))) {
-                                matchesContractProps = true;
-                                break;
-                            }
-                            if (contract.roles && contract.roles.some(r => String(r.role).toLowerCase().includes(searchText) || String(r.access).toLowerCase().includes(searchText))) {
-                                matchesContractProps = true;
-                                break;
-                            }
+            // Custom properties search
+            const customProps = nodeData.customProperties || [];
+            if (customProps.some(prop => String(prop.value).toLowerCase().includes(searchText))) {
+                return true;
+            }
+
+            // Roles search
+            const nodeRoles = nodeData.roles || [];
+            if (nodeRoles.some(r => String(r.role).toLowerCase().includes(searchText) || String(r.access).toLowerCase().includes(searchText))) {
+                return true;
+            }
+
+            // Contract search (optimized with lookup)
+            const outputPorts = nodeData.outputPorts || [];
+            for (const port of outputPorts) {
+                if (port.contractId) {
+                    const contract = contractLookup.get(String(port.contractId));
+                    if (contract) {
+                        if (contract.customProperties?.some(prop => String(prop.value).toLowerCase().includes(searchText))) {
+                            return true;
+                        }
+                        if (contract.roles?.some(r => String(r.role).toLowerCase().includes(searchText) || String(r.access).toLowerCase().includes(searchText))) {
+                            return true;
                         }
                     }
                 }
-
-                matchesSearch = matchesLabel || matchesCustomProps || matchesRoles || matchesContractProps;
             }
 
-            return matchesDomain && matchesSearch;
+            return false;
         });
 
         if (primaryMatches.length === 0 && (selectedDomains.length > 0 || globalFilterText !== '')) {
             return []; // No matches
         }
-        if (selectedDomains.length === 0 && globalFilterText === '') {
-            return nodes; // No filters, show all (original positions)
-        }
 
-        // 2. Identify Neighbors (Producers and Consumers) of Primary Matches
-        // We need the edges to find neighbors
-        const allEdges = dataMeshOperations.filter(item => item.dataUsageAgreementSpecification).map(edge => ({
-            source: edge.provider.dataProductId,
-            target: edge.consumer.dataProductId
-        }));
-
+        // 2. Identify Neighbors (Producers and Consumers) of Primary Matches - optimized
         const primaryIds = new Set(primaryMatches.map(n => n.id));
         const neighborIds = new Set();
 
-        allEdges.forEach(edge => {
+        edgeLookup.forEach(edge => {
             if (primaryIds.has(edge.source)) {
                 neighborIds.add(edge.target); // Consumer is neighbor
             }
@@ -2214,7 +2254,7 @@ function Flow({ isExpanded = false }) {
                         <EnvironmentSelectorWidget
                             environments={config['multi-environment']}
                             envFilter={selectedEnv}
-                            setEnvFilter={(env) => React.startTransition(() => setSelectedEnv(env))}
+                            setEnvFilter={setSelectedEnv}
                             mode={mode}
                         />
                     )}
@@ -2224,7 +2264,7 @@ function Flow({ isExpanded = false }) {
                         <DomainSelectorWidget
                             domains={availableDomains}
                             selectedDomains={selectedDomains}
-                            onChange={(domains) => React.startTransition(() => setSelectedDomains(domains))}
+                            onChange={setSelectedDomains}
                             formatDomain={(d) => config?.domainNameCustomisation?.[d] || d}
                         />
                     )}
@@ -2233,7 +2273,7 @@ function Flow({ isExpanded = false }) {
                     {!selection.id && (
                         <DataProductSearchWidget
                             filterText={globalFilterText}
-                            onFilterChange={(text) => React.startTransition(() => setGlobalFilterText(text))}
+                            onFilterChange={setGlobalFilterText}
                         />
                     )}
 
