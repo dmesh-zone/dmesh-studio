@@ -1459,6 +1459,7 @@ function Flow({ isExpanded = false }) {
             position: { x: 0, y: 0 },
             data: {
                 ...selectedNode.data,
+                subtitle: config?.domainNameCustomisation?.[selectedNode.data.originalData?.domain] || selectedNode.data.originalData?.domain || selectedNode.data.subtitle,
                 // Add outputPorts from original dataMeshNodes if available, enriched with icon
                 outputPorts: dataMeshNodes.find(n => String(n.id) === String(selection.id) && n.kind === 'DataProduct')?.outputPorts?.map(port => {
                     let portIcon = null;
@@ -1508,6 +1509,10 @@ function Flow({ isExpanded = false }) {
             if (sourceNode) {
                 relatedNodes.push({
                     ...sourceNode,
+                    data: {
+                        ...sourceNode.data,
+                        subtitle: config?.domainNameCustomisation?.[sourceNode.data.originalData?.domain] || sourceNode.data.originalData?.domain || sourceNode.data.subtitle,
+                    },
                     position: { x: -450, y: index * verticalStep } // Stack upstream on left - Using 450 to match COLUMN_SPACING
                 });
             }
@@ -1520,13 +1525,17 @@ function Flow({ isExpanded = false }) {
             if (targetNode) {
                 relatedNodes.push({
                     ...targetNode,
+                    data: {
+                        ...targetNode.data,
+                        subtitle: config?.domainNameCustomisation?.[targetNode.data.originalData?.domain] || targetNode.data.originalData?.domain || targetNode.data.subtitle,
+                    },
                     position: { x: 450, y: index * verticalStep } // Stack downstream on right
                 });
             }
         });
 
         return relatedNodes;
-    }, [selection, nodes, dataMeshNodes, dataMeshOperations, compactMode]);
+    }, [selection, nodes, dataMeshNodes, dataMeshOperations, compactMode, config]);
 
     // Mesh filtering visibility logic
     // Pre-compute contract lookup for performance optimization
