@@ -27,7 +27,7 @@
       value: rdsoracle
   outputPorts: []
 - kind: DataProduct
-  id: a538c642-e1d5-4c07-9e79-e31be0bd295c
+  id: 63a5da09-2924-5715-bd47-895163991424
   name: Petstore C
   domain: petstore
   status: active
@@ -794,7 +794,7 @@
           examples:
             - 2024-06-01T08:00:00Z
 - kind: DataProduct
-  id: 9a82ac51-c30d-45f4-9b5c-83ef5013c46e
+  id: 62771b01-e27d-5d64-8f81-e35b2c201f98
   name: Petstore C
   domain: petstore
   status: active
@@ -2244,7 +2244,7 @@
     teamId: petstore-analytics-team
     dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
 - dataUsageAgreementSpecification: 0.0.1
-  id: 45c55a30-cf22-491a-be10-098555ac291b
+  id: 740fadad-60ca-5371-ac82-cdd2e78cbd06
   info:
     active: true
     purpose: Extract operational data from Petstore C database
@@ -2253,12 +2253,12 @@
   provider:
     teamId: petstore-c-team
     outputPortId: "*"
-    dataProductId: a538c642-e1d5-4c07-9e79-e31be0bd295c
+    dataProductId: 63a5da09-2924-5715-bd47-895163991424
   consumer:
     teamId: petstore-central-team
-    dataProductId: 9a82ac51-c30d-45f4-9b5c-83ef5013c46e
+    dataProductId: 62771b01-e27d-5d64-8f81-e35b2c201f98
 - dataUsageAgreementSpecification: 0.0.1
-  id: 23c8a920-d3ab-41c4-b892-75d1123490cf
+  id: 03f871a5-87d2-5fac-ba28-e623cd7e6be0
   info:
     active: true
     purpose: Integrate Petstore C data into unified retail view
@@ -2267,7 +2267,7 @@
   provider:
     teamId: petstore-central-team
     outputPortId: "*"
-    dataProductId: 9a82ac51-c30d-45f4-9b5c-83ef5013c46e
+    dataProductId: 62771b01-e27d-5d64-8f81-e35b2c201f98
   consumer:
     teamId: petstore-analytics-team
     dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6

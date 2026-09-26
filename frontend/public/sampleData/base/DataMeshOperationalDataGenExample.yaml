@@ -1,7 +1,7 @@
 - apiVersion: v0.9.0
   kind: DataProduct
   name: Customer Data Product
-  id: fbe8d147-28db-4f1d-bedf-a3fe9f458427
+  id: 578a09ba-65c7-59ee-a5c2-85d6179fd64b
   domain: seller
   status: draft
   tenant: RetailCorp
@@ -13,16 +13,16 @@
   inputPorts:
   - name: payments 
     version: v1.0.0
-    contractId: dbb7b1eb-7628-436e-8914-2a00638ba6db
+    contractId: 6ed704da-fcb5-5f8d-89c8-ba8edcad5375
   - name: payments
     version: v2.0.0
-    contractId: dbb7b1eb-7628-436e-8914-2a00638ba6da
+    contractId: 3b42bd6d-c658-547a-ae4c-5f2789998c12
   - name: onlinetransactions
     version: v1.0.0
-    contractId: ec2a112d-5cfe-49f3-8760-f9cfb4597544
+    contractId: 37408da6-2b4a-5a6f-97dd-08dd0c5b066b
   - name: onlinetransactions
     version: v1.1.0
-    contractId: ec2a112d-5cfe-49f3-8760-f9cfb4597547
+    contractId: 15488085-b52a-541b-8547-f9dc1b284936
     tags: ["transactions"]
     customProperties:
       - property: "transactions_version"
@@ -33,17 +33,17 @@
   outputPorts:
   - name: "example"
     version: v1.0.0
-    contractId: 53581432-6c55-4ba2-a65f-72344a91553a
+    contractId: 943310d3-5fbd-56f0-ae41-246ec9b99c5b
   - name: rawtransactions
     description: "Raw Transactions"
     type: tables
     version: 1.0.0
-    contractId: c2798941-1b7e-4b03-9e0d-955b1a872b32
+    contractId: 95afab2d-5ac0-51af-aa9e-c6c5ec85d0c7
   - name: rawtransactions
     description: "Raw Transactions"
     type: tables
     version: 2.0.0
-    contractId: c2798941-1b7e-4b03-9e0d-955b1a872b33
+    contractId: ddb9726a-204b-58a3-9e8a-4df3c0edf684
     tags: ["transactions"]
     customProperties:
       - property: "transactions_version"
@@ -55,20 +55,20 @@
     - type: "external"
       url: "https://mysbomserver/mysbom"
     inputContracts:
-    - id: dbb7b1eb-7628-436e-8914-2a00638ba6db
+    - id: 6ed704da-fcb5-5f8d-89c8-ba8edcad5375
       version: 2.0.0
-    - id: ec2a112d-5cfe-49f3-8760-f9cfb4597544
+    - id: 37408da6-2b4a-5a6f-97dd-08dd0c5b066b
       version: 1.0.0
   - name: consolidatedtransactions 
     description: "Consolidated transactions"
     type: tables
     version: 1.0.0
-    contractId: a44978be-1fe0-4226-b840-1b715bc25c63
+    contractId: 8212360c-f748-5777-b0ff-15093a364ab4
   - name: fulltransactionswithreturns 
     description: "Full transactions with returns"
     type: tables
     version: 0.3.0
-    contractId: ef769969-0cbe-4188-876f-bb00abadaee4
+    contractId: d7a5b26d-e284-5b7c-955d-d94d22a14dc9
   managementPorts:
   - content: dictionary
     type: topic
@@ -116,7 +116,7 @@
   dataProduct: my quantum # Data product name
   version: 1.1.0 # Version (follows semantic versioning)
   status: active
-  id: 53581432-6c55-4ba2-a65f-72344a91553a
+  id: 943310d3-5fbd-56f0-ae41-246ec9b99c5b
   authoritativeDefinitions:
   - type: canonical
     url: https://github.com/bitol-io/open-data-contract-standard/blob/main/docs/examples/all/full-example.odcs.yaml
@@ -233,7 +233,7 @@
           tags: [ ]
           classification: public
           authoritativeDefinitions:
-            - url: https://collibra.com/asset/742b358f-71a5-4ab1-bda4-dcdba9418c25
+            - url: https://collibra.com/asset/479c4d2a-669e-553e-ad36-3fc544325607
               type: businessDefinition
             - url: https://github.com/myorg/myrepo
               type: transformationImplementation

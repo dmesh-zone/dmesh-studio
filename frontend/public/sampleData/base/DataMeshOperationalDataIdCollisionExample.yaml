@@ -122,7 +122,7 @@
           tags: [ ]
           classification: public
           authoritativeDefinitions:
-            - url: https://collibra.com/asset/742b358f-71a5-4ab1-bda4-dcdba9418c25
+            - url: https://collibra.com/asset/479c4d2a-669e-553e-ad36-3fc544325607
               type: businessDefinition
             - url: https://github.com/myorg/myrepo
               type: transformationImplementation
