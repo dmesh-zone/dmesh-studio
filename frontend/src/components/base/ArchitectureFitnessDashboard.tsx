@@ -175,7 +175,28 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                 else items.push(obj);
             });
         }
-        return items;
+        
+        const contractIdToDomain = new Map<string, string>();
+        items.forEach(item => {
+            if (item.kind === 'DataProduct' && item.domain) {
+                if (item.outputPorts && Array.isArray(item.outputPorts)) {
+                    item.outputPorts.forEach((port: any) => {
+                        if (port.contractId) {
+                            contractIdToDomain.set(port.contractId, item.domain);
+                        }
+                    });
+                }
+            }
+        });
+
+        return items.map(item => {
+            if (item.kind === 'DataContract') {
+                if (item.id && contractIdToDomain.has(item.id)) {
+                    return { ...item, domain: contractIdToDomain.get(item.id) };
+                }
+            }
+            return item;
+        });
     }, [selectedEnv, dataMeshOps]);
 
     const allDomains = useMemo(() => {
@@ -205,6 +226,7 @@ const categoryDomainStats = useMemo(() => {
                 const domainData = filteredEnvData.filter(dp => (dp.domain || 'Unknown') === domain && dp.kind === cat.targetKind);
                 
                 cat.rules.forEach(rule => {
+                    if (domainData.length === 0) return;
                     let ruleFailed = false;
                     for (const item of domainData) {
                         if (!rule.evaluate(item).passed) {
@@ -332,18 +354,18 @@ const categoryResults = useMemo(() => {
                 border: '1px solid var(--m3-outline-variant)',
                 background: 'var(--m3-surface)'
             }}>
-                {(selectedDomains.length !== 1 && Object.keys(categoryDomainStats).length > 0) && (() => {
+                {(Object.keys(categoryDomainStats).length > 0) && (() => {
                     const sortedDomains = Array.from(new Set(filteredEnvData.map(dp => dp.domain).filter(d => d && d !== 'Unknown'))).sort() as string[];
                     return (
                         <Box sx={{ mb: 4 }}>
                             <Typography variant="h6" sx={{ mb: 2, color: 'var(--m3-on-surface)' }}>
-                                Domain architecture fitness summary
+                                Architecture fitness summary
                             </Typography>
                             <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid var(--m3-outline-variant)', borderRadius: '8px', background: 'var(--m3-surface-variant)' }}>
                                 <Table size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+                                            <TableCell sx={{ fontWeight: 'bold', position: 'sticky', left: 0, bgcolor: 'var(--m3-surface-variant)', zIndex: 2 }}>Category</TableCell>
                                             {sortedDomains.map(domain => (
                                                 <TableCell key={domain} align="center" sx={{ fontWeight: 'bold' }}>{domainNameCustomisation[domain] || domain}</TableCell>
                                             ))}
@@ -352,7 +374,7 @@ const categoryResults = useMemo(() => {
                                     <TableBody>
                                         {activeCategories.map(cat => (
                                             <TableRow key={cat.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                <TableCell>{cat.label}</TableCell>
+                                                <TableCell sx={{ position: 'sticky', left: 0, bgcolor: 'var(--m3-surface-variant)', zIndex: 1 }}>{cat.label}</TableCell>
                                                 {sortedDomains.map(domain => {
                                                     const stats = categoryDomainStats[cat.id]?.[domain] || { rulesPassed: 0, rulesError: 0, rulesWarning: 0 };
                                                     return (
