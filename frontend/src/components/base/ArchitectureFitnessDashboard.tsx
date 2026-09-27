@@ -62,9 +62,11 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
 
     const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
     const [sidePanelData, setSidePanelData] = useState<any>(null);
+    const [sidePanelFilter, setSidePanelFilter] = useState<string>('');
     const [domainNameCustomisation, setDomainNameCustomisation] = useState<any>({});
     const [hideCompliantRules, setHideCompliantRules] = useState<boolean>(() => {
-        return localStorage.getItem('dmesh-hide-compliant-rules') === 'true';
+        const stored = localStorage.getItem('dmesh-hide-compliant-rules');
+        return stored !== null ? stored === 'true' : false;
     });
 
     useEffect(() => {
@@ -607,7 +609,10 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
             <Drawer
                 anchor="right"
                 open={Boolean(sidePanelData)}
-                onClose={() => setSidePanelData(null)}
+                onClose={() => {
+                    setSidePanelData(null);
+                    setSidePanelFilter('');
+                }}
                 sx={{ '& .MuiDrawer-paper': { width: Math.min(drawerWidth, window.innerWidth * 0.95), display: 'flex', flexDirection: 'column', bgcolor: 'var(--side-panel-bg, #f8fafc)' } }}
             >
                 <div
@@ -625,13 +630,48 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                 />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid var(--side-panel-container-border, #e5e7eb)' }}>
                     <Typography variant="h6">{sidePanelData?.kind === 'DataContract' ? 'Data Contract' : 'Data Product'} YAML</Typography>
-                    <IconButton onClick={() => setSidePanelData(null)} size="small">
+                    <IconButton onClick={() => { setSidePanelData(null); setSidePanelFilter(''); }} size="small">
                         <CloseIcon />
                     </IconButton>
                 </Box>
+
+                {sidePanelData && (
+                    <Box sx={{ p: 2, borderBottom: '1px solid var(--side-panel-container-border, #e5e7eb)', bgcolor: 'var(--side-panel-bg, #f8fafc)' }}>
+                        <div style={{ position: 'relative' }}>
+                            <input
+                                type="text"
+                                className="custom-input"
+                                placeholder="Filter YAML..."
+                                value={sidePanelFilter}
+                                onChange={(e) => setSidePanelFilter(e.target.value)}
+                                style={{ paddingRight: '24px', width: '100%', boxSizing: 'border-box' }}
+                            />
+                            {sidePanelFilter && (
+                                <button
+                                    onClick={() => setSidePanelFilter('')}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '8px',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        color: '#94a3b8',
+                                        fontSize: '14px',
+                                        padding: 0
+                                    }}
+                                >
+                                    &times;
+                                </button>
+                            )}
+                        </div>
+                    </Box>
+                )}
+
                 <Box sx={{ flexGrow: 1, overflow: 'auto', p: 0 }}>
                     {sidePanelData && (
-                        <InteractiveYaml data={sidePanelData} />
+                        <InteractiveYaml data={sidePanelData} filterText={sidePanelFilter} />
                     )}
                 </Box>
             </Drawer>
