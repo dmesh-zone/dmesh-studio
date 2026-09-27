@@ -370,7 +370,7 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                 p: 3,
                 borderRadius: '16px',
                 border: '1px solid var(--m3-outline-variant)',
-                background: 'var(--m3-surface)'
+                bgcolor: 'background.paper'
             }}>
                 {(Object.keys(categoryDomainStats).length > 0) && (() => {
                     const sortedDomains = Array.from(new Set(filteredEnvData.map(dp => dp.domain).filter(d => d && d !== 'Unknown'))).sort() as string[];
@@ -379,24 +379,24 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                             <Typography variant="h6" sx={{ mb: 2, color: 'var(--m3-on-surface)' }}>
                                 Architecture fitness summary
                             </Typography>
-                            <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid var(--m3-outline-variant)', borderRadius: '8px', background: 'var(--m3-surface-variant)' }}>
-                                <Table size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell sx={{ fontWeight: 'bold', position: 'sticky', left: 0, bgcolor: 'var(--m3-surface-variant)', zIndex: 2 }}>Category</TableCell>
+                            <div style={{ border: '1px solid var(--m3-outline-variant)', borderRadius: '8px', overflow: 'auto', backgroundColor: 'var(--m3-surface)' }}>
+                                <table className="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th style={{ position: 'sticky', left: 0, zIndex: 2, textAlign: 'left' }}>Category</th>
                                             {sortedDomains.map(domain => (
-                                                <TableCell key={domain} align="center" sx={{ fontWeight: 'bold' }}>{domainNameCustomisation[domain] || domain}</TableCell>
+                                                <th key={domain} style={{ textAlign: 'center' }}>{domainNameCustomisation[domain] || domain}</th>
                                             ))}
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         {activeCategories.map(cat => (
-                                            <TableRow key={cat.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                <TableCell sx={{ position: 'sticky', left: 0, bgcolor: 'var(--m3-surface-variant)', zIndex: 1 }}>{cat.label}</TableCell>
+                                            <tr key={cat.id}>
+                                                <td style={{ position: 'sticky', left: 0, zIndex: 1, fontWeight: 'bold' }}>{cat.label}</td>
                                                 {sortedDomains.map(domain => {
                                                     const stats = categoryDomainStats[cat.id]?.[domain] || { rulesPassed: 0, rulesError: 0, rulesWarning: 0 };
                                                     return (
-                                                        <TableCell key={domain} align="center">
+                                                        <td key={domain} style={{ textAlign: 'center' }}>
                                                             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', justifyContent: 'center' }}>
                                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Passed Rules">
                                                                     <CheckCircleIcon color="success" fontSize="small" />
@@ -421,14 +421,14 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                                                                     </Box>
                                                                 )}
                                                             </Box>
-                                                        </TableCell>
+                                                        </td>
                                                     )
                                                 })}
-                                            </TableRow>
+                                            </tr>
                                         ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                                    </tbody>
+                                </table>
+                            </div>
                         </Box>
                     );
                 })()}
@@ -494,7 +494,7 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                                                 border: '1px solid var(--m3-outline-variant)',
                                                 borderRadius: '8px !important',
                                                 '&:before': { display: 'none' },
-                                                background: 'var(--m3-surface-variant)'
+                                                bgcolor: 'background.paper'
                                             }}
                                         >
                                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -548,15 +548,15 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                                             </AccordionSummary>
                                             <AccordionDetails sx={{ bgcolor: 'var(--m3-surface)', p: 0, display: 'flex', flexDirection: 'column' }}>
                                                 {result.failures.length > 0 ? (
-                                                    <TableContainer>
-                                                        <Table size="small">
-                                                            <TableHead>
-                                                                <TableRow sx={{ backgroundColor: 'var(--m3-surface-variant)' }}>
-                                                                    <TableCell sx={{ fontWeight: 'bold' }}>Violating Item</TableCell>
-                                                                    <TableCell sx={{ fontWeight: 'bold' }}>Failure Reason</TableCell>
-                                                                </TableRow>
-                                                            </TableHead>
-                                                            <TableBody>
+                                                    <div style={{ overflow: 'auto', borderRadius: '4px', border: '1px solid var(--m3-outline-variant)' }}>
+                                                        <table className="custom-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style={{ textAlign: 'left' }}>Violating Item</th>
+                                                                    <th style={{ textAlign: 'left' }}>Failure Reason</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
                                                                 {result.failures.map((f: any, idx: number) => {
                                                                     const domain = f.dp.domain || 'unknown';
                                                                     const name = f.dp.name || f.dp.id || 'unknown';
@@ -565,8 +565,8 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                                                                         dpLink = `/mesh/domain/${domain}/dataproduct/${f.dp.dataProductId}/contract/${f.dp.id}?env=${selectedEnv}&domains=*`;
                                                                     }
                                                                     return (
-                                                                        <TableRow key={idx}>
-                                                                            <TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                        <tr key={idx}>
+                                                                            <td style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                                                 <Link to={dpLink} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--m3-primary)', textDecoration: 'none' }}>
                                                                                     {domain}.{name}
                                                                                 </Link>
@@ -577,17 +577,18 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                                                                                         setSidePanelData(f.dp.originalData || f.dp);
                                                                                     }}
                                                                                     title="View YAML"
+                                                                                    sx={{ p: 0.5 }}
                                                                                 >
                                                                                     <DescriptionIcon fontSize="small" />
                                                                                 </IconButton>
-                                                                            </TableCell>
-                                                                            <TableCell sx={{ color: 'error.main' }}>{f.reason}</TableCell>
-                                                                        </TableRow>
+                                                                            </td>
+                                                                            <td style={{ color: 'var(--health-critical, #EF4444)' }}>{f.reason}</td>
+                                                                        </tr>
                                                                     );
                                                                 })}
-                                                            </TableBody>
-                                                        </Table>
-                                                    </TableContainer>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 ) : (
                                                     <Box sx={{ p: 2 }}>
                                                         <Typography variant="body2" color="text.secondary">

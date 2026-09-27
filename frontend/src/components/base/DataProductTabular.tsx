@@ -129,6 +129,8 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                 setProductsList(data.products);
                 setAllDomains(data.domains);
                 setAllTypes(data.types);
+                setSelectedDomains(prev => prev.filter(d => data.domains.includes(d)));
+                setSelectedTypes(prev => prev.filter(t => data.types.includes(t)));
                 setEnvironments(data.environments);
                 setDomainNameCustomisation(data.config.domainNameCustomisation || {});
                 setIconMap(data.config.iconMap || {});
