@@ -7,23 +7,23 @@ export type RuleExtension = Partial<Rule> & { id: string, suppressed?: boolean }
 export function extendRules(baseRules: Rule[], overrides: RuleExtension[]): Rule[] {
     const overrideMap = new Map(overrides.map(r => [r.id, r]));
     const result: Rule[] = [];
-    
+
     for (const rule of baseRules) {
         if (!overrideMap.has(rule.id)) {
             result.push(rule);
             continue;
         }
-        
+
         const override = overrideMap.get(rule.id)!;
         if (override.suppressed) {
             overrideMap.delete(rule.id);
             continue;
         }
-        
+
         result.push({ ...rule, ...override } as Rule);
         overrideMap.delete(rule.id);
     }
-    
+
     // Add any remaining overrides (new rules)
     result.push(...Array.from(overrideMap.values()) as Rule[]);
     return result;
@@ -242,8 +242,8 @@ export const dataContractRules: Rule[] = [
         label: "All Data Contracts have a 'apiVersion' property that is supported",
         severity: 'error',
         evaluate: (dc: any) => {
-            if (dc.apiVersion !== 'v3.1.0') {
-                return { passed: false, reason: `apiVersion is '${dc.apiVersion || 'undefined'}'. Supported versions: 'v3.1.0'` };
+            if (dc.apiVersion !== 'v3.0.1') {
+                return { passed: false, reason: `apiVersion is '${dc.apiVersion || 'undefined'}'. Supported versions: 'v3.0.1'` };
             }
             return { passed: true };
         }

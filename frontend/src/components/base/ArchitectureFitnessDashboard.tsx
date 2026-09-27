@@ -205,8 +205,8 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
         return items.map(item => {
             if (item.kind === 'DataContract') {
                 if (item.id && contractIdToDomain.has(item.id)) {
-                    return { 
-                        ...item, 
+                    return {
+                        ...item,
                         domain: contractIdToDomain.get(item.id),
                         dataProductId: contractIdToDataProduct.get(item.id)
                     };
@@ -434,8 +434,8 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                 })()}
 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', mb: 2, ml: 1 }}>
-                    <Button 
-                        variant="outlined" 
+                    <Button
+                        variant="outlined"
                         size="small"
                         onClick={() => setHideCompliantRules(!hideCompliantRules)}
                         sx={{ textTransform: 'none', borderRadius: 8, borderColor: 'var(--m3-outline)', color: 'var(--m3-on-surface)' }}
@@ -629,7 +629,31 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                     }}
                 />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid var(--side-panel-container-border, #e5e7eb)' }}>
-                    <Typography variant="h6">{sidePanelData?.kind === 'DataContract' ? 'Data Contract' : 'Data Product'} YAML</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="h6">{sidePanelData?.kind === 'DataContract' ? 'Data Contract' : 'Data Product'} YAML</Typography>
+                        {sidePanelData?.kind === 'DataContract' && (
+                            <a
+                                href={`https://bitol-io.github.io/open-data-contract-standard/${sidePanelData.apiVersion || 'v3.0.1'}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="custom-chip custom-chip-interactive"
+                                style={{ textDecoration: 'none' }}
+                            >
+                                Open Data Contract Standard {(sidePanelData.apiVersion || 'v3.0.1').toUpperCase()}
+                            </a>
+                        )}
+                        {sidePanelData?.kind === 'DataProduct' && (
+                            <a
+                                href={`https://bitol-io.github.io/open-data-product-standard/${sidePanelData.apiVersion || 'v1.0.0'}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="custom-chip custom-chip-interactive"
+                                style={{ textDecoration: 'none' }}
+                            >
+                                Open Data Product Standard {(sidePanelData.apiVersion || 'v1.0.0').toUpperCase()}
+                            </a>
+                        )}
+                    </Box>
                     <IconButton onClick={() => { setSidePanelData(null); setSidePanelFilter(''); }} size="small">
                         <CloseIcon />
                     </IconButton>

@@ -15,6 +15,44 @@
       value: rdsoracle
     - property: dataProductBusinessName
       value: Petstore A data source
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore A database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-a-team
+          outputPortId: "*"
+          dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore A database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-a-team
+          outputPortId: "*"
+          dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore A database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-a-team
+          outputPortId: "*"
+          dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
     outputPorts: []
     version: v1
   - kind: DataProduct
@@ -32,6 +70,32 @@
       value: rdsoracle
     - property: dataProductBusinessName
       value: Petstore B data source
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore B database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-b-team
+          outputPortId: "*"
+          dataProductId: 30982ac5-326d-5744-915c-63ef5013c46e
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore B database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-b-team
+          outputPortId: "*"
+          dataProductId: 30982ac5-326d-5744-915c-63ef5013c46e
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
     outputPorts: []
     version: v1
   - kind: DataProduct
@@ -49,6 +113,20 @@
       value: rdsoracle
     - property: dataProductBusinessName
       value: Petstore C data source
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore C database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-c-team
+          outputPortId: "*"
+          dataProductId: 63a5da09-2924-5715-bd47-895163991424
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 62771b01-e27d-5d64-8f81-e35b2c201f98
     outputPorts: []
     version: v1
   - kind: DataProduct
@@ -66,6 +144,44 @@
       value: rdsoracle
     - property: dataProductBusinessName
       value: Food Production data source
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Extract operational data from Food Production database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
+        consumer:
+          teamId: food-production-team
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+      - info:
+          active: true
+          purpose: Extract operational data from Food Production database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
+        consumer:
+          teamId: food-production-team
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+      - info:
+          active: true
+          purpose: Extract operational data from Food Production database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
+        consumer:
+          teamId: food-production-team
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
     outputPorts: []
     version: v1
   - kind: DataProduct
@@ -83,6 +199,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Petstore A
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Integrate Petstore A data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Integrate Petstore A data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Integrate Petstore A data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
     outputPorts:
     - name: customers
       version: v1
@@ -102,8 +256,12 @@
     version: v1
   - kind: DataContract
     id: e87611c2-76b4-567a-8c61-c81b36e7831a
+    customProperties:
+    - property: dataProductId
+      value: 128a3c4b-71c6-5929-aa27-c98974544bf4
+    dataProduct: petstore_a
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
     servers:
     - server: Petstore workspace
@@ -111,24 +269,26 @@
       environment: dev
       host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
-      schema: retail_data
+      schema: petstore_a
     - server: Petstore workspace
       type: databricks
       environment: qa
       host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
-      schema: retail_data
+      schema: petstore_a
     - server: Petstore workspace
       type: databricks
       environment: prod
       host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
-      schema: retail_data
+      schema: petstore_a
     roles:
     - role: dataAnalyst01
       access: read
+      description: read access for data analyst role
     - role: dataEngineer01
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: customers
       physicalType: table
@@ -465,6 +625,32 @@
       value: databricks
     - property: dataProductBusinessName
       value: Petstore B
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Integrate Petstore B data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Integrate Petstore B data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
     outputPorts:
     - name: customers
       version: v1
@@ -484,14 +670,39 @@
     version: v1
   - kind: DataContract
     id: 688de69e-651c-5bef-a503-bf2b68c7e7c1
+    customProperties:
+    - property: dataProductId
+      value: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+    dataProduct: petstore_b
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_b
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_b
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_b
     roles:
     - role: dataAnalyst02
       access: read
+      description: read access for data analyst role
     - role: dataEngineer02
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: customers
       physicalType: table
@@ -828,6 +1039,20 @@
       value: databricks
     - property: dataProductBusinessName
       value: Petstore C
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Integrate Petstore C data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 62771b01-e27d-5d64-8f81-e35b2c201f98
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
     outputPorts:
     - name: customers
       version: v1
@@ -860,6 +1085,83 @@
       value: databricks
     - property: dataProductBusinessName
       value: Food Production
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Enrich food production data with analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: food-analytics-team
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+      - info:
+          active: true
+          purpose: Consume manufacturing data from Food Production to enrich Unified
+            Petstore Retail Data
+          status: approved
+          startDate: 2026-02-14
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Enrich food production data with analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: food-analytics-team
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+      - info:
+          active: true
+          purpose: Consume manufacturing data from Food Production to enrich Unified
+            Petstore Retail Data
+          status: approved
+          startDate: 2026-02-14
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Enrich food production data with analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: food-analytics-team
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+      - info:
+          active: true
+          purpose: Consume manufacturing data from Food Production to enrich Unified
+            Petstore Retail Data
+          status: approved
+          startDate: 2026-02-14
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
     outputPorts:
     - name: food_products
       version: v1
@@ -879,14 +1181,39 @@
     version: v1
   - kind: DataContract
     id: 35d5516c-6e77-5423-9f8f-e7e368d38642
+    customProperties:
+    - property: dataProductId
+      value: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+    dataProduct: food_production
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production
     roles:
     - role: dataAnalyst03
       access: read
+      description: read access for data analyst role
     - role: dataEngineer03
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: food_products
       physicalType: table
@@ -1166,6 +1493,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Unified Petstore Retail Data
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Aggregate unified retail data for business analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-analytics-team
+          outputPortId: "*"
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+        consumer:
+          teamId: business-intelligence-team
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+      - info:
+          active: true
+          purpose: Aggregate unified retail data for business analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-analytics-team
+          outputPortId: "*"
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+        consumer:
+          teamId: business-intelligence-team
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+      - info:
+          active: true
+          purpose: Aggregate unified retail data for business analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-analytics-team
+          outputPortId: "*"
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+        consumer:
+          teamId: business-intelligence-team
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
     outputPorts:
     - name: unified_customers
       version: v1
@@ -1191,14 +1556,39 @@
     version: v1
   - kind: DataContract
     id: b636c282-7234-5728-b7a9-7ccaeab8d518
+    customProperties:
+    - property: dataProductId
+      value: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+    dataProduct: unified_petstore_retail_data
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: unified_petstore_retail_data
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: unified_petstore_retail_data
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: unified_petstore_retail_data
     roles:
     - role: dataAnalyst04
       access: read
+      description: read access for data analyst role
     - role: dataEngineer04
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: unified_customers
       physicalType: table
@@ -1496,6 +1886,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Food Production Analytics Data
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Aggregate production data for operations analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-analytics-team
+          outputPortId: "*"
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+        consumer:
+          teamId: operations-team
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+      - info:
+          active: true
+          purpose: Aggregate production data for operations analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-analytics-team
+          outputPortId: "*"
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+        consumer:
+          teamId: operations-team
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+      - info:
+          active: true
+          purpose: Aggregate production data for operations analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-analytics-team
+          outputPortId: "*"
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+        consumer:
+          teamId: operations-team
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
     outputPorts:
     - name: product_quality
       version: v1
@@ -1518,14 +1946,39 @@
     version: v1
   - kind: DataContract
     id: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
+    customProperties:
+    - property: dataProductId
+      value: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+    dataProduct: food_production_analytics_data
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_analytics_data
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_analytics_data
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_analytics_data
     roles:
     - role: dataAnalyst05
       access: read
+      description: read access for data analyst role
     - role: dataEngineer05
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: product_quality
       physicalType: table
@@ -1746,6 +2199,50 @@
       value: databricks
     - property: dataProductBusinessName
       value: Petstore Business Analytics
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Power BI visualization of petstore business metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: business-intelligence-team
+          outputPortId: "*"
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+        consumer:
+          teamId: app-dev-team
+          dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
+        custom:
+          consumerApplicationClientId: 6779ef20e75817b79602
+      - info:
+          active: true
+          purpose: Power BI visualization of petstore business metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: business-intelligence-team
+          outputPortId: "*"
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+        consumer:
+          teamId: app-dev-team
+          dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
+        custom:
+          consumerApplicationClientId: 6779ef20e75817b79602
+      - info:
+          active: true
+          purpose: Power BI visualization of petstore business metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: business-intelligence-team
+          outputPortId: "*"
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+        consumer:
+          teamId: app-dev-team
+          dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
+        custom:
+          consumerApplicationClientId: 6779ef20e75817b79602
     outputPorts:
     - name: sales_metrics
       version: v1
@@ -1762,14 +2259,39 @@
     version: v1
   - kind: DataContract
     id: edc38778-1856-5164-955c-e1069d62a986
+    customProperties:
+    - property: dataProductId
+      value: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+    dataProduct: petstore_business_analytics
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_business_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_business_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_business_analytics
     roles:
     - role: dataAnalyst06
       access: read
+      description: read access for data analyst role
     - role: dataEngineer06
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: sales_metrics
       physicalType: table
@@ -1946,6 +2468,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Food Production Operations Analytics
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Power BI visualization of food production metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: operations-team
+          outputPortId: "*"
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+        consumer:
+          teamId: app-dev-team
+          dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
+      - info:
+          active: true
+          purpose: Power BI visualization of food production metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: operations-team
+          outputPortId: "*"
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+        consumer:
+          teamId: app-dev-team
+          dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
+      - info:
+          active: true
+          purpose: Power BI visualization of food production metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: operations-team
+          outputPortId: "*"
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+        consumer:
+          teamId: app-dev-team
+          dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
     outputPorts:
     - name: production_efficiency
       version: v1
@@ -1959,14 +2519,39 @@
     version: v1
   - kind: DataContract
     id: 90752d80-7b05-5810-963c-62127c5bef06
+    customProperties:
+    - property: dataProductId
+      value: a0314893-7445-5a8f-b603-d8f07ac25380
+    dataProduct: food_production_operations_analytics
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_operations_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_operations_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_operations_analytics
     roles:
     - role: dataAnalyst07
       access: read
+      description: read access for data analyst role
     - role: dataEngineer07
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: production_efficiency
       physicalType: table
@@ -2324,6 +2909,44 @@
       value: rdsoracle
     - property: dataProductBusinessName
       value: Petstore A data source
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore A database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-a-team
+          outputPortId: "*"
+          dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore A database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-a-team
+          outputPortId: "*"
+          dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore A database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-a-team
+          outputPortId: "*"
+          dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
     outputPorts: []
     version: v1
   - kind: DataProduct
@@ -2341,6 +2964,32 @@
       value: rdsoracle
     - property: dataProductBusinessName
       value: Petstore B data source
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore B database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-b-team
+          outputPortId: "*"
+          dataProductId: 30982ac5-326d-5744-915c-63ef5013c46e
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore B database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-b-team
+          outputPortId: "*"
+          dataProductId: 30982ac5-326d-5744-915c-63ef5013c46e
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
     outputPorts: []
     version: v1
   - kind: DataProduct
@@ -2358,6 +3007,44 @@
       value: rdsoracle
     - property: dataProductBusinessName
       value: Food Production data source
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Extract operational data from Food Production database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
+        consumer:
+          teamId: food-production-team
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+      - info:
+          active: true
+          purpose: Extract operational data from Food Production database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
+        consumer:
+          teamId: food-production-team
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+      - info:
+          active: true
+          purpose: Extract operational data from Food Production database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
+        consumer:
+          teamId: food-production-team
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
     outputPorts: []
     version: v1
   - kind: DataProduct
@@ -2375,6 +3062,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Petstore A
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Integrate Petstore A data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Integrate Petstore A data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Integrate Petstore A data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
     outputPorts:
     - name: customers
       version: v1
@@ -2394,8 +3119,12 @@
     version: v1
   - kind: DataContract
     id: e87611c2-76b4-567a-8c61-c81b36e7831a
+    customProperties:
+    - property: dataProductId
+      value: 128a3c4b-71c6-5929-aa27-c98974544bf4
+    dataProduct: petstore_a
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
     servers:
     - server: Petstore workspace
@@ -2403,24 +3132,26 @@
       environment: dev
       host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
-      schema: retail_data
+      schema: petstore_a
     - server: Petstore workspace
       type: databricks
       environment: qa
       host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
-      schema: retail_data
+      schema: petstore_a
     - server: Petstore workspace
       type: databricks
       environment: prod
       host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
-      schema: retail_data
+      schema: petstore_a
     roles:
     - role: dataAnalyst01
       access: read
+      description: read access for data analyst role
     - role: dataEngineer01
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: customers
       physicalType: table
@@ -2757,6 +3488,32 @@
       value: databricks
     - property: dataProductBusinessName
       value: Petstore B
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Integrate Petstore B data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Integrate Petstore B data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
     outputPorts:
     - name: customers
       version: v1
@@ -2776,14 +3533,39 @@
     version: v1
   - kind: DataContract
     id: 688de69e-651c-5bef-a503-bf2b68c7e7c1
+    customProperties:
+    - property: dataProductId
+      value: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+    dataProduct: petstore_b
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_b
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_b
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_b
     roles:
     - role: dataAnalyst02
       access: read
+      description: read access for data analyst role
     - role: dataEngineer02
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: customers
       physicalType: table
@@ -3120,6 +3902,83 @@
       value: databricks
     - property: dataProductBusinessName
       value: Food Production
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Enrich food production data with analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: food-analytics-team
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+      - info:
+          active: true
+          purpose: Consume manufacturing data from Food Production to enrich Unified
+            Petstore Retail Data
+          status: approved
+          startDate: 2026-02-14
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Enrich food production data with analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: food-analytics-team
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+      - info:
+          active: true
+          purpose: Consume manufacturing data from Food Production to enrich Unified
+            Petstore Retail Data
+          status: approved
+          startDate: 2026-02-14
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Enrich food production data with analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: food-analytics-team
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+      - info:
+          active: true
+          purpose: Consume manufacturing data from Food Production to enrich Unified
+            Petstore Retail Data
+          status: approved
+          startDate: 2026-02-14
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
     outputPorts:
     - name: food_products
       version: v1
@@ -3139,14 +3998,39 @@
     version: v1
   - kind: DataContract
     id: 35d5516c-6e77-5423-9f8f-e7e368d38642
+    customProperties:
+    - property: dataProductId
+      value: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+    dataProduct: food_production
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production
     roles:
     - role: dataAnalyst03
       access: read
+      description: read access for data analyst role
     - role: dataEngineer03
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: food_products
       physicalType: table
@@ -3426,6 +4310,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Unified Petstore Retail Data
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Aggregate unified retail data for business analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-analytics-team
+          outputPortId: "*"
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+        consumer:
+          teamId: business-intelligence-team
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+      - info:
+          active: true
+          purpose: Aggregate unified retail data for business analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-analytics-team
+          outputPortId: "*"
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+        consumer:
+          teamId: business-intelligence-team
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+      - info:
+          active: true
+          purpose: Aggregate unified retail data for business analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-analytics-team
+          outputPortId: "*"
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+        consumer:
+          teamId: business-intelligence-team
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
     outputPorts:
     - name: unified_customers
       version: v1
@@ -3451,14 +4373,39 @@
     version: v1
   - kind: DataContract
     id: b636c282-7234-5728-b7a9-7ccaeab8d518
+    customProperties:
+    - property: dataProductId
+      value: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+    dataProduct: unified_petstore_retail_data
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: unified_petstore_retail_data
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: unified_petstore_retail_data
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: unified_petstore_retail_data
     roles:
     - role: dataAnalyst04
       access: read
+      description: read access for data analyst role
     - role: dataEngineer04
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: unified_customers
       physicalType: table
@@ -3756,6 +4703,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Food Production Analytics Data
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Aggregate production data for operations analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-analytics-team
+          outputPortId: "*"
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+        consumer:
+          teamId: operations-team
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+      - info:
+          active: true
+          purpose: Aggregate production data for operations analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-analytics-team
+          outputPortId: "*"
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+        consumer:
+          teamId: operations-team
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+      - info:
+          active: true
+          purpose: Aggregate production data for operations analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-analytics-team
+          outputPortId: "*"
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+        consumer:
+          teamId: operations-team
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
     outputPorts:
     - name: product_quality
       version: v1
@@ -3778,14 +4763,39 @@
     version: v1
   - kind: DataContract
     id: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
+    customProperties:
+    - property: dataProductId
+      value: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+    dataProduct: food_production_analytics_data
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_analytics_data
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_analytics_data
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_analytics_data
     roles:
     - role: dataAnalyst05
       access: read
+      description: read access for data analyst role
     - role: dataEngineer05
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: product_quality
       physicalType: table
@@ -4006,6 +5016,50 @@
       value: databricks
     - property: dataProductBusinessName
       value: Petstore Business Analytics
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Power BI visualization of petstore business metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: business-intelligence-team
+          outputPortId: "*"
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+        consumer:
+          teamId: app-dev-team
+          dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
+        custom:
+          consumerApplicationClientId: 6779ef20e75817b79602
+      - info:
+          active: true
+          purpose: Power BI visualization of petstore business metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: business-intelligence-team
+          outputPortId: "*"
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+        consumer:
+          teamId: app-dev-team
+          dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
+        custom:
+          consumerApplicationClientId: 6779ef20e75817b79602
+      - info:
+          active: true
+          purpose: Power BI visualization of petstore business metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: business-intelligence-team
+          outputPortId: "*"
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+        consumer:
+          teamId: app-dev-team
+          dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
+        custom:
+          consumerApplicationClientId: 6779ef20e75817b79602
     outputPorts:
     - name: sales_metrics
       version: v1
@@ -4022,14 +5076,39 @@
     version: v1
   - kind: DataContract
     id: edc38778-1856-5164-955c-e1069d62a986
+    customProperties:
+    - property: dataProductId
+      value: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+    dataProduct: petstore_business_analytics
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_business_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_business_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_business_analytics
     roles:
     - role: dataAnalyst06
       access: read
+      description: read access for data analyst role
     - role: dataEngineer06
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: sales_metrics
       physicalType: table
@@ -4206,6 +5285,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Food Production Operations Analytics
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Power BI visualization of food production metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: operations-team
+          outputPortId: "*"
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+        consumer:
+          teamId: app-dev-team
+          dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
+      - info:
+          active: true
+          purpose: Power BI visualization of food production metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: operations-team
+          outputPortId: "*"
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+        consumer:
+          teamId: app-dev-team
+          dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
+      - info:
+          active: true
+          purpose: Power BI visualization of food production metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: operations-team
+          outputPortId: "*"
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+        consumer:
+          teamId: app-dev-team
+          dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
     outputPorts:
     - name: production_efficiency
       version: v1
@@ -4219,14 +5336,39 @@
     version: v1
   - kind: DataContract
     id: 90752d80-7b05-5810-963c-62127c5bef06
+    customProperties:
+    - property: dataProductId
+      value: a0314893-7445-5a8f-b603-d8f07ac25380
+    dataProduct: food_production_operations_analytics
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_operations_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_operations_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_operations_analytics
     roles:
     - role: dataAnalyst07
       access: read
+      description: read access for data analyst role
     - role: dataEngineer07
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: production_efficiency
       physicalType: table
@@ -4556,6 +5698,44 @@
       value: rdsoracle
     - property: dataProductBusinessName
       value: Petstore A data source
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore A database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-a-team
+          outputPortId: "*"
+          dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore A database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-a-team
+          outputPortId: "*"
+          dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+      - info:
+          active: true
+          purpose: Extract operational data from Petstore A database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-a-team
+          outputPortId: "*"
+          dataProductId: 4c9c60a6-9b7a-559f-9acb-2253b9f27a78
+        consumer:
+          teamId: petstore-central-team
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
     outputPorts: []
     version: v1
   - kind: DataProduct
@@ -4573,6 +5753,44 @@
       value: rdsoracle
     - property: dataProductBusinessName
       value: Food Production data source
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Extract operational data from Food Production database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
+        consumer:
+          teamId: food-production-team
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+      - info:
+          active: true
+          purpose: Extract operational data from Food Production database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
+        consumer:
+          teamId: food-production-team
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+      - info:
+          active: true
+          purpose: Extract operational data from Food Production database
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: b3d406b9-952f-5df4-8ab5-b10c1521d0ad
+        consumer:
+          teamId: food-production-team
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
     outputPorts: []
     version: v1
   - kind: DataProduct
@@ -4590,6 +5808,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Petstore A
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Integrate Petstore A data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Integrate Petstore A data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Integrate Petstore A data into unified retail view
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-central-team
+          outputPortId: "*"
+          dataProductId: 128a3c4b-71c6-5929-aa27-c98974544bf4
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
     outputPorts:
     - name: customers
       version: v1
@@ -4609,8 +5865,12 @@
     version: v1
   - kind: DataContract
     id: e87611c2-76b4-567a-8c61-c81b36e7831a
+    customProperties:
+    - property: dataProductId
+      value: 128a3c4b-71c6-5929-aa27-c98974544bf4
+    dataProduct: petstore_a
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
     servers:
     - server: Petstore workspace
@@ -4618,24 +5878,26 @@
       environment: dev
       host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
-      schema: retail_data
+      schema: petstore_a
     - server: Petstore workspace
       type: databricks
       environment: qa
       host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
-      schema: retail_data
+      schema: petstore_a
     - server: Petstore workspace
       type: databricks
       environment: prod
       host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
       catalog: petstore
-      schema: retail_data
+      schema: petstore_a
     roles:
     - role: dataAnalyst01
       access: read
+      description: read access for data analyst role
     - role: dataEngineer01
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: customers
       physicalType: table
@@ -4959,14 +6221,39 @@
         - 2024-06-01T08:00:00Z
   - kind: DataContract
     id: 688de69e-651c-5bef-a503-bf2b68c7e7c1
+    customProperties:
+    - property: dataProductId
+      value: 3297774a-3037-5b64-b0ff-41f6c075f1d6
+    dataProduct: petstore_b
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_b
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_b
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_b
     roles:
     - role: dataAnalyst02
       access: read
+      description: read access for data analyst role
     - role: dataEngineer02
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: customers
       physicalType: table
@@ -5303,6 +6590,83 @@
       value: databricks
     - property: dataProductBusinessName
       value: Food Production
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Enrich food production data with analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: food-analytics-team
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+      - info:
+          active: true
+          purpose: Consume manufacturing data from Food Production to enrich Unified
+            Petstore Retail Data
+          status: approved
+          startDate: 2026-02-14
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Enrich food production data with analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: food-analytics-team
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+      - info:
+          active: true
+          purpose: Consume manufacturing data from Food Production to enrich Unified
+            Petstore Retail Data
+          status: approved
+          startDate: 2026-02-14
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+      - info:
+          active: true
+          purpose: Enrich food production data with analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: food-analytics-team
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+      - info:
+          active: true
+          purpose: Consume manufacturing data from Food Production to enrich Unified
+            Petstore Retail Data
+          status: approved
+          startDate: 2026-02-14
+        provider:
+          teamId: food-production-team
+          outputPortId: "*"
+          dataProductId: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+        consumer:
+          teamId: petstore-analytics-team
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
     outputPorts:
     - name: food_products
       version: v1
@@ -5322,14 +6686,39 @@
     version: v1
   - kind: DataContract
     id: 35d5516c-6e77-5423-9f8f-e7e368d38642
+    customProperties:
+    - property: dataProductId
+      value: f951f3d6-810d-5c6b-89c4-d12c14ba15b0
+    dataProduct: food_production
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production
     roles:
     - role: dataAnalyst03
       access: read
+      description: read access for data analyst role
     - role: dataEngineer03
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: food_products
       physicalType: table
@@ -5609,6 +6998,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Unified Petstore Retail Data
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Aggregate unified retail data for business analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-analytics-team
+          outputPortId: "*"
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+        consumer:
+          teamId: business-intelligence-team
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+      - info:
+          active: true
+          purpose: Aggregate unified retail data for business analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-analytics-team
+          outputPortId: "*"
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+        consumer:
+          teamId: business-intelligence-team
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+      - info:
+          active: true
+          purpose: Aggregate unified retail data for business analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: petstore-analytics-team
+          outputPortId: "*"
+          dataProductId: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+        consumer:
+          teamId: business-intelligence-team
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
     outputPorts:
     - name: unified_customers
       version: v1
@@ -5634,14 +7061,39 @@
     version: v1
   - kind: DataContract
     id: b636c282-7234-5728-b7a9-7ccaeab8d518
+    customProperties:
+    - property: dataProductId
+      value: 7d4e218a-a30a-579d-982d-3e8bea3904a6
+    dataProduct: unified_petstore_retail_data
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: unified_petstore_retail_data
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: unified_petstore_retail_data
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: unified_petstore_retail_data
     roles:
     - role: dataAnalyst04
       access: read
+      description: read access for data analyst role
     - role: dataEngineer04
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: unified_customers
       physicalType: table
@@ -5939,6 +7391,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Food Production Analytics Data
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Aggregate production data for operations analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-analytics-team
+          outputPortId: "*"
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+        consumer:
+          teamId: operations-team
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+      - info:
+          active: true
+          purpose: Aggregate production data for operations analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-analytics-team
+          outputPortId: "*"
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+        consumer:
+          teamId: operations-team
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+      - info:
+          active: true
+          purpose: Aggregate production data for operations analytics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: food-analytics-team
+          outputPortId: "*"
+          dataProductId: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+        consumer:
+          teamId: operations-team
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
     outputPorts:
     - name: product_quality
       version: v1
@@ -5961,14 +7451,39 @@
     version: v1
   - kind: DataContract
     id: cfaf9347-fcf9-5152-b7c7-bedd2da09ab5
+    customProperties:
+    - property: dataProductId
+      value: ac45ad74-3fb6-5b5a-bc1a-edb0968a154f
+    dataProduct: food_production_analytics_data
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_analytics_data
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_analytics_data
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_analytics_data
     roles:
     - role: dataAnalyst05
       access: read
+      description: read access for data analyst role
     - role: dataEngineer05
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: product_quality
       physicalType: table
@@ -6189,6 +7704,50 @@
       value: databricks
     - property: dataProductBusinessName
       value: Petstore Business Analytics
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Power BI visualization of petstore business metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: business-intelligence-team
+          outputPortId: "*"
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+        consumer:
+          teamId: app-dev-team
+          dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
+        custom:
+          consumerApplicationClientId: 6779ef20e75817b79602
+      - info:
+          active: true
+          purpose: Power BI visualization of petstore business metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: business-intelligence-team
+          outputPortId: "*"
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+        consumer:
+          teamId: app-dev-team
+          dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
+        custom:
+          consumerApplicationClientId: 6779ef20e75817b79602
+      - info:
+          active: true
+          purpose: Power BI visualization of petstore business metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: business-intelligence-team
+          outputPortId: "*"
+          dataProductId: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+        consumer:
+          teamId: app-dev-team
+          dataProductId: 0c2ab542-0864-5294-91ce-cb9614c36391
+        custom:
+          consumerApplicationClientId: 6779ef20e75817b79602
     outputPorts:
     - name: sales_metrics
       version: v1
@@ -6205,14 +7764,39 @@
     version: v1
   - kind: DataContract
     id: edc38778-1856-5164-955c-e1069d62a986
+    customProperties:
+    - property: dataProductId
+      value: deebe052-0a1d-5d2d-b7f6-53c74cb25282
+    dataProduct: petstore_business_analytics
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_business_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_business_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: petstore_business_analytics
     roles:
     - role: dataAnalyst06
       access: read
+      description: read access for data analyst role
     - role: dataEngineer06
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: sales_metrics
       physicalType: table
@@ -6389,6 +7973,44 @@
       value: databricks
     - property: dataProductBusinessName
       value: Food Production Operations Analytics
+    - property: dataUsageAgreements
+      value:
+      - info:
+          active: true
+          purpose: Power BI visualization of food production metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: operations-team
+          outputPortId: "*"
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+        consumer:
+          teamId: app-dev-team
+          dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
+      - info:
+          active: true
+          purpose: Power BI visualization of food production metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: operations-team
+          outputPortId: "*"
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+        consumer:
+          teamId: app-dev-team
+          dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
+      - info:
+          active: true
+          purpose: Power BI visualization of food production metrics
+          status: approved
+          startDate: 2026-02-10
+        provider:
+          teamId: operations-team
+          outputPortId: "*"
+          dataProductId: a0314893-7445-5a8f-b603-d8f07ac25380
+        consumer:
+          teamId: app-dev-team
+          dataProductId: c80d0183-3468-5dbe-b7be-9950c7c89e78
     outputPorts:
     - name: production_efficiency
       version: v1
@@ -6402,14 +8024,39 @@
     version: v1
   - kind: DataContract
     id: 90752d80-7b05-5810-963c-62127c5bef06
+    customProperties:
+    - property: dataProductId
+      value: a0314893-7445-5a8f-b603-d8f07ac25380
+    dataProduct: food_production_operations_analytics
     status: active
-    version: "1"
+    version: v1
     apiVersion: v3.0.1
+    servers:
+    - server: Petstore workspace
+      type: databricks
+      environment: dev
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_operations_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: qa
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_operations_analytics
+    - server: Petstore workspace
+      type: databricks
+      environment: prod
+      host: https://github.com/dmesh-zone/dmesh-studio/blob/main/README.md
+      catalog: petstore
+      schema: food_production_operations_analytics
     roles:
     - role: dataAnalyst07
       access: read
+      description: read access for data analyst role
     - role: dataEngineer07
       access: write
+      description: write access for data engineer development activities
     schema:
     - name: production_efficiency
       physicalType: table
