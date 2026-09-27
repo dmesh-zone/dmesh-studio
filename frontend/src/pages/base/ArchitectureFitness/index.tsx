@@ -10,7 +10,7 @@ export function extendRules(baseRules: Rule[], overrides: RuleExtension[]): Rule
 
     for (const rule of baseRules) {
         if (!overrideMap.has(rule.id)) {
-            result.push(rule);
+            result.push({ ...rule, source: rule.source || 'base rules' });
             continue;
         }
 
@@ -20,12 +20,13 @@ export function extendRules(baseRules: Rule[], overrides: RuleExtension[]): Rule
             continue;
         }
 
-        result.push({ ...rule, ...override } as Rule);
+        result.push({ ...rule, ...override, source: 'custom rules' } as Rule);
         overrideMap.delete(rule.id);
     }
 
     // Add any remaining overrides (new rules)
-    result.push(...Array.from(overrideMap.values()) as Rule[]);
+    const remaining = Array.from(overrideMap.values()).map(r => ({ ...r, source: 'custom rules' })) as Rule[];
+    result.push(...remaining);
     return result;
 }
 

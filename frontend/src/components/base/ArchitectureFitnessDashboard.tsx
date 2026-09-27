@@ -46,6 +46,7 @@ export interface Rule {
     label: string;
     severity: 'error' | 'warning';
     evaluate: (dp: any) => { passed: boolean; reason?: string };
+    source?: 'base rules' | 'custom rules';
 }
 
 interface ArchitectureFitnessDashboardProps {
@@ -521,7 +522,8 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                                                         <Tooltip title={
                                                             <React.Fragment>
                                                                 Rule ID: {result.id}<br />
-                                                                <span style={{ opacity: 0.8, fontStyle: 'italic' }}>click to copy</span>
+                                                                Rule defined in: {result.source || 'base rules'}<br />
+                                                                <span style={{ opacity: 0.8, fontStyle: 'italic' }}>click to copy Rule ID</span>
                                                             </React.Fragment>
                                                         }>
                                                             <IconButton
