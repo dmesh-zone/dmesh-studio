@@ -232,8 +232,14 @@ function Flow({ isExpanded = false }) {
         if (parts.length >= 5 && parts[1] === 'domain' && parts[3] === 'dataproduct') {
             const dataproductId = parts[4];
             const isContracts = parts[5] === 'contracts';
+            const isContractId = parts[5] === 'contract' && parts[6];
 
-            if (isContracts) {
+            if (isContractId) {
+                const urlContractId = parts[6];
+                if (selection.id !== urlContractId) {
+                    setSelection({ id: urlContractId, kind: 'DataContract' });
+                }
+            } else if (isContracts) {
                 // User wants the contracts for this data product. 
                 // We find the product, get its first output port, and select that contract.
                 const product = dataMeshOperations.find(n => String(n.id) === dataproductId && n.kind === 'DataProduct');
@@ -340,7 +346,7 @@ function Flow({ isExpanded = false }) {
             } else if (selection.kind === 'DataContract') {
                 const producerNode = dataMeshOperations.find(n => n.kind === 'DataProduct' && n.outputPorts?.some(p => String(p.contractId) === String(selection.id)));
                 if (producerNode) {
-                    const expectedPath = `/mesh/domain/${producerNode.domain}/dataproduct/${producerNode.id}/contracts`;
+                    const expectedPath = `/mesh/domain/${producerNode.domain}/dataproduct/${producerNode.id}/contract/${selection.id}`;
                     if (location.pathname !== expectedPath || paramsChanged) {
                         navigate(`${expectedPath}${searchPart}`, { replace: true });
                     }
@@ -382,7 +388,7 @@ function Flow({ isExpanded = false }) {
                         const name = resolveOdpsPath({ raw: producerNode }, '_customProperty("dataProductBusinessName")') || producerNode?.name || producerNode.id;
                         const finalName = domainAlias ? `(${domainAlias}) ${name}` : name;
                         const typeAlias = getProductAlias(producerNode);
-                        window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: [typeAlias, finalName, 'Data Contracts'] }));
+                        window.dispatchEvent(new CustomEvent('set-breadcrumbs', { detail: [typeAlias, finalName, 'Data Contract'] }));
                     } else {
                         // Fallback if producer not found
                         const domainAlias = config?.domainNameCustomisation?.[item.domain] || item.domain;

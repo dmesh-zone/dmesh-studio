@@ -1,7 +1,35 @@
 import React from 'react';
 import ArchitectureFitnessDashboard, { Rule, FitnessCategory } from '../../../components/base/ArchitectureFitnessDashboard';
 
-const dataProductRules: Rule[] = [
+export type RuleExtension = Partial<Rule> & { id: string, suppressed?: boolean };
+
+// Helper function to easily add, override, or suppress rules
+export function extendRules(baseRules: Rule[], overrides: RuleExtension[]): Rule[] {
+    const overrideMap = new Map(overrides.map(r => [r.id, r]));
+    const result: Rule[] = [];
+    
+    for (const rule of baseRules) {
+        if (!overrideMap.has(rule.id)) {
+            result.push(rule);
+            continue;
+        }
+        
+        const override = overrideMap.get(rule.id)!;
+        if (override.suppressed) {
+            overrideMap.delete(rule.id);
+            continue;
+        }
+        
+        result.push({ ...rule, ...override } as Rule);
+        overrideMap.delete(rule.id);
+    }
+    
+    // Add any remaining overrides (new rules)
+    result.push(...Array.from(overrideMap.values()) as Rule[]);
+    return result;
+}
+
+export const dataProductRules: Rule[] = [
     {
         id: 'api-version-supported',
         label: "All Data Products have a 'apiVersion' property that is supported",
@@ -208,7 +236,7 @@ const dataProductRules: Rule[] = [
 
 ];
 
-const dataContractRules: Rule[] = [
+export const dataContractRules: Rule[] = [
     {
         id: 'api-version-supported',
         label: "All Data Contracts have a 'apiVersion' property that is supported",
@@ -386,7 +414,7 @@ const dataContractRules: Rule[] = [
     }
 ];
 
-const categories: FitnessCategory[] = [
+export const categories: FitnessCategory[] = [
     {
         id: 'data-product',
         label: 'Data Product Specification compliance',

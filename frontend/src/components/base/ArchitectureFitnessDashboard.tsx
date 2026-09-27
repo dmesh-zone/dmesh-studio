@@ -18,7 +18,8 @@ import {
     Alert,
     Tooltip,
     IconButton,
-    Drawer
+    Drawer,
+    Button
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -26,6 +27,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import ErrorIcon from '@mui/icons-material/Error';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloseIcon from '@mui/icons-material/Close';
+import TagIcon from '@mui/icons-material/Tag';
 import InteractiveYaml from '../../InteractiveYaml';
 import EnvironmentSelectorWidget from './EnvironmentSelectorWidget';
 import DomainSelectorWidget from './DomainSelectorWidget';
@@ -57,11 +59,18 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
     const [environments, setEnvironments] = useState<string[]>(['Dev', 'QA', 'Prod']);
     const [selectedEnv, setSelectedEnv] = useState<string>('');
     const [dataMeshOps, setDataMeshOps] = useState<any[]>([]);
-    
+
     const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
     const [sidePanelData, setSidePanelData] = useState<any>(null);
     const [domainNameCustomisation, setDomainNameCustomisation] = useState<any>({});
-    
+    const [hideCompliantRules, setHideCompliantRules] = useState<boolean>(() => {
+        return localStorage.getItem('dmesh-hide-compliant-rules') === 'true';
+    });
+
+    useEffect(() => {
+        localStorage.setItem('dmesh-hide-compliant-rules', String(hideCompliantRules));
+    }, [hideCompliantRules]);
+
     const [drawerWidth, setDrawerWidth] = useState(1000);
     const isResizing = React.useRef(false);
 
@@ -83,7 +92,7 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
 
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
-        
+
         return () => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
@@ -115,9 +124,9 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                 setIsLoading(true);
                 const envsData = await OperationalData.getDataMeshOperations();
                 const configData = await OperationalData.getConfig();
-                
+
                 setDomainNameCustomisation(configData.domainNameCustomisation || {});
-                
+
                 const isMultiEnv = envsData.some(item => item.env !== undefined);
                 let envList = configData['multi-environment'];
 
@@ -134,7 +143,7 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                 const defaultEnv = configData['default-environment'] || envList[envList.length - 1];
                 const storedEnv = localStorage.getItem('dmesh-selected-env');
                 const envToSet = storedEnv && envList.includes(storedEnv) ? storedEnv : defaultEnv;
-                
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const envParam = urlParams.get('env');
                 if (envParam && envList.includes(envParam)) {
@@ -175,14 +184,16 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                 else items.push(obj);
             });
         }
-        
+
         const contractIdToDomain = new Map<string, string>();
+        const contractIdToDataProduct = new Map<string, string>();
         items.forEach(item => {
             if (item.kind === 'DataProduct' && item.domain) {
                 if (item.outputPorts && Array.isArray(item.outputPorts)) {
                     item.outputPorts.forEach((port: any) => {
                         if (port.contractId) {
                             contractIdToDomain.set(port.contractId, item.domain);
+                            contractIdToDataProduct.set(port.contractId, item.id);
                         }
                     });
                 }
@@ -192,7 +203,11 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
         return items.map(item => {
             if (item.kind === 'DataContract') {
                 if (item.id && contractIdToDomain.has(item.id)) {
-                    return { ...item, domain: contractIdToDomain.get(item.id) };
+                    return { 
+                        ...item, 
+                        domain: contractIdToDomain.get(item.id),
+                        dataProductId: contractIdToDataProduct.get(item.id)
+                    };
                 }
             }
             return item;
@@ -212,9 +227,9 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
         return currentEnvData.filter(dp => selectedDomains.includes(dp.domain));
     }, [currentEnvData, selectedDomains]);
 
-const categoryDomainStats = useMemo(() => {
+    const categoryDomainStats = useMemo(() => {
         const stats: Record<string, Record<string, { rulesPassed: number, rulesError: number, rulesWarning: number }>> = {};
-        
+
         activeCategories.forEach(cat => {
             stats[cat.id] = {};
             filteredEnvData.forEach(dp => {
@@ -224,7 +239,7 @@ const categoryDomainStats = useMemo(() => {
 
             Object.keys(stats[cat.id]).forEach(domain => {
                 const domainData = filteredEnvData.filter(dp => (dp.domain || 'Unknown') === domain && dp.kind === cat.targetKind);
-                
+
                 cat.rules.forEach(rule => {
                     if (domainData.length === 0) return;
                     let ruleFailed = false;
@@ -234,7 +249,7 @@ const categoryDomainStats = useMemo(() => {
                             break;
                         }
                     }
-                    
+
                     if (ruleFailed) {
                         if (rule.severity === 'error') stats[cat.id][domain].rulesError++;
                         if (rule.severity === 'warning') stats[cat.id][domain].rulesWarning++;
@@ -244,11 +259,11 @@ const categoryDomainStats = useMemo(() => {
                 });
             });
         });
-        
+
         return stats;
     }, [filteredEnvData, activeCategories]);
 
-const categoryResults = useMemo(() => {
+    const categoryResults = useMemo(() => {
         const resultsByCat: Record<string, any[]> = {};
         activeCategories.forEach(cat => {
             const catData = filteredEnvData.filter(dp => dp.kind === cat.targetKind);
@@ -333,23 +348,24 @@ const categoryResults = useMemo(() => {
                 </Typography>
 
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+
                     <EnvironmentSelectorWidget
                         environments={environments}
                         envFilter={selectedEnv}
                         setEnvFilter={updateEnv}
                     />
-                    <DomainSelectorWidget 
-                        domains={allDomains} 
-                        selectedDomains={selectedDomains} 
-                        onChange={setSelectedDomains} 
+                    <DomainSelectorWidget
+                        domains={allDomains}
+                        selectedDomains={selectedDomains}
+                        onChange={setSelectedDomains}
                         formatDomain={(d) => domainNameCustomisation[d] || d}
                     />
                 </Box>
             </Box>
 
             {/* Content Area */}
-            <Paper elevation={0} sx={{ 
-                p: 3, 
+            <Paper elevation={0} sx={{
+                p: 3,
                 borderRadius: '16px',
                 border: '1px solid var(--m3-outline-variant)',
                 background: 'var(--m3-surface)'
@@ -378,33 +394,34 @@ const categoryResults = useMemo(() => {
                                                 {sortedDomains.map(domain => {
                                                     const stats = categoryDomainStats[cat.id]?.[domain] || { rulesPassed: 0, rulesError: 0, rulesWarning: 0 };
                                                     return (
-                                                    <TableCell key={domain} align="center">
-                                                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', justifyContent: 'center' }}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Passed Rules">
-                                                                <CheckCircleIcon color="success" fontSize="small" />
-                                                                <Typography variant="body2" sx={{ fontWeight: 600, color: 'success.main' }}>
-                                                                    {stats.rulesPassed}
-                                                                </Typography>
+                                                        <TableCell key={domain} align="center">
+                                                            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', justifyContent: 'center' }}>
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Passed Rules">
+                                                                    <CheckCircleIcon color="success" fontSize="small" />
+                                                                    <Typography variant="body2" sx={{ fontWeight: 600, color: 'success.main' }}>
+                                                                        {stats.rulesPassed}
+                                                                    </Typography>
+                                                                </Box>
+                                                                {stats.rulesError > 0 && (
+                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Errored Rules">
+                                                                        <ErrorIcon color="error" fontSize="small" />
+                                                                        <Typography variant="body2" sx={{ fontWeight: 600, color: 'error.main' }}>
+                                                                            {stats.rulesError}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                )}
+                                                                {stats.rulesWarning > 0 && (
+                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Warning Rules">
+                                                                        <WarningIcon color="warning" fontSize="small" />
+                                                                        <Typography variant="body2" sx={{ fontWeight: 600, color: 'warning.main' }}>
+                                                                            {stats.rulesWarning}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                )}
                                                             </Box>
-                                                            {stats.rulesError > 0 && (
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Errored Rules">
-                                                                    <ErrorIcon color="error" fontSize="small" />
-                                                                    <Typography variant="body2" sx={{ fontWeight: 600, color: 'error.main' }}>
-                                                                        {stats.rulesError}
-                                                                    </Typography>
-                                                                </Box>
-                                                            )}
-                                                            {stats.rulesWarning > 0 && (
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Warning Rules">
-                                                                    <WarningIcon color="warning" fontSize="small" />
-                                                                    <Typography variant="body2" sx={{ fontWeight: 600, color: 'warning.main' }}>
-                                                                        {stats.rulesWarning}
-                                                                    </Typography>
-                                                                </Box>
-                                                            )}
-                                                        </Box>
-                                                    </TableCell>
-                                                )})}
+                                                        </TableCell>
+                                                    )
+                                                })}
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -414,140 +431,176 @@ const categoryResults = useMemo(() => {
                     );
                 })()}
 
+                <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', mb: 2, ml: 1 }}>
+                    <Button 
+                        variant="outlined" 
+                        size="small"
+                        onClick={() => setHideCompliantRules(!hideCompliantRules)}
+                        sx={{ textTransform: 'none', borderRadius: 8, borderColor: 'var(--m3-outline)', color: 'var(--m3-on-surface)' }}
+                    >
+                        {hideCompliantRules ? 'Show compliant rules' : 'Hide compliant rules'}
+                    </Button>
+                </Box>
+
                 {activeCategories.map(cat => {
                     const stats = globalCategoryStats[cat.id];
                     const results = categoryResults[cat.id] || [];
                     return (
-                    <Accordion key={cat.id} defaultExpanded elevation={0} sx={{ background: 'transparent', '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ px: 0 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-                                <Typography variant="h6" sx={{ color: 'var(--m3-on-surface)' }}>
-                                    {cat.label}
-                                </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Passed Rules">
-                                        <CheckCircleIcon color="success" fontSize="small" />
-                                        <Typography variant="body2" sx={{ fontWeight: 600, color: 'success.main' }}>
-                                            {stats.rulesPassed}
-                                        </Typography>
-                                    </Box>
-                                    {stats.rulesError > 0 && (
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Errored Rules">
-                                            <ErrorIcon color="error" fontSize="small" />
-                                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'error.main' }}>
-                                                {stats.rulesError}
+                        <Accordion key={cat.id} elevation={0} sx={{ background: 'transparent', '&:before': { display: 'none' } }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ px: 0 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+                                    <Typography variant="h6" sx={{ color: 'var(--m3-on-surface)' }}>
+                                        {cat.label}
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Passed Rules">
+                                            <CheckCircleIcon color="success" fontSize="small" />
+                                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'success.main' }}>
+                                                {stats.rulesPassed}
                                             </Typography>
                                         </Box>
-                                    )}
-                                    {stats.rulesWarning > 0 && (
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Warning Rules">
-                                            <WarningIcon color="warning" fontSize="small" />
-                                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'warning.main' }}>
-                                                {stats.rulesWarning}
-                                            </Typography>
-                                        </Box>
-                                    )}
-                                </Box>
-                            </Box>
-                        </AccordionSummary>
-                        <AccordionDetails sx={{ px: 0, py: 2 }}>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                {results.map((result) => (
-                                    <Accordion 
-                                        key={result.id} 
-                                        elevation={0}
-                                        sx={{
-                                            border: '1px solid var(--m3-outline-variant)',
-                                            borderRadius: '8px !important',
-                                            '&:before': { display: 'none' },
-                                            background: 'var(--m3-surface-variant)'
-                                        }}
-                                    >
-                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', pr: 2 }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                    {result.uncompliantCount === 0 ? (
-                                                        <Chip 
-                                                            label="PASS" 
-                                                            size="small" 
-                                                            color="success"
-                                                            sx={{ fontWeight: 'bold', fontSize: '0.7rem', minWidth: '70px' }}
-                                                        />
-                                                    ) : (
-                                                        <Chip 
-                                                            label={result.severity.toUpperCase()} 
-                                                            size="small" 
-                                                            color={result.severity === 'error' ? 'error' : 'warning'}
-                                                            sx={{ fontWeight: 'bold', fontSize: '0.7rem', minWidth: '70px' }}
-                                                        />
-                                                    )}
-                                                    <Typography sx={{ fontWeight: 500, color: 'var(--m3-on-surface)' }}>
-                                                        {result.label}
-                                                    </Typography>
-                                                </Box>
-                                                <Box sx={{ display: 'flex', gap: 2 }}>
-                                                    <Typography variant="body2" sx={{ color: 'success.main', fontWeight: 500 }}>
-                                                        Compliant: {result.compliantCount}
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: result.uncompliantCount > 0 ? 'error.main' : 'text.secondary', fontWeight: 500 }}>
-                                                        Uncompliant: {result.uncompliantCount}
-                                                    </Typography>
-                                                </Box>
+                                        {stats.rulesError > 0 && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Errored Rules">
+                                                <ErrorIcon color="error" fontSize="small" />
+                                                <Typography variant="body2" sx={{ fontWeight: 600, color: 'error.main' }}>
+                                                    {stats.rulesError}
+                                                </Typography>
                                             </Box>
-                                        </AccordionSummary>
-                                        <AccordionDetails sx={{ bgcolor: 'var(--m3-surface)', p: 0, display: 'flex', flexDirection: 'column' }}>
-                                            {result.failures.length > 0 ? (
-                                                <TableContainer>
-                                                    <Table size="small">
-                                                        <TableHead>
-                                                            <TableRow sx={{ backgroundColor: 'var(--m3-surface-variant)' }}>
-                                                                <TableCell sx={{ fontWeight: 'bold' }}>Violating Item</TableCell>
-                                                                <TableCell sx={{ fontWeight: 'bold' }}>Failure Reason</TableCell>
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {result.failures.map((f: any, idx: number) => {
-                                                                const domain = f.dp.domain || 'unknown';
-                                                                const name = f.dp.name || f.dp.id || 'unknown';
-                                                                const dpLink = `/mesh/domain/${domain}/dataproduct/${f.dp.id}?env=${selectedEnv}`;
-                                                                return (
-                                                                    <TableRow key={idx}>
-                                                                        <TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                            <Link to={dpLink} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--m3-primary)', textDecoration: 'none' }}>
-                                                                                {domain}.{name}
-                                                                            </Link>
-                                                                            <IconButton
-                                                                                size="small"
-                                                                                onClick={(e) => {
-                                                                                    e.stopPropagation();
-                                                                                    setSidePanelData(f.dp.originalData || f.dp);
-                                                                                }}
-                                                                                title="View YAML"
-                                                                            >
-                                                                                <DescriptionIcon fontSize="small" />
-                                                                            </IconButton>
-                                                                        </TableCell>
-                                                                        <TableCell sx={{ color: 'error.main' }}>{f.reason}</TableCell>
-                                                                    </TableRow>
-                                                                );
-                                                            })}
-                                                        </TableBody>
-                                                    </Table>
-                                                </TableContainer>
-                                            ) : (
-                                                <Box sx={{ p: 2 }}>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        All items are compliant with this rule.
-                                                    </Typography>
+                                        )}
+                                        {stats.rulesWarning > 0 && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} title="Warning Rules">
+                                                <WarningIcon color="warning" fontSize="small" />
+                                                <Typography variant="body2" sx={{ fontWeight: 600, color: 'warning.main' }}>
+                                                    {stats.rulesWarning}
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                    </Box>
+                                </Box>
+                            </AccordionSummary>
+                            <AccordionDetails sx={{ px: 0, py: 2 }}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                    {results.filter(r => !hideCompliantRules || r.uncompliantCount > 0).length === 0 ? (
+                                        <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', pl: 2 }}>
+                                            All rules in this category are compliant.
+                                        </Typography>
+                                    ) : results.filter(r => !hideCompliantRules || r.uncompliantCount > 0).map((result) => (
+                                        <Accordion
+                                            key={result.id}
+                                            elevation={0}
+                                            sx={{
+                                                border: '1px solid var(--m3-outline-variant)',
+                                                borderRadius: '8px !important',
+                                                '&:before': { display: 'none' },
+                                                background: 'var(--m3-surface-variant)'
+                                            }}
+                                        >
+                                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', pr: 2 }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                        {result.uncompliantCount === 0 ? (
+                                                            <Chip
+                                                                label="PASS"
+                                                                size="small"
+                                                                color="success"
+                                                                sx={{ fontWeight: 'bold', fontSize: '0.7rem', minWidth: '70px' }}
+                                                            />
+                                                        ) : (
+                                                            <Chip
+                                                                label={result.severity.toUpperCase()}
+                                                                size="small"
+                                                                color={result.severity === 'error' ? 'error' : 'warning'}
+                                                                sx={{ fontWeight: 'bold', fontSize: '0.7rem', minWidth: '70px' }}
+                                                            />
+                                                        )}
+                                                        <Typography sx={{ fontWeight: 500, color: 'var(--m3-on-surface)' }}>
+                                                            {result.label}
+                                                        </Typography>
+                                                        <Tooltip title={
+                                                            <React.Fragment>
+                                                                Rule ID: {result.id}<br />
+                                                                <span style={{ opacity: 0.8, fontStyle: 'italic' }}>click to copy</span>
+                                                            </React.Fragment>
+                                                        }>
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    navigator.clipboard.writeText(result.id);
+                                                                }}
+                                                                sx={{ color: 'text.secondary', ml: -1 }}
+                                                            >
+                                                                <TagIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </Box>
+                                                    <Box sx={{ display: 'flex', gap: 2 }}>
+                                                        <Typography variant="body2" sx={{ color: 'success.main', fontWeight: 500 }}>
+                                                            Compliant: {result.compliantCount}
+                                                        </Typography>
+                                                        <Typography variant="body2" sx={{ color: result.uncompliantCount > 0 ? 'error.main' : 'text.secondary', fontWeight: 500 }}>
+                                                            Uncompliant: {result.uncompliantCount}
+                                                        </Typography>
+                                                    </Box>
                                                 </Box>
-                                            )}
-                                        </AccordionDetails>
-                                    </Accordion>
-                                ))}
-                            </Box>
-                        </AccordionDetails>
-                    </Accordion>
-                )})}
+                                            </AccordionSummary>
+                                            <AccordionDetails sx={{ bgcolor: 'var(--m3-surface)', p: 0, display: 'flex', flexDirection: 'column' }}>
+                                                {result.failures.length > 0 ? (
+                                                    <TableContainer>
+                                                        <Table size="small">
+                                                            <TableHead>
+                                                                <TableRow sx={{ backgroundColor: 'var(--m3-surface-variant)' }}>
+                                                                    <TableCell sx={{ fontWeight: 'bold' }}>Violating Item</TableCell>
+                                                                    <TableCell sx={{ fontWeight: 'bold' }}>Failure Reason</TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {result.failures.map((f: any, idx: number) => {
+                                                                    const domain = f.dp.domain || 'unknown';
+                                                                    const name = f.dp.name || f.dp.id || 'unknown';
+                                                                    let dpLink = `/mesh/domain/${domain}/dataproduct/${f.dp.id}?env=${selectedEnv}`;
+                                                                    if (f.dp.kind === 'DataContract' && f.dp.dataProductId) {
+                                                                        dpLink = `/mesh/domain/${domain}/dataproduct/${f.dp.dataProductId}/contract/${f.dp.id}?env=${selectedEnv}&domains=*`;
+                                                                    }
+                                                                    return (
+                                                                        <TableRow key={idx}>
+                                                                            <TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                                <Link to={dpLink} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--m3-primary)', textDecoration: 'none' }}>
+                                                                                    {domain}.{name}
+                                                                                </Link>
+                                                                                <IconButton
+                                                                                    size="small"
+                                                                                    onClick={(e) => {
+                                                                                        e.stopPropagation();
+                                                                                        setSidePanelData(f.dp.originalData || f.dp);
+                                                                                    }}
+                                                                                    title="View YAML"
+                                                                                >
+                                                                                    <DescriptionIcon fontSize="small" />
+                                                                                </IconButton>
+                                                                            </TableCell>
+                                                                            <TableCell sx={{ color: 'error.main' }}>{f.reason}</TableCell>
+                                                                        </TableRow>
+                                                                    );
+                                                                })}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
+                                                ) : (
+                                                    <Box sx={{ p: 2 }}>
+                                                        <Typography variant="body2" color="text.secondary">
+                                                            All items are compliant with this rule.
+                                                        </Typography>
+                                                    </Box>
+                                                )}
+                                            </AccordionDetails>
+                                        </Accordion>
+                                    ))}
+                                </Box>
+                            </AccordionDetails>
+                        </Accordion>
+                    )
+                })}
 
             </Paper>
 

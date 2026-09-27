@@ -11,7 +11,7 @@ navigation:
           title: "Data Products"
           icon: "Layers"
           component: "DataProducts"
-        - id: "fitness"
+        - id: "architecture-fitness"
           title: "Architecture Fitness"
           icon: "Rule"
           component: "ArchitectureFitness"
