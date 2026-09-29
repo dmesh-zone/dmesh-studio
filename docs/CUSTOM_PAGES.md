@@ -181,7 +181,7 @@ DMesh Studio provides helper functions to extract data that isn't a simple top-l
 ```javascript
 { 
     columnName: "Type", 
-    odpsDescriptor: "_customProperty(\"dataProductTier\")",
+    odpsDescriptor: "type",
     textMapper: (val, ctx) => ctx.formatType(val)
 },
 { 

@@ -260,7 +260,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     const effectiveTable = useMemo(() => {
         return tableDescriptor || [
             { columnName: "Domain", odpsDescriptor: "domain", textMapper: (val, ctx) => ctx.formatDomain(val) },
-            { columnName: "Type", odpsDescriptor: "_customProperty(\"dataProductTier\")", textMapper: (val, ctx) => ctx.formatType(val) },
+            { columnName: "Type", odpsDescriptor: "type", textMapper: (val, ctx) => ctx.formatType(val) },
             { columnName: "Data Product Name", odpsDescriptor: "name", sidePanelLink: true },
             { columnName: "Purpose", odpsDescriptor: "description.purpose" },
             { columnName: "Stage", odpsDescriptor: "_highestEnv", displayFormat: "chip" }
@@ -299,7 +299,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     const generateExportData = () => {
         const effectiveTable = tableDescriptor || [
             { columnName: "Domain", odpsDescriptor: "domain", textMapper: (val, ctx) => ctx.formatDomain(val) },
-            { columnName: "Type", odpsDescriptor: "_customProperty(\"dataProductTier\")", textMapper: (val, ctx) => ctx.formatType(val) },
+            { columnName: "Type", odpsDescriptor: "type", textMapper: (val, ctx) => ctx.formatType(val) },
             { columnName: "Data Product Name", odpsDescriptor: "name" },
             { columnName: "Purpose", odpsDescriptor: "description.purpose" },
             { columnName: "Stage", odpsDescriptor: "_highestEnv" }
@@ -452,7 +452,7 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
     const renderDynamicTable = () => {
         const columns = tableDescriptor || [
             { columnName: "Domain", odpsDescriptor: "domain", textMapper: (val, ctx) => ctx.formatDomain(val) },
-            { columnName: "Type", odpsDescriptor: "_customProperty(\"dataProductTier\")", textMapper: (val, ctx) => ctx.formatType(val) },
+            { columnName: "Type", odpsDescriptor: "type", textMapper: (val, ctx) => ctx.formatType(val) },
             { columnName: "Data Product Name", odpsDescriptor: "name", sidePanelLink: true },
             { columnName: "Purpose", odpsDescriptor: "description.purpose" },
             { columnName: "Stage", odpsDescriptor: "_highestEnv", displayFormat: "chip" }

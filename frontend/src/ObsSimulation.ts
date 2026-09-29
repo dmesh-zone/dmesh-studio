@@ -278,7 +278,7 @@ export const simulateDataMeshOperationsMetrics = (dataMeshOperationalData, dimen
 
     const targetDPs = dataMeshOperationalData.filter(item => {
         if (item.kind !== 'DataProduct') return false;
-        const tier = item.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+        const tier = item.type;
         if (tier === 'dataSource' || tier === 'application') return false;
         return true;
     });

@@ -210,7 +210,7 @@ export default function DataProductVisual({ data, dataMeshOperations = [] }) {
                     </span>
 
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>Version</span>
-                    <span style={{ fontWeight: '500' }}>{safeRender(data.apiVersion)}</span>
+                    <span style={{ fontWeight: '500' }}>{safeRender(data.version)}</span>
                 </div>
             </div>
 
@@ -301,7 +301,7 @@ export default function DataProductVisual({ data, dataMeshOperations = [] }) {
                                                     consumerName = consumerNode.name;
                                                 }
                                                 
-                                                const tierProp = consumerProps.find(p => p.property === 'dataProductTier')?.value;
+                                                const tierProp = consumerProps.type;
                                                 if (tierProp) {
                                                     consumerTier = tierProp;
                                                 }

@@ -25,6 +25,12 @@ Live demo: https://dmesh-zone.github.io/dmesh-studio
 - **Observability Drilldown**: Contextual side panel opened by clicking a node in Observe Mode. Shows detailed "Metrics" and "Events" tabs for the selected observability dimension.
 - **Details Panel**: Informational side panel providing tabular data, component structure, schemas, and examples for a selected node.
 
+## Architecture Fitness Functions
+
+DMesh Studio includes an **Architecture Fitness Dashboard** to evaluate whether the imported Data Mesh definitions align with organizational standards and target architectural expectations. This functions as a set of rules evaluated against Data Products and Data Contracts. 
+
+For more details on how these work and how to customize the rules, see the [Architecture Fitness Functions Guide](docs/ARCHITECTURE_FITNESS_FUNCTIONS.md).
+
 ## Configuration
 
 The application is configured through `frontend/public/config/base/config.yaml`. This file controls the default dataMeshOperations URL, visual appearance, and data product tiers.

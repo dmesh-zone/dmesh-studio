@@ -4,6 +4,16 @@ All notable changes to **DMesh Studio** will be documented in this file.
 
 ---
 
+## 🚀 [v0.5.0] - 2026-09-29
+
+### 📝 Schema & Validation Standards
+- **Schema Migration:** Replaced the deprecated `dataProductTier` property with the standard `type` property globally across all YAML specifications and Mermaid architectural diagrams.
+- **API Version Upgrades:** Bumped standard version requirements across the platform. Data Products are now validated against `apiVersion: v1.1.0` (ODPS) and Data Contracts against `apiVersion: v3.2.0` (ODCS).
+- **Field Deprecation:** Removed the deprecated `.dataProduct` property from all Data Contract schemas.
+- **Architecture Fitness Tests:** Introduced the Architecture Fitness dashboard rules to strictly enforce the new API versions, flag the deprecated `.dataProduct` usage, and validate the new nested `customProperties` structure across multi-environment datasets.
+
+---
+
 ## 🚀 [v0.4.0] - 2026-09-19
 
 ### ✨ Highlights

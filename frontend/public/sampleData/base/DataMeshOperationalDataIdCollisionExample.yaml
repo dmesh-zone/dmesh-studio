@@ -17,7 +17,6 @@
 
 - kind: DataContract
   domain: seller # Domain
-  dataProduct: my quantum # Data product name
   version: 1.1.0 # Version (follows semantic versioning)
   status: active
   id: "1"

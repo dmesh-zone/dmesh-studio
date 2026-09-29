@@ -113,7 +113,6 @@
   productCreatedTs: "2023-01-15T10:30:00Z" 
 
 - domain: seller # Domain
-  dataProduct: my quantum # Data product name
   version: 1.1.0 # Version (follows semantic versioning)
   status: active
   id: 943310d3-5fbd-56f0-ae41-246ec9b99c5b
@@ -367,6 +366,7 @@
       secondLevelApprovers: 'mickey'
   # SLA
   slaProperties:
+    customProperties:
     - property: latency # Property, see list of values in DP QoS
       value: 4
       unit: d # d, day, days for days; y, yr, years for years

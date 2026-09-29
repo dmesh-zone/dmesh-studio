@@ -36,8 +36,9 @@ export const dataProductRules: Rule[] = [
         label: "All Data Products have a 'apiVersion' property that is supported",
         severity: 'error',
         evaluate: (dp: any) => {
-            if (dp.apiVersion !== 'v1.0.0') {
-                return { passed: false, reason: `apiVersion is '${dp.apiVersion || 'undefined'}'. Supported versions: 'v1.0.0'` };
+            const supportedVersion = 'v1.1.0'
+            if (dp.apiVersion !== supportedVersion) {
+                return { passed: false, reason: `apiVersion is '${dp.apiVersion || 'undefined'}'. Supported version: ${supportedVersion}` };
             }
             return { passed: true };
         }
@@ -82,7 +83,7 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'version-v1',
+        id: 'version',
         label: "All Data Products have a valid 'version' property (e.g. v1 or v1.0.0)",
         severity: 'error',
         evaluate: (dp: any) => {
@@ -115,8 +116,8 @@ export const dataProductRules: Rule[] = [
         label: "All Data Products (except dataSource and application) have a 'description.purpose' property",
         severity: 'warning',
         evaluate: (dp: any) => {
-            const tierProp = dp.customProperties?.find((p: any) => p.property === 'dataProductTier');
-            if (tierProp && (tierProp.value === 'dataSource' || tierProp.value === 'application')) {
+            const tier = dp.type;
+            if (tier && (tier === 'dataSource' || tier === 'application')) {
                 return { passed: true };
             }
             if (!dp.description || !dp.description.purpose) return { passed: false, reason: "Missing 'description.purpose' property" };
@@ -128,10 +129,10 @@ export const dataProductRules: Rule[] = [
         label: "Data Products of tier sourceAligned/curated/consumerAligned must have 'outputPorts' array",
         severity: 'error',
         evaluate: (dp: any) => {
-            const tierProp = dp.customProperties?.find((p: any) => p.property === 'dataProductTier');
-            if (tierProp && ['sourceAligned', 'curated', 'consumerAligned'].includes(tierProp.value)) {
+            const tier = dp.type;
+            if (tier && ['sourceAligned', 'curated', 'consumerAligned'].includes(tier)) {
                 if (!dp.outputPorts || !Array.isArray(dp.outputPorts)) {
-                    return { passed: false, reason: `'outputPorts' array is missing or invalid for tier '${tierProp.value}'` };
+                    return { passed: false, reason: `'outputPorts' array is missing or invalid for tier '${tier}'` };
                 }
             }
             return { passed: true };
@@ -184,14 +185,14 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'tier-custom-property',
-        label: "All Data Products have a 'customProperty' 'dataProductTier' with values 'sourceAligned/curated/consumerAligned'",
+        id: 'type',
+        label: "All Data Products have a 'type' property with values 'dataSource/sourceAligned/curated/consumerAligned/application'",
         severity: 'error',
         evaluate: (dp: any) => {
-            const tierProp = dp.customProperties?.find((p: any) => p.property === 'dataProductTier');
-            if (!tierProp) return { passed: false, reason: "Missing 'dataProductTier' custom property" };
-            if (!['dataSource', 'sourceAligned', 'curated', 'consumerAligned', 'application'].includes(tierProp.value)) {
-                return { passed: false, reason: `Invalid 'dataProductTier' value: '${tierProp.value}'` };
+            const dpType = dp.type;
+            if (!dpType) return { passed: false, reason: "Missing 'type' property" };
+            if (!['dataSource', 'sourceAligned', 'curated', 'consumerAligned', 'application'].includes(dpType)) {
+                return { passed: false, reason: `Invalid 'type' value: '${dpType}'` };
             }
             return { passed: true };
         }
@@ -213,11 +214,11 @@ export const dataProductRules: Rule[] = [
         severity: 'error',
         evaluate: (dp: any) => {
             const uuidv5Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-            const tierProp = dp.customProperties?.find((p: any) => p.property === 'dataProductTier');
-            if (tierProp && ['dataSource', 'sourceAligned', 'curated'].includes(tierProp.value)) {
+            const tier = dp.type;
+            if (tier && ['dataSource', 'sourceAligned', 'curated'].includes(tier)) {
                 const agreementsProp = dp.customProperties?.find((p: any) => p.property === 'dataUsageAgreements');
                 if (!agreementsProp || !Array.isArray(agreementsProp.value)) {
-                    return { passed: false, reason: `Missing or invalid 'dataUsageAgreements' array for tier '${tierProp.value}'` };
+                    return { passed: false, reason: `Missing or invalid 'dataUsageAgreements' array for tier '${tier}'` };
                 }
                 for (let i = 0; i < agreementsProp.value.length; i++) {
                     const agreement = agreementsProp.value[i];
@@ -243,8 +244,9 @@ export const dataContractRules: Rule[] = [
         label: "All Data Contracts have a 'apiVersion' property that is supported",
         severity: 'error',
         evaluate: (dc: any) => {
-            if (dc.apiVersion !== 'v3.0.1') {
-                return { passed: false, reason: `apiVersion is '${dc.apiVersion || 'undefined'}'. Supported versions: 'v3.0.1'` };
+            const supportedVersion = 'v3.2.0'
+            if (dc.apiVersion !== supportedVersion) {
+                return { passed: false, reason: `apiVersion is '${dc.apiVersion || 'undefined'}'. Supported version: ${supportedVersion}` };
             }
             return { passed: true };
         }
@@ -300,10 +302,10 @@ export const dataContractRules: Rule[] = [
     },
     {
         id: 'data_product-not-empty',
-        label: "All Data Contracts have a non-empty 'dataProduct' property",
-        severity: 'error',
+        label: "Data Contracts should not have a 'dataProduct' property (deprecated)",
+        severity: 'warning',
         evaluate: (dc: any) => {
-            if (!dc.dataProduct || typeof dc.dataProduct !== 'string' || dc.dataProduct.trim() === '') return { passed: false, reason: "Missing or empty 'dataProduct' property" };
+            if (dc.dataProduct && typeof dc.dataProduct === 'string' && dc.dataProduct.trim() !== '') return { passed: false, reason: "Data Contracts should not have a 'dataProduct' property (deprecated)" };
             return { passed: true };
         }
     },

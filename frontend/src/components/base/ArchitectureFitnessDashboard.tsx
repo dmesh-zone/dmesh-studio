@@ -636,24 +636,24 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                         <Typography variant="h6">{sidePanelData?.kind === 'DataContract' ? 'Data Contract' : 'Data Product'} YAML</Typography>
                         {sidePanelData?.kind === 'DataContract' && (
                             <a
-                                href={`https://bitol-io.github.io/open-data-contract-standard/${sidePanelData.apiVersion || 'v3.0.1'}`}
+                                href={`https://bitol-io.github.io/open-data-contract-standard/${sidePanelData.apiVersion || 'v3.2.0'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="custom-chip custom-chip-interactive"
                                 style={{ textDecoration: 'none' }}
                             >
-                                Open Data Contract Standard {(sidePanelData.apiVersion || 'v3.0.1').toUpperCase()}
+                                Open Data Contract Standard {(sidePanelData.apiVersion || 'v3.2.0').toUpperCase()}
                             </a>
                         )}
                         {sidePanelData?.kind === 'DataProduct' && (
                             <a
-                                href={`https://bitol-io.github.io/open-data-product-standard/${sidePanelData.apiVersion || 'v1.0.0'}`}
+                                href={`https://bitol-io.github.io/open-data-product-standard/${sidePanelData.apiVersion || 'v1.1.0'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="custom-chip custom-chip-interactive"
                                 style={{ textDecoration: 'none' }}
                             >
-                                Open Data Product Standard {(sidePanelData.apiVersion || 'v1.0.0').toUpperCase()}
+                                Open Data Product Standard {(sidePanelData.apiVersion || 'v1.1.0').toUpperCase()}
                             </a>
                         )}
                     </Box>

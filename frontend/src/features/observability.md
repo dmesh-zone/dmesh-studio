@@ -151,8 +151,8 @@ Requirements are expressed as user stories following the standard format: As a [
   - N Data sources
   - N Data Products
   - N Output ports
-  - N records ingested (aggregate physical.pipeline.recordsProcessed from sourceAligned dataProductTier)
-  - N records processed (aggregate physical.pipeline.recordsProcessed from any other dataProductTiers)
+  - N records ingested (aggregate physical.pipeline.recordsProcessed from sourceAligned type)
+  - N records processed (aggregate physical.pipeline.recordsProcessed from any other types)
 - Where numbers are high, use the k, M, B units.
 - Calculation will update based on domain/search filtering criteria.
 

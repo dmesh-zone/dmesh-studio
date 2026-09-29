@@ -99,7 +99,7 @@ class OperationalData {
 
             items.forEach(item => {
                 if (item.kind === 'DataProduct') {
-                    const type = item.customProperties?.find(p => p.property === 'dataProductTier')?.value || 'dataSource';
+                    const type = item.type || 'dataSource';
                     
                     // Filter early if tierFilter is provided
                     if (tierFilter) {

@@ -366,7 +366,7 @@ function Flow({ isExpanded = false }) {
     // Dispatch breadcrumbs based on selection
     React.useEffect(() => {
         const getProductAlias = (itemObj) => {
-            const tier = resolveOdpsPath({ raw: itemObj }, '_customProperty("dataProductTier")');
+            const tier = resolveOdpsPath({ raw: itemObj }, 'type');
             const aliasMap = config?.dataMeshBreadcrumbDataProductAliasMap || {};
             if (tier && aliasMap[tier]) return aliasMap[tier];
             return aliasMap["*"] || "Data Product";
@@ -772,7 +772,7 @@ function Flow({ isExpanded = false }) {
             const dataMeshNodes = dataMeshOperations.filter(item => item.kind === 'DataProduct');
             const columnCounts = {};
             dataMeshNodes.forEach(node => {
-                const tier = node.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+                const tier = node.type;
                 const tierConfig = config.tiers?.[tier] || {};
                 const colNum = tierConfig.columnNumber !== undefined ? tierConfig.columnNumber : 1;
                 columnCounts[colNum] = (columnCounts[colNum] || 0) + 1;
@@ -852,7 +852,7 @@ function Flow({ isExpanded = false }) {
                 return true;
             })
             .map(node => {
-                const tier = node.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+                const tier = node.type;
                 const technology = node.customProperties?.find(p => p.property === 'technology')?.value;
                 const businessName = node.customProperties?.find(p => p.property === 'dataProductBusinessName')?.value;
 
@@ -1028,7 +1028,7 @@ function Flow({ isExpanded = false }) {
             dataMeshNodes
                 .filter(node => node.kind === 'DataProduct')
                 .forEach(node => {
-                    const tier = node.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+                    const tier = node.type;
                     const tierConfig = config.tiers?.[tier] || {};
                     const colNum = tierConfig.columnNumber !== undefined ? tierConfig.columnNumber : 1;
                     if (!activeTiers.has(colNum)) {
@@ -1649,8 +1649,8 @@ function Flow({ isExpanded = false }) {
         // 4. Dynamic Relayout for Filtered View
         // Sort nodes by tier (columnNumber) then by domain then by label to ensure consistent vertical order
         const sortedNodes = [...filteredNodes].sort((a, b) => {
-            const tierA = a.data.originalData?.customProperties?.find(p => p.property === 'dataProductTier')?.value;
-            const tierB = b.data.originalData?.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+            const tierA = a.data.originalData?.type;
+            const tierB = b.data.originalData?.type;
             const colA = config.tiers?.[tierA]?.columnNumber || 1;
             const colB = config.tiers?.[tierB]?.columnNumber || 1;
             if (colA !== colB) return colA - colB;
@@ -1676,7 +1676,7 @@ function Flow({ isExpanded = false }) {
         const activeTiers = new Map();
 
         const layoutedNodes = sortedNodes.map(node => {
-            const tier = node.data.originalData?.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+            const tier = node.data.originalData?.type;
             const tierConfig = config.tiers?.[tier] || {};
             const columnNumber = tierConfig.columnNumber !== undefined ? tierConfig.columnNumber : 1;
 
@@ -1994,7 +1994,7 @@ function Flow({ isExpanded = false }) {
 
         visibleNodes.forEach(node => {
             if (node.type !== 'selectorNode') return;
-            const tier = node.data.originalData?.customProperties?.find(p => p.property === 'dataProductTier')?.value;
+            const tier = node.data.originalData?.type;
             const metrics = metricsMap.get(node.id);
 
             results.forEach(kpiObj => {
@@ -2005,7 +2005,7 @@ function Flow({ isExpanded = false }) {
                 let matchesCriteria = true;
 
                 if (agg.criteria) {
-                    if (agg.criteria.dataProductTier && (!tier || !agg.criteria.dataProductTier.includes(tier))) {
+                    if (agg.criteria.type && (!tier || !agg.criteria.type.includes(tier))) {
                         matchesCriteria = false;
                     }
                     if (agg.criteria.kind && node.data.originalData?.kind !== agg.criteria.kind) {
@@ -2684,24 +2684,24 @@ function Flow({ isExpanded = false }) {
                                     {/* Standard Specification Pills */}
                                     {sidePanelType === 'data-product-yaml' && (
                                         <a
-                                            href="https://bitol-io.github.io/open-data-product-standard/v1.0.0"
+                                            href="https://bitol-io.github.io/open-data-product-standard/v1.1.0"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="custom-chip custom-chip-interactive"
-                                            style={{ textDecoration: 'none' }}
+                                            style={{ textDecoration: 'none', textTransform: 'none' }}
                                         >
-                                            Open Data Product Standard v1.0.0
+                                            Open Data Product Standard v1.1.0
                                         </a>
                                     )}
                                     {sidePanelType === 'data-contract-yaml' && (
                                         <a
-                                            href="https://bitol-io.github.io/open-data-contract-standard/v3.0.1"
+                                            href="https://bitol-io.github.io/open-data-contract-standard/v3.2.0"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="custom-chip custom-chip-interactive"
-                                            style={{ textDecoration: 'none' }}
+                                            style={{ textDecoration: 'none', textTransform: 'none' }}
                                         >
-                                            Open Data Contract Standard v3.0.1
+                                            Open Data Contract Standard v3.2.0
                                         </a>
                                     )}
                                     {sidePanelType === 'agreement-yaml' && (
@@ -2710,7 +2710,7 @@ function Flow({ isExpanded = false }) {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="custom-chip custom-chip-interactive"
-                                            style={{ textDecoration: 'none' }}
+                                            style={{ textDecoration: 'none', textTransform: 'none' }}
                                         >
                                             Data Usage Agreement Specification v0.0.1
                                         </a>
@@ -2721,7 +2721,7 @@ function Flow({ isExpanded = false }) {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="custom-chip custom-chip-interactive"
-                                            style={{ textDecoration: 'none' }}
+                                            style={{ textDecoration: 'none', textTransform: 'none' }}
                                         >
                                             Open Data Product Observability Standard v0.1.0
                                         </a>

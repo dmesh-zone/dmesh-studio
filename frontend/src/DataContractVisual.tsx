@@ -130,8 +130,6 @@ export default function DataContractVisual({ data, anchor, filterByAnchor = fals
                     <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>Version</span>
                     <span style={{ fontWeight: '500' }}>{data.version}</span>
 
-                    <span style={{ color: 'var(--m3-on-surface-variant)', fontWeight: '600' }}>API</span>
-                    <span style={{ fontWeight: '500' }}>{data.apiVersion}</span>
                 </div>
                 {data.description && data.description.purpose && (
                     <div style={{

@@ -3,12 +3,11 @@
   name: Petstore A
   domain: petstore
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Operational Oracle database for Petstore A retail operations
-  customProperties:
-    - property: dataProductTier
-      value: dataSource
+  type: dataSource
+    customProperties:
     - property: technology
       value: rdsoracle
   outputPorts: []
@@ -17,12 +16,11 @@
   name: Petstore B
   domain: petstore
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Operational Oracle database for Petstore B retail operations
-  customProperties:
-    - property: dataProductTier
-      value: dataSource
+  type: dataSource
+    customProperties:
     - property: technology
       value: rdsoracle
   outputPorts: []
@@ -31,12 +29,11 @@
   name: Food Production
   domain: food_production
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Operational Oracle database for Pet food manufacturing
-  customProperties:
-    - property: dataProductTier
-      value: dataSource
+  type: dataSource
+    customProperties:
     - property: technology
       value: rdsoracle
   outputPorts: []
@@ -45,12 +42,11 @@
   name: Petstore A
   domain: petstore
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Source-aligned data from Petstore A operational database
-  customProperties:
-    - property: dataProductTier
-      value: sourceAligned
+  type: sourceAligned
+    customProperties:
     - property: technology
       value: databricks
   outputPorts:
@@ -73,7 +69,7 @@
   id: urn:petstore-a:contract:retail-data
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   servers:
     - server: "Petstore workspace"
       type: databricks
@@ -426,12 +422,11 @@
   name: Petstore B
   domain: petstore
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Source-aligned data from Petstore B operational database
-  customProperties:
-    - property: dataProductTier
-      value: sourceAligned
+  type: sourceAligned
+    customProperties:
     - property: technology
       value: databricks
   outputPorts:
@@ -454,7 +449,7 @@
   id: urn:petstore-b:contract:retail-data
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   schema:
     - name: customers
       physicalType: table
@@ -781,12 +776,11 @@
   name: Food Production
   domain: food_production
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Source-aligned data from food production operational database
-  customProperties:
-    - property: dataProductTier
-      value: sourceAligned
+  type: sourceAligned
+    customProperties:
     - property: technology
       value: databricks
   outputPorts:
@@ -809,7 +803,7 @@
   id: urn:food-production:contract:manufacturing-data
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   schema:
     - name: food_products
       physicalType: table
@@ -1079,12 +1073,11 @@
   name: Unified Petstore Retail Data
   domain: petstore
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Harmonized and integrated retail data from both petstores
-  customProperties:
-    - property: dataProductTier
-      value: curated
+  type: curated
+    customProperties:
     - property: technology
       value: databricks
   outputPorts:
@@ -1113,7 +1106,7 @@
   id: urn:petstore:contract:unified-retail
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   schema:
     - name: unified_customers
       physicalType: table
@@ -1402,13 +1395,12 @@
   name: Food Production Analytics Data
   domain: food_production
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Curated food production data with quality metrics and performance
       indicators
-  customProperties:
-    - property: dataProductTier
-      value: curated
+  type: curated
+    customProperties:
     - property: technology
       value: databricks
   outputPorts:
@@ -1434,7 +1426,7 @@
   id: urn:food-production:contract:production-analytics
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   schema:
     - name: product_quality
       physicalType: table
@@ -1651,12 +1643,11 @@
   name: Petstore Business Analytics
   domain: petstore
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Pre-aggregated analytics for business intelligence and dashboards
-  customProperties:
-    - property: dataProductTier
-      value: consumerAligned
+  type: consumerAligned
+    customProperties:
     - property: technology
       value: databricks
   outputPorts:
@@ -1676,7 +1667,7 @@
   id: urn:petstore:contract:business-analytics
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   schema:
     - name: sales_metrics
       physicalType: table
@@ -1843,12 +1834,11 @@
   name: Food Production Operations Analytics
   domain: food_production
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Pre-aggregated operations metrics for production dashboards
-  customProperties:
-    - property: dataProductTier
-      value: consumerAligned
+  type: consumerAligned
+    customProperties:
     - property: technology
       value: databricks
   outputPorts:
@@ -1865,7 +1855,7 @@
   id: urn:food-production:contract:operations-analytics
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   schema:
     - name: production_efficiency
       physicalType: table
@@ -1992,12 +1982,11 @@
   name: Petstore Analytics Dashboard Data
   domain: petstore
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Power BI dashboards for petstore business intelligence
-  customProperties:
-    - property: dataProductTier
-      value: application
+  type: application
+    customProperties:
     - property: technology
       value: powerbi
   outputPorts: []
@@ -2006,12 +1995,11 @@
   name: Food Production Analytics Dashboard Data
   domain: food_production
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Power BI dashboards for food production analytics
-  customProperties:
-    - property: dataProductTier
-      value: application
+  type: application
+    customProperties:
     - property: technology
       value: powerbi
   outputPorts: []

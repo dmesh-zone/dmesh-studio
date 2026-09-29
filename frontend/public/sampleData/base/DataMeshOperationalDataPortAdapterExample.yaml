@@ -3,13 +3,12 @@
   name: Food Production Analytics (1 data contract)
   domain: food_production
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Curated food production data with quality metrics and performance
       indicators
-  customProperties:
-    - property: dataProductTier
-      value: curated
+  type: curated
+    customProperties:
     - property: technology
       value: databricks
   outputPorts:
@@ -38,7 +37,7 @@
   id: dc3
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   servers:
     - server: "Databricks workspace"
       type: databricks
@@ -180,13 +179,12 @@
   name: Food Production Analytics (2 data contracts)
   domain: food_production
   status: active
-  apiVersion: v1.0.0
+  apiVersion: v1.1.0
   description:
     purpose: Curated food production data with quality metrics and performance
       indicators
-  customProperties:
-    - property: dataProductTier
-      value: curated
+  type: curated
+    customProperties:
     - property: technology
       value: databricks
   outputPorts:
@@ -215,7 +213,7 @@
   id: dc1
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   servers:
     - server: "Databricks workspace"
       type: databricks
@@ -325,7 +323,7 @@
   id: dc2
   status: active
   version: "1"
-  apiVersion: v3.0.1
+  apiVersion: v3.2.0
   servers:
     - server: "OData server"
       type: api

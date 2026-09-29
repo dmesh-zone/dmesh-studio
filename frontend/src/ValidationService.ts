@@ -18,8 +18,8 @@ import Ajv from 'ajv/dist/2019';
 import addFormats from 'ajv-formats';
 import draft7MetaSchema from 'ajv/dist/refs/json-schema-draft-07.json';
 import YAML from 'yaml';
-import dataProductSchema from './schemas/odps-json-schema-v1.0.0.json';
-import dataContractSchema from './schemas/odcs-json-schema-v3.1.0.json';
+import dataProductSchema from './schemas/odps-json-schema-v1.1.0.json';
+import dataContractSchema from './schemas/odcs-json-schema-v3.2.0.json';
 import duaSchema from './schemas/datausageagreement.schema-v0.0.1.json';
 import metricsSchema from './schemas/odps-observability-metrics-schema-v0.0.1.json';
 
