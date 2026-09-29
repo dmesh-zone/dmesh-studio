@@ -20,8 +20,8 @@ navigation:
           icon: "Settings"
           component: "Settings"
 
-# defaultDataMeshOperationalDataUrl: /sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
-defaultDataMeshOperationalDataUrl: http://localhost:8000/dmesh/discover-multi-environment
+defaultDataMeshOperationalDataUrl: /sampleData/base/DataMeshOperationalDataPetsMultiEnvExample.yaml
+# defaultDataMeshOperationalDataUrl: http://localhost:8000/dmesh/discover-multi-environment
 
 single-domain-default-filter: False # Default is False
 zoom-to-fit-columns: True # Default is True
