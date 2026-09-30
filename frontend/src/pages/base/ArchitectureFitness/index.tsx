@@ -1,7 +1,7 @@
 import React from 'react';
 import ArchitectureFitnessDashboard, { Rule, FitnessCategory } from '../../../components/base/ArchitectureFitnessDashboard';
 
-export type RuleExtension = Partial<Rule> & { id: string, suppressed?: boolean };
+export type RuleExtension = Partial<Rule> & { id: string, suppressed?: boolean, runBaseRulePrior?: boolean };
 
 // Helper function to easily add, override, or suppress rules
 export function extendRules(baseRules: Rule[], overrides: RuleExtension[]): Rule[] {
@@ -20,7 +20,16 @@ export function extendRules(baseRules: Rule[], overrides: RuleExtension[]): Rule
             continue;
         }
 
-        result.push({ ...rule, ...override, source: 'custom rules' } as Rule);
+        let evaluateFn = override.evaluate || rule.evaluate;
+        if (override.runBaseRulePrior && override.evaluate) {
+            evaluateFn = (item: any) => {
+                const baseResult = rule.evaluate(item);
+                if (!baseResult.passed) return baseResult;
+                return override.evaluate!(item);
+            };
+        }
+
+        result.push({ ...rule, ...override, evaluate: evaluateFn, source: 'custom rules' } as Rule);
         overrideMap.delete(rule.id);
     }
 
