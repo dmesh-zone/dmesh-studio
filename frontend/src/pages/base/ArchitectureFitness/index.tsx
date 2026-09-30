@@ -32,8 +32,8 @@ export function extendRules(baseRules: Rule[], overrides: RuleExtension[]): Rule
 
 export const dataProductRules: Rule[] = [
     {
-        id: 'api-version-supported',
-        label: "All Data Products have a 'apiVersion' property that is supported",
+        id: 'apiVersion-supported',
+        label: "All Data Products have a 'apiVersion' property that is supported (v1.1.0)",
         severity: 'error',
         evaluate: (dp: any) => {
             const supportedVersion = 'v1.1.0'
@@ -44,7 +44,7 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'kind-data-product',
+        id: 'kind-valid',
         label: "All Data Products have a 'kind' property with 'DataProduct' value",
         severity: 'error',
         evaluate: (dp: any) => {
@@ -53,13 +53,26 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'id-uuid-v5',
-        label: "All Data Products have an 'id' in UUID v5 format",
+        id: 'id-valid',
+        label: "All Data Products have a valid 'id' property (using UUID v5 format)",
         severity: 'error',
         evaluate: (dp: any) => {
             const uuidv5Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             if (!dp.id) return { passed: false, reason: "Missing 'id' property" };
             if (!uuidv5Regex.test(dp.id)) return { passed: false, reason: `'id' is not in UUID v5 format: ${dp.id}` };
+            return { passed: true };
+        }
+    },
+    {
+        id: 'type-valid',
+        label: "All Data Products have a 'type' property with values 'dataSource/sourceAligned/curated/consumerAligned/application'",
+        severity: 'error',
+        evaluate: (dp: any) => {
+            const dpType = dp.type;
+            if (!dpType) return { passed: false, reason: "Missing 'type' property" };
+            if (!['dataSource', 'sourceAligned', 'curated', 'consumerAligned', 'application'].includes(dpType)) {
+                return { passed: false, reason: `Invalid 'type' value: '${dpType}'` };
+            }
             return { passed: true };
         }
     },
@@ -73,8 +86,8 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'name-snake-case',
-        label: "All Data Products have a 'name' property in snake case",
+        id: 'name-convention-valid',
+        label: "All Data Products have a 'name' property following snake case naming convention",
         severity: 'warning',
         evaluate: (dp: any) => {
             if (!dp.name) return { passed: true }; // skipped if no name
@@ -83,7 +96,7 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'version',
+        id: 'version-valid',
         label: "All Data Products have a valid 'version' property (e.g. v1 or v1.0.0)",
         severity: 'error',
         evaluate: (dp: any) => {
@@ -94,16 +107,19 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'status-active',
-        label: "All Data Products have a 'status' property with 'active' value",
+        id: 'status-valid',
+        label: "All Data Products have a 'status' property with valid values",
         severity: 'error',
         evaluate: (dp: any) => {
-            if (dp.status !== 'active') return { passed: false, reason: `Status is '${dp.status || 'undefined'}' instead of 'active'` };
+            const validStatuses = ['proposed', 'draft', 'active', 'deprecated', 'retired'];
+            if (!validStatuses.includes(dp.status)) {
+                return { passed: false, reason: `Status is '${dp.status || 'undefined'}'. Expected one of: ${validStatuses.join(', ')}` };
+            }
             return { passed: true };
         }
     },
     {
-        id: 'domain-not-empty',
+        id: 'domain-valid',
         label: "All Data Products have a non-empty 'domain' property",
         severity: 'error',
         evaluate: (dp: any) => {
@@ -112,7 +128,7 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'description-purpose',
+        id: 'description-purpose-exists',
         label: "All Data Products (except dataSource and application) have a 'description.purpose' property",
         severity: 'warning',
         evaluate: (dp: any) => {
@@ -125,9 +141,9 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'output-ports-provided',
-        label: "Data Products of tier sourceAligned/curated/consumerAligned must have 'outputPorts' array",
-        severity: 'error',
+        id: 'outputPorts-expected',
+        label: "Data Products of tier sourceAligned/curated/consumerAligned should have 'outputPorts' array",
+        severity: 'warning',
         evaluate: (dp: any) => {
             const tier = dp.type;
             if (tier && ['sourceAligned', 'curated', 'consumerAligned'].includes(tier)) {
@@ -139,45 +155,22 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'output-ports-name',
-        label: "All elements in 'outputPorts' must contain a 'name' property",
-        severity: 'error',
-        evaluate: (dp: any) => {
-            if (Array.isArray(dp.outputPorts)) {
-                for (const op of dp.outputPorts) {
-                    if (!op.name) return { passed: false, reason: "An output port is missing the 'name' property" };
-                }
-            }
-            return { passed: true };
-        }
-    },
-    {
-        id: 'output-ports-version',
-        label: "All elements in 'outputPorts' must contain a valid 'version' property",
-        severity: 'error',
-        evaluate: (dp: any) => {
-            if (Array.isArray(dp.outputPorts)) {
-                for (let i = 0; i < dp.outputPorts.length; i++) {
-                    const op = dp.outputPorts[i];
-                    if (!/^v\d+(?:\.\d+\.\d+)?$/.test(op.version || '')) {
-                        return { passed: false, reason: `Output port at index ${i} has an invalid version format: '${op.version}'` };
-                    }
-                }
-            }
-            return { passed: true };
-        }
-    },
-    {
-        id: 'output-ports-contract-id',
-        label: "All elements in 'outputPorts' must contain a valid 'contractId' property in UUID v5 format",
+        id: 'outputPorts-valid',
+        label: "All elements in 'outputPorts' must contain valid 'name', 'version', and 'contractId' (UUID v5) properties",
         severity: 'error',
         evaluate: (dp: any) => {
             const uuidv5Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             if (Array.isArray(dp.outputPorts)) {
                 for (let i = 0; i < dp.outputPorts.length; i++) {
                     const op = dp.outputPorts[i];
+                    if (!op.name) {
+                        return { passed: false, reason: `Output port at index ${i} is missing the 'name' property` };
+                    }
+                    if (!/^v\d+(?:\.\d+\.\d+)?$/.test(op.version || '')) {
+                        return { passed: false, reason: `Output port at index ${i} has an invalid version format: '${op.version}'` };
+                    }
                     if (!op.contractId || !uuidv5Regex.test(op.contractId)) {
-                        return { passed: false, reason: `Output port at index ${i} has an invalid or missing id in UUID v5 format: '${op.id}'` };
+                        return { passed: false, reason: `Output port at index ${i} has an invalid or missing 'contractId' in UUID v5 format: '${op.contractId || 'undefined'}'` };
                     }
                 }
             }
@@ -185,21 +178,8 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'type',
-        label: "All Data Products have a 'type' property with values 'dataSource/sourceAligned/curated/consumerAligned/application'",
-        severity: 'error',
-        evaluate: (dp: any) => {
-            const dpType = dp.type;
-            if (!dpType) return { passed: false, reason: "Missing 'type' property" };
-            if (!['dataSource', 'sourceAligned', 'curated', 'consumerAligned', 'application'].includes(dpType)) {
-                return { passed: false, reason: `Invalid 'type' value: '${dpType}'` };
-            }
-            return { passed: true };
-        }
-    },
-    {
-        id: 'technology-custom-property',
-        label: "All Data Products have a 'technology' customProperty that is not empty",
+        id: 'technology-customProperty-valid',
+        label: "All Data Products have a valid 'technology' customProperty",
         severity: 'error',
         evaluate: (dp: any) => {
             const techProp = dp.customProperties?.find((p: any) => p.property === 'technology');
@@ -209,9 +189,9 @@ export const dataProductRules: Rule[] = [
         }
     },
     {
-        id: 'data-usage-agreements',
+        id: 'dataUsageAgreements-customProperty-valid',
         label: "Data Products of specific tiers must have valid 'dataUsageAgreements' customProperty",
-        severity: 'error',
+        severity: 'warning',
         evaluate: (dp: any) => {
             const uuidv5Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             const tier = dp.type;
@@ -240,8 +220,8 @@ export const dataProductRules: Rule[] = [
 
 export const dataContractRules: Rule[] = [
     {
-        id: 'api-version-supported',
-        label: "All Data Contracts have a 'apiVersion' property that is supported",
+        id: 'apiVersion-supported',
+        label: "All Data Contracts have a 'apiVersion' property that is supported (v3.2.0)",
         severity: 'error',
         evaluate: (dc: any) => {
             const supportedVersion = 'v3.2.0'
@@ -252,7 +232,7 @@ export const dataContractRules: Rule[] = [
         }
     },
     {
-        id: 'kind-data-contract',
+        id: 'kind-valid',
         label: "All Data Contracts have a 'kind' property with 'DataContract' value",
         severity: 'error',
         evaluate: (dc: any) => {
@@ -261,7 +241,7 @@ export const dataContractRules: Rule[] = [
         }
     },
     {
-        id: 'id-uuid-v5',
+        id: 'id-valid',
         label: "All Data Contracts have an 'id' in UUID v5 format",
         severity: 'error',
         evaluate: (dc: any) => {
@@ -272,7 +252,7 @@ export const dataContractRules: Rule[] = [
         }
     },
     {
-        id: 'version-v1',
+        id: 'version-valid',
         label: "All Data Contracts have a valid 'version' property (e.g. v1 or v1.0.0)",
         severity: 'error',
         evaluate: (dc: any) => {
@@ -283,16 +263,19 @@ export const dataContractRules: Rule[] = [
         }
     },
     {
-        id: 'status-active',
-        label: "All Data Contracts have a 'status' property with 'active' value",
+        id: 'status-valid',
+        label: "All Data Contracts have a 'status' property with valid values",
         severity: 'error',
         evaluate: (dc: any) => {
-            if (dc.status !== 'active') return { passed: false, reason: `Status is '${dc.status || 'undefined'}' instead of 'active'` };
+            const validStatuses = ['proposed', 'draft', 'active', 'deprecated', 'retired'];
+            if (!validStatuses.includes(dc.status)) {
+                return { passed: false, reason: `Status is '${dc.status || 'undefined'}'. Expected one of: ${validStatuses.join(', ')}` };
+            }
             return { passed: true };
         }
     },
     {
-        id: 'domain-not-empty',
+        id: 'domain-exists',
         label: "All Data Contracts have a non-empty 'domain' property",
         severity: 'error',
         evaluate: (dc: any) => {
@@ -301,7 +284,7 @@ export const dataContractRules: Rule[] = [
         }
     },
     {
-        id: 'data_product-not-empty',
+        id: 'dataProduct-deprecated',
         label: "Data Contracts should not have a 'dataProduct' property (deprecated)",
         severity: 'warning',
         evaluate: (dc: any) => {
@@ -310,7 +293,7 @@ export const dataContractRules: Rule[] = [
         }
     },
     {
-        id: 'servers-are-valid',
+        id: 'servers-valid',
         label: "All Data Contracts have valid 'servers' property",
         severity: 'error',
         evaluate: (dc: any) => {
@@ -330,17 +313,18 @@ export const dataContractRules: Rule[] = [
         }
     },
     {
-        id: 'data-product-id-not-empty',
-        label: "All Data Contracts have a non-empty 'dataProductId' custom property",
+        id: 'dataProductId-valid',
+        label: "All Data Contracts have a 'dataProductId' custom property in uuid v5 format",
         severity: 'error',
         evaluate: (dc: any) => {
+            const uuidv5Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             const dataProductIdProp = dc.customProperties?.find((p: any) => p.property === 'dataProductId');
-            if (!dataProductIdProp || !dataProductIdProp.value || typeof dataProductIdProp.value !== 'string' || dataProductIdProp.value.trim() === '') return { passed: false, reason: "Missing or empty 'dataProductId' custom property" };
+            if (!dataProductIdProp || !dataProductIdProp.value || typeof dataProductIdProp.value !== 'string' || !uuidv5Regex.test(dataProductIdProp.value)) return { passed: false, reason: "Missing or invalid 'dataProductId' custom property" };
             return { passed: true };
         }
     },
     {
-        id: 'roles-are-valid',
+        id: 'roles-valid',
         label: "All Data Contracts have a non-empty 'roles' property with valid role, access, and description",
         severity: 'error',
         evaluate: (dc: any) => {
@@ -363,7 +347,7 @@ export const dataContractRules: Rule[] = [
         }
     },
     {
-        id: 'schema-array-not-empty',
+        id: 'schema-not-empty',
         label: "All Data Contracts have a 'schema' array with at least one entry",
         severity: 'error',
         evaluate: (dc: any) => {
