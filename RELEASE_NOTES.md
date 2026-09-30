@@ -4,6 +4,13 @@ All notable changes to **DMesh Studio** will be documented in this file.
 
 ---
 
+## 🚀 [v0.5.1] - 2026-09-30
+
+### 🐛 Bug Fixes & Improvements
+- **Architecture Fitness Dashboard:** Fixed an issue where the dashboard was improperly validating Data Contracts against dynamically inherited properties (like `domain`) instead of their raw, underlying YAML specification.
+- **Architecture Fitness Dashboard:** Fixed a bug in the summary page logic where domain failing rules were not being counted and aggregated correctly.
+---
+
 ## 🚀 [v0.5.0] - 2026-09-29
 
 ### 📝 Schema & Validation Standards

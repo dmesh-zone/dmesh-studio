@@ -112,3 +112,7 @@ To maintain optimal performance and prevent UI freezing when handling large data
 - **Component Memoization**: Wrap expensive UI components and selector widgets in `React.memo` to prevent unnecessary re-renders.
 - **React.startTransition**: Wrap expensive state updates (like triggering massive layout recalculations or filtering the main dataset) in `React.startTransition` to de-prioritize them and keep the main UI thread responsive.
 
+## 10. Release & Versioning
+- **Semantic Versioning**: The project strictly follows Semantic Versioning (SemVer). Version numbers must reflect the nature of the changes (MAJOR.MINOR.PATCH).
+- **Release Notes**: All significant changes, schema migrations, new features, and bug fixes must be documented in `RELEASE_NOTES.md`.
+- **Package Version**: The `frontend/package.json` version property must be updated with every release, as this version is dynamically displayed at the bottom left of the Data Mesh view.
