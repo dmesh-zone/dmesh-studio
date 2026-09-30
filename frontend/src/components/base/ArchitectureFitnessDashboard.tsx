@@ -112,7 +112,7 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
         if (rules && rules.length > 0) {
             return [{
                 id: 'default',
-                label: 'Data Product Specification compliance',
+                label: 'Data Product Specification compliance rules',
                 targetKind: 'DataProduct',
                 rules
             }];
@@ -188,42 +188,47 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
             });
         }
 
-        // Build mapping of contractId to all domains and reference it
-        const contractIdToDomains = new Map<string, Set<string>>();
+        // Build mapping of contractId to all domains and data products that reference it
+        const contractIdToProducts = new Map<string, { domain: string, dataProductId: string }[]>();
         items.forEach(item => {
-            if (item.kind === 'DataProduct' && item.domain) {
+            if (item.kind === 'DataProduct' && item.domain && item.id) {
                 if (item.outputPorts && Array.isArray(item.outputPorts)) {
                     item.outputPorts.forEach((port: any) => {
                         if (port.contractId) {
-                            if (!contractIdToDomains.has(port.contractId)) {
-                                contractIdToDomains.set(port.contractId, new Set());
+                            if (!contractIdToProducts.has(port.contractId)) {
+                                contractIdToProducts.set(port.contractId, []);
                             }
-                            contractIdToDomains.get(port.contractId)!.add(item.domain);
+                            // Avoid exact duplicates
+                            const existing = contractIdToProducts.get(port.contractId)!;
+                            if (!existing.some(p => p.domain === item.domain && p.dataProductId === item.id)) {
+                                existing.push({ domain: item.domain, dataProductId: item.id });
+                            }
                         }
                     });
                 }
             }
         });
-        // Create multiple instances of DataContracts - one for each domain that references them
+        // Create multiple instances of DataContracts - one for each data product that references them
         const mappedItems: any[] = [];
         items.forEach(item => {
             if (item.kind === 'DataContract') {
-                if (item.id && contractIdToDomains.has(item.id)) {
-                    //Create one instance per domain that references this contract
-                    const domains = contractIdToDomains.get(item.id)!;
-                    domains.forEach(domain => {
+                if (item.id && contractIdToProducts.has(item.id)) {
+                    //Create one instance per data product that references this contract
+                    const products = contractIdToProducts.get(item.id)!;
+                    products.forEach(prod => {
                         mappedItems.push({
                             ...item,
-                            domain: domain,
-                            // Create unique ID for each domain instance to avoid conflicts
-                            _instanceId: `${item.id}_${domain}`,
+                            domain: prod.domain,
+                            dataProductId: prod.dataProductId,
+                            // Create unique ID for each instance to avoid conflicts
+                            _instanceId: `${item.id}_${prod.dataProductId}`,
                             _originalItem: item
                         });
                     });
                 }
                 else {
-                    // Keep original DataContract if not referenced by any DataProduct
-                    mappedItems.push(item);
+                    // Do not include orphaned data contracts in the dashboard evaluations
+                    // mappedItems.push(item);
                 }
             } else {
                 // Keep all non-DataContract items as-is
@@ -307,12 +312,12 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                     const targetForEvaluation = dp._originalItem || dp;
                     const res = rule.evaluate(targetForEvaluation);
                     if (res.passed) {
-                        compliantCount++;
+                        if (domain !== 'Unknown') compliantCount++;
                         domainStats[domain].compliant++;
                     } else {
-                        uncompliantCount++;
+                        if (domain !== 'Unknown') uncompliantCount++;
                         domainStats[domain].uncompliant++;
-                        failures.push({ dp, reason: res.reason! });
+                        if (domain !== "Unknown") failures.push({ dp, reason: res.reason! });
                     }
                 });
 

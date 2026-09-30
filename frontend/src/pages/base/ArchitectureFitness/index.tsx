@@ -420,13 +420,13 @@ export const dataContractRules: Rule[] = [
 export const categories: FitnessCategory[] = [
     {
         id: 'data-product',
-        label: 'Data Product Specification compliance',
+        label: 'Data Product Specification compliance rules',
         targetKind: 'DataProduct',
         rules: dataProductRules
     },
     {
         id: 'data-contract',
-        label: 'Data Contract Specification compliance',
+        label: 'Data Contract Specification compliance rules',
         targetKind: 'DataContract',
         rules: dataContractRules
     }
