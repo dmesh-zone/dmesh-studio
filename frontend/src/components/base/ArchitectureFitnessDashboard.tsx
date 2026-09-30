@@ -188,33 +188,50 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
             });
         }
 
-        const contractIdToDomain = new Map<string, string>();
-        const contractIdToDataProduct = new Map<string, string>();
+        // Build mapping of contractId to all domains and reference it
+        const contractIdToDomains = new Map<string, Set<string>>();
         items.forEach(item => {
             if (item.kind === 'DataProduct' && item.domain) {
                 if (item.outputPorts && Array.isArray(item.outputPorts)) {
                     item.outputPorts.forEach((port: any) => {
                         if (port.contractId) {
-                            contractIdToDomain.set(port.contractId, item.domain);
-                            contractIdToDataProduct.set(port.contractId, item.id);
+                            if (!contractIdToDomains.has(port.contractId)) {
+                                contractIdToDomains.set(port.contractId, new Set());
+                            }
+                            contractIdToDomains.get(port.contractId)!.add(item.domain);
                         }
                     });
                 }
             }
         });
-
-        return items.map(item => {
+        // Create multiple instances of DataContracts - one for each domain that references them
+        const mappedItems: any[] = [];
+        items.forEach(item => {
             if (item.kind === 'DataContract') {
-                if (item.id && contractIdToDomain.has(item.id)) {
-                    return {
-                        ...item,
-                        domain: contractIdToDomain.get(item.id),
-                        dataProductId: contractIdToDataProduct.get(item.id)
-                    };
+                if (item.id && contractIdToDomains.has(item.id)) {
+                    //Create one instance per domain that references this contract
+                    const domains = contractIdToDomains.get(item.id)!;
+                    domains.forEach(domain => {
+                        mappedItems.push({
+                            ...item,
+                            domain: domain,
+                            // Create unique ID for each domain instance to avoid conflicts
+                            _instanceId: `${item.id}_${domain}`,
+                            _originalItem: item
+                        });
+                    });
                 }
+                else {
+                    // Keep original DataContract if not referenced by any DataProduct
+                    mappedItems.push(item);
+                }
+            } else {
+                // Keep all non-DataContract items as-is
+                mappedItems.push(item);
             }
-            return item;
         });
+
+        return mappedItems;
     }, [selectedEnv, dataMeshOps]);
 
     const allDomains = useMemo(() => {
@@ -235,25 +252,32 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
 
         activeCategories.forEach(cat => {
             stats[cat.id] = {};
+
+            // Initialise stats for all domains
             filteredEnvData.forEach(dp => {
                 const domain = dp.domain || 'Unknown';
                 if (!stats[cat.id][domain]) stats[cat.id][domain] = { rulesPassed: 0, rulesError: 0, rulesWarning: 0 };
             });
 
+            // Calculate rule compliance per domain - each rule gets one status per domain
             Object.keys(stats[cat.id]).forEach(domain => {
                 const domainData = filteredEnvData.filter(dp => (dp.domain || 'Unknown') === domain && dp.kind === cat.targetKind);
 
                 cat.rules.forEach(rule => {
                     if (domainData.length === 0) return;
-                    let ruleFailed = false;
+
+                    // Check if any item in this domain fails this rule
+                    let ruleFailure = false;
                     for (const item of domainData) {
-                        if (!rule.evaluate(item).passed) {
-                            ruleFailed = true;
+                        const targetForEvaluation = item._originalItem || item;
+                        if (!rule.evaluate(targetForEvaluation).passed) {
+                            ruleFailure = true;
                             break;
                         }
                     }
 
-                    if (ruleFailed) {
+                    // Count this rule once per domain based on its worst outcome in that domain
+                    if (ruleFailure) {
                         if (rule.severity === 'error') stats[cat.id][domain].rulesError++;
                         if (rule.severity === 'warning') stats[cat.id][domain].rulesWarning++;
                     } else {
@@ -280,7 +304,8 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                     const domain = dp.domain || 'Unknown';
                     if (!domainStats[domain]) domainStats[domain] = { compliant: 0, uncompliant: 0 };
 
-                    const res = rule.evaluate(dp);
+                    const targetForEvaluation = dp._originalItem || dp;
+                    const res = rule.evaluate(targetForEvaluation);
                     if (res.passed) {
                         compliantCount++;
                         domainStats[domain].compliant++;
