@@ -556,16 +556,25 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
                                                                 <span style={{ opacity: 0.8, fontStyle: 'italic' }}>click to copy Rule ID</span>
                                                             </React.Fragment>
                                                         }>
-                                                            <IconButton
-                                                                size="small"
+                                                            <Box
+                                                                component="span"
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     navigator.clipboard.writeText(result.id);
                                                                 }}
-                                                                sx={{ color: 'text.secondary', ml: -1 }}
+                                                                sx={{ 
+                                                                    color: 'text.secondary', 
+                                                                    ml: -1, 
+                                                                    cursor: 'pointer',
+                                                                    display: 'inline-flex',
+                                                                    alignItems: 'center',
+                                                                    padding: '5px',
+                                                                    borderRadius: '50%',
+                                                                    '&:hover': { bgcolor: 'action.hover' }
+                                                                }}
                                                             >
                                                                 <TagIcon fontSize="small" />
-                                                            </IconButton>
+                                                            </Box>
                                                         </Tooltip>
                                                     </Box>
                                                     <Box sx={{ display: 'flex', gap: 2 }}>
