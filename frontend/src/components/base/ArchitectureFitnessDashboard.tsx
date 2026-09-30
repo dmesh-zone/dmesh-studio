@@ -61,7 +61,24 @@ export default function ArchitectureFitnessDashboard({ categories = [], rules = 
     const [selectedEnv, setSelectedEnv] = useState<string>('');
     const [dataMeshOps, setDataMeshOps] = useState<any[]>([]);
 
-    const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
+    const [selectedDomains, setSelectedDomains] = useState<string[]>(() => {
+        try {
+            const urlDomains = new URLSearchParams(window.location.search).get('domains');
+            if (urlDomains !== null) {
+                return (urlDomains && urlDomains !== '*') ? urlDomains.split(',') : [];
+            }
+            const stored = localStorage.getItem('dmesh-selected-domains');
+            return stored ? JSON.parse(stored) : [];
+        } catch { return []; }
+    });
+
+    useEffect(() => {
+        if (selectedDomains.length > 0) {
+            localStorage.setItem('dmesh-selected-domains', JSON.stringify(selectedDomains));
+        } else {
+            localStorage.removeItem('dmesh-selected-domains');
+        }
+    }, [selectedDomains]);
     const [sidePanelData, setSidePanelData] = useState<any>(null);
     const [sidePanelFilter, setSidePanelFilter] = useState<string>('');
     const [domainNameCustomisation, setDomainNameCustomisation] = useState<any>({});

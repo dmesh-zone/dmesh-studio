@@ -201,7 +201,8 @@ function App() {
                 color="text.secondary"
                 onClick={() => {
                   if (navConfig?.sections?.[0]?.pages?.[0]?.id) {
-                    navigate(`/${navConfig.sections[0].pages[0].id}`);
+                    const freshEnv = localStorage.getItem('dmesh-selected-env') || currentEnv;
+                    navigate(`/${navConfig.sections[0].pages[0].id}?env=${freshEnv}`);
                   }
                 }}
                 sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
@@ -326,7 +327,10 @@ function App() {
                 return (
                   <Tooltip key={page.id} title={!isExpanded ? page.title : ""} placement="right">
                     <Box
-                      onClick={() => navigate(`/${page.id}`)}
+                      onClick={() => {
+                        const freshEnv = localStorage.getItem('dmesh-selected-env') || currentEnv;
+                        navigate(`/${page.id}?env=${freshEnv}`);
+                      }}
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -407,7 +411,8 @@ function App() {
                       color="text.secondary"
                       onClick={() => {
                         if (navConfig?.sections?.[0]?.pages?.[0]?.id) {
-                          navigate(`/${navConfig.sections[0].pages[0].id}`);
+                          const freshEnv = localStorage.getItem('dmesh-selected-env') || currentEnv;
+                          navigate(`/${navConfig.sections[0].pages[0].id}?env=${freshEnv}`);
                         }
                       }}
                       sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
