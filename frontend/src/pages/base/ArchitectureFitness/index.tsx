@@ -65,7 +65,7 @@ export const dataProductRules: Rule[] = [
     },
     {
         id: 'type-valid',
-        label: "All Data Products have a 'type' property with values 'dataSource/sourceAligned/curated/consumerAligned/application'",
+        label: "All Data Products have a 'type' property with values 'dataSource|sourceAligned|curated|consumerAligned|application'",
         severity: 'error',
         evaluate: (dp: any) => {
             const dpType = dp.type;
