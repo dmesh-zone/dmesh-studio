@@ -200,23 +200,22 @@ export const dataProductRules: Rule[] = [
     {
         id: 'dataUsageAgreements-customProperty-valid',
         label: "Data Products of specific tiers must have valid 'dataUsageAgreements' customProperty",
-        severity: 'warning',
+        severity: 'error',
         evaluate: (dp: any) => {
             const uuidv5Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             const tier = dp.type;
             if (tier && ['dataSource', 'sourceAligned', 'curated'].includes(tier)) {
                 const agreementsProp = dp.customProperties?.find((p: any) => p.property === 'dataUsageAgreements');
-                if (!agreementsProp || !Array.isArray(agreementsProp.value)) {
-                    return { passed: false, reason: `Missing or invalid 'dataUsageAgreements' array for tier '${tier}'` };
-                }
-                for (let i = 0; i < agreementsProp.value.length; i++) {
-                    const agreement = agreementsProp.value[i];
-                    if (!agreement.info || agreement.info.active !== true) {
-                        return { passed: false, reason: `Agreement at index ${i} is missing 'info.active: true'` };
-                    }
-                    const consumerId = agreement.consumer?.dataProductId;
-                    if (!consumerId || !uuidv5Regex.test(consumerId)) {
-                        return { passed: false, reason: `Agreement at index ${i} has an invalid or missing 'consumer.dataProductId' in UUID v5 format` };
+                if (agreementsProp && Array.isArray(agreementsProp.value)) {
+                    for (let i = 0; i < agreementsProp.value.length; i++) {
+                        const agreement = agreementsProp.value[i];
+                        if (!agreement.info || agreement.info.active !== true) {
+                            return { passed: false, reason: `Agreement at index ${i} is missing 'info.active: true'` };
+                        }
+                        const consumerId = agreement.consumer?.dataProductId;
+                        if (!consumerId || !uuidv5Regex.test(consumerId)) {
+                            return { passed: false, reason: `Agreement at index ${i} has an invalid or missing 'consumer.dataProductId' in UUID v5 format` };
+                        }
                     }
                 }
             }
