@@ -19,7 +19,7 @@ const EnvironmentSelectorWidget: React.FC<EnvironmentSelectorWidgetProps> = Reac
     mode = 'light'
 }) => {
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, bgcolor: mode === 'dark' ? '#1e293b' : '#ffffff', px: 2, py: '2px', borderRadius: '8px', border: '1px solid', borderColor: 'divider', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', height: '32px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, bgcolor: 'var(--input-bg, background.paper)', px: 2, py: '2px', borderRadius: '8px', border: '1px solid', borderColor: 'divider', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', height: '32px' }}>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold', mr: 0.5 }}>
                 Environment:
             </Typography>
