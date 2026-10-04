@@ -21,7 +21,7 @@ export const CustomThemeProvider = ({ children }: { children: ReactNode }) => {
         if (storedTheme === 'light' || storedTheme === 'dark') {
             return storedTheme as PaletteMode;
         }
-        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        return 'light';
     });
 
     const [primaryColor, setPrimaryColor] = useState(null);
