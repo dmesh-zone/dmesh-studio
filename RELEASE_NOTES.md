@@ -4,6 +4,21 @@ All notable changes to **DMesh Studio** will be documented in this file.
 
 ---
 
+## 🚀 [v0.6.0] - 2026-10-04
+
+### ✨ New Features
+- **Navigation Customization:** Added a new "Pages" section in Settings allowing users to show or hide pages in the navigation menu. 
+- **Configuration:** Introduced `showByDefault` property in `config.yaml` to govern initial page visibility.
+- **Icons:** Added Atlassian Confluence SVG icon support.
+
+### 🐛 Bug Fixes & Improvements
+- **UI/UX:** Redesigned the settings toggle switch to conform with Material Design 3 specifications.
+- **UI/UX:** Fixed an issue where the Environment Selector widget was not rendering correctly in dark theme.
+- **Storage:** Standardized all local storage keys across the platform to follow the `dmesh-*` naming convention.
+- **Architecture Fitness:** Improved validation logic for `dataUsageAgreements` to only trigger errors if the array is present but its child elements are non-conformant.
+
+---
+
 ## 🚀 [v0.5.1] - 2026-09-30
 
 ### 🐛 Bug Fixes & Improvements
