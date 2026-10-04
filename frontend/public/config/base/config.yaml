@@ -15,6 +15,7 @@ navigation:
           title: "Architecture Fitness"
           icon: "Rule"
           component: "ArchitectureFitness"
+          showByDefault: true
         - id: "settings"
           title: "Settings"
           icon: "Settings"

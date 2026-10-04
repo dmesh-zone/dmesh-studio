@@ -17,7 +17,7 @@ export const useThemeContext = () => useContext(ThemeContext);
 export const CustomThemeProvider = ({ children }: { children: ReactNode }) => {
     // Determine initial mode from localStorage or system preference
     const [mode, setMode] = useState<PaletteMode>(() => {
-        const storedTheme = localStorage.getItem('theme');
+        const storedTheme = localStorage.getItem('dmesh-theme');
         if (storedTheme === 'light' || storedTheme === 'dark') {
             return storedTheme as PaletteMode;
         }
@@ -28,7 +28,7 @@ export const CustomThemeProvider = ({ children }: { children: ReactNode }) => {
 
     // Persist mode to localStorage when it changes
     useEffect(() => {
-        localStorage.setItem('theme', mode);
+        localStorage.setItem('dmesh-theme', mode);
         if (mode === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
         } else {

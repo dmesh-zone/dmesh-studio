@@ -140,6 +140,23 @@ function App() {
     applyTheme();
   }, [mode, setPrimaryColor]);
 
+  const [pageVisibility, setPageVisibility] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+     const updateVisibility = () => {
+         try {
+             const stored = localStorage.getItem('dmesh-page-visibility');
+             if (stored) setPageVisibility(JSON.parse(stored));
+         } catch {
+             setPageVisibility({});
+         }
+     };
+     updateVisibility();
+     window.addEventListener('nav-preferences-changed', updateVisibility);
+     return () => window.removeEventListener('nav-preferences-changed', updateVisibility);
+  }, []);
+
+
 
   React.useEffect(() => {
     Promise.all([
@@ -312,7 +329,14 @@ function App() {
 
         {/* Navigation Items */}
         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, width: '100%', pt: 1 }}>
-          {navConfig?.sections?.map((section, sIdx) => (
+          {navConfig?.sections?.map((section, sIdx) => {
+            const visiblePages = section.pages.filter((page: any) => {
+                return pageVisibility[page.id] !== undefined ? pageVisibility[page.id] : (page.showByDefault !== false);
+            });
+            
+            if (visiblePages.length === 0) return null;
+
+            return (
             <React.Fragment key={sIdx}>
               {sIdx > 0 && (!section.name || section.name === "") && (
                 <Divider sx={{ my: 1, borderColor: mode === 'dark' ? '#333333' : '#cccccc' }} />
@@ -322,7 +346,7 @@ function App() {
                   {section.name}
                 </Typography>
               )}
-              {section.pages.map((page) => {
+              {visiblePages.map((page) => {
                 const IconComponent = getIcon(page.icon);
                 return (
                   <Tooltip key={page.id} title={!isExpanded ? page.title : ""} placement="right">
@@ -376,7 +400,7 @@ function App() {
                 );
               })}
             </React.Fragment>
-          ))}
+          )})}
         </Box>
       </Box>
 

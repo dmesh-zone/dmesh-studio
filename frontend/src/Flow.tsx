@@ -427,9 +427,9 @@ function Flow({ isExpanded = false }) {
 
     // Observability State
     const [observeMode, setObserveMode] = React.useState(false);
-    const [compactMode, setCompactMode] = React.useState(() => localStorage.getItem('compactMode') === 'true');
+    const [compactMode, setCompactMode] = React.useState(() => localStorage.getItem('dmesh-compact-mode') === 'true');
     React.useEffect(() => {
-        localStorage.setItem('compactMode', String(compactMode));
+        localStorage.setItem('dmesh-compact-mode', String(compactMode));
     }, [compactMode]);
     const [activeDimension, setActiveDimension] = React.useState(null); // null = 'any'
     const [metricsMap, setMetricsMap] = React.useState(new Map());
@@ -439,17 +439,17 @@ function Flow({ isExpanded = false }) {
     const [showConfig, setShowConfig] = React.useState(false);
     const [showEventsTab, setShowEventsTab] = React.useState(false);
 
-    const [showDomainLabels, setShowDomainLabels] = React.useState(() => localStorage.getItem('showDomainLabels') === 'true');
+    const [showDomainLabels, setShowDomainLabels] = React.useState(() => localStorage.getItem('dmesh-show-domain-labels') === 'true');
     React.useEffect(() => {
-        localStorage.setItem('showDomainLabels', String(showDomainLabels));
+        localStorage.setItem('dmesh-show-domain-labels', String(showDomainLabels));
     }, [showDomainLabels]);
 
     const [showDescriptionsExpanded, setShowDescriptionsExpanded] = React.useState(() => {
-        const val = localStorage.getItem('showDescriptionsExpanded');
+        const val = localStorage.getItem('dmesh-show-descriptions-expanded');
         return val === null ? true : val === 'true';
     });
     React.useEffect(() => {
-        localStorage.setItem('showDescriptionsExpanded', String(showDescriptionsExpanded));
+        localStorage.setItem('dmesh-show-descriptions-expanded', String(showDescriptionsExpanded));
     }, [showDescriptionsExpanded]);
 
     const [showGlobalConfig, setShowGlobalConfig] = React.useState(false);
@@ -778,7 +778,7 @@ function Flow({ isExpanded = false }) {
                 columnCounts[colNum] = (columnCounts[colNum] || 0) + 1;
             });
             const maxNodes = Math.max(0, ...(Object.values(columnCounts) as number[]));
-            const savedCompactMode = localStorage.getItem('compactMode');
+            const savedCompactMode = localStorage.getItem('dmesh-compact-mode');
             if (savedCompactMode !== null) {
                 setCompactMode(savedCompactMode === 'true');
             } else {
