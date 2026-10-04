@@ -106,6 +106,7 @@ For each page in the `navigation` block:
 - **`title`**: The text that appears in the navigation drawer and tooltips.
 - **`icon`**: The name of the Material-UI icon to display (e.g., "Hub" renders `<HubIcon />`).
 - **`component`**: The registered component name (matching the folder name in `src/pages/base` or `src/pages/custom`).
+- **`showByDefault`**: A boolean (default `true`) determining whether the page is visible in the navigation menu out of the box, or if it must be enabled by the user in Settings first.
 
 By modifying `config/custom/config.yaml`, your organization can add new navigation items or hide existing ones without modifying the React source code.
 
