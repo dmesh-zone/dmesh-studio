@@ -89,6 +89,7 @@ iconMap:
   powerbi: /icons/powerbi.svg
   agent: /icons/robot.svg
   application: /icons/application.svg
+  confluence: /icons/confluence.svg
 
 technologyNameMap:
   database: Database
@@ -122,6 +123,7 @@ technologyNameMap:
   kafka: Kafka
   kinesis: Kinesis
   powerbi: Power BI
+  confluence: Confluence
 
 tiers:
   dataSource:
