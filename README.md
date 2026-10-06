@@ -1,7 +1,8 @@
 # dmesh-studio
 
+> **⚠️ Note:** This project is no longer actively maintained as it has been superseded by https://github.com/dmesh-zone/dmesh-studio
+
 [![CodeQL](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/codeql.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/codeql.yml)
-[![Snyk Security Scan](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/snyk.yml/badge.svg)](https://github.com/dmesh-zone/dmesh-studio/actions/workflows/snyk.yml)
 
 A React-based visualization tool for exploring Data Mesh dataMeshOperationsList, Data Products, Data Contracts, and Data Usage Agreements.
 
