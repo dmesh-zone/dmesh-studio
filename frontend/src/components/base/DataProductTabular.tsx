@@ -281,8 +281,8 @@ export default function DataProductTabular({ title, tierFilter = null, customCon
                     bVal = colDef.textMapper(bVal, ctx);
                 }
 
-                if (aVal < bVal) return sortConfig.direction === 'ascending' ? -1 : 1;
-                if (aVal > bVal) return sortConfig.direction === 'ascending' ? 1 : -1;
+                if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
                 return 0;
             });
         }

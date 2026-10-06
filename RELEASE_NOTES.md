@@ -4,6 +4,13 @@ All notable changes to **DMesh Studio** will be documented in this file.
 
 ---
 
+## 🚀 [v0.6.1] - 2026-10-06
+
+### 🐛 Bug Fixes & Improvements
+- **Data Products:** Fixed an issue where the data products tabular view failed to toggle between ascending and descending sort orders when clicking on a column header.
+
+---
+
 ## 🚀 [v0.6.0] - 2026-10-04
 
 ### ✨ New Features
